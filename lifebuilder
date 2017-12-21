@@ -21,9 +21,6 @@ source ${SCRIPTDIR}/conf/lifebuilder.conf
 
 
 
-exit 0
-
-
 #prepare workdirectory and logfile
 if [ ! -d $WORKDIR ]; then
     mkdir -p $WORKDIR
@@ -51,11 +48,16 @@ fi
 
 
 output() {
-    echo "________________________________________"
-    echo "$1"
-    echo ""
+    printf "$1"
     echo "$1" >>$WORKDIR/lifebuilder.log
 }
+
+
+
+output "test that"
+
+exit 0
+
 
 
 copyskel (){
