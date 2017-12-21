@@ -1,0 +1,34 @@
+default vesamenu.c32
+prompt 0
+timeout 20
+
+menu title life 16.04 neon
+menu background splash.png
+
+label live
+  menu label Start des Live Systems
+  kernel /casper/vmlinuz
+  append boot=casper initrd=/casper/initrd.gz nvme_load=YES nvd_load=YES quiet splash
+
+label toram
+  menu label Lade Live System in den RAM 
+  kernel /casper/vmlinuz
+  append boot=casper toram initrd=/casper/initrd.gz
+  
+label install
+  menu label Start des System-Installationsprogrammes
+  kernel /casper/vmlinuz
+  append boot=casper initrd=/casper/initrd.gz finstall nvme_load=YES nvd_load=YES quiet splash
+
+label safe
+  menu label Start des Live Systems in sicherem Grafikmodus
+  kernel /casper/vmlinuz
+  append boot=casper initrd=/casper/initrd.gz xforcevesa nomodeset nvme_load=YES nvd_load=YES quiet splash
+
+label debug
+  menu label Start des Live Systems im Debug Modus
+  kernel /casper/vmlinuz
+  append boot=casper initrd=/casper/initrd.gz
+
+
+
