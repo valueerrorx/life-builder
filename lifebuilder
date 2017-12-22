@@ -67,7 +67,6 @@ copyskel (){
         output "Cleaning /etc/skel ..."
         
         rm -rf /etc/skel/Webroot > /dev/null 2>&1
-        rm -rf /etc/skel/Downloads > /dev/null 2>&1
         rm -rf /etc/skel/.life > /dev/null 2>&1
         rm -rf /etc/skel/.arduino > /dev/null 2>&1
         rm -rf /etc/skel/.apps > /dev/null 2>&1
@@ -136,6 +135,10 @@ copyskel (){
         find /etc/skel/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
         find /etc/skel/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
         grep -Rl "$SKELUSER" /etc/skel | xargs rm -rf '{}' > /dev/null 2>&1
+        
+        
+        mkdir /etc/skel/Downloads/   #we want this default folder
+        
         
         #fix permissions 
         chown -R root:root /etc/skel
@@ -222,7 +225,7 @@ cdfs (){
     
     
     
-    output "Copying /var and /etc to temp area and excluding extra files  ... this will take a while so be patient"
+    output "Copying /var and /etc to temp folder and excluding extra files  ... this will take a while.."
 
     if [ "$EXCLUDES" != "" ]; then
         for addvar in $EXCLUDES ; do
@@ -250,7 +253,8 @@ cdfs (){
     sed -i "s/LIVECDLABEL/$LIVECDLABEL/g" $WORKDIR/dummysys/etc/default/grub
 
     
-    output "Cleaning up files not needed for the live in $WORKDIR/dummysys"
+    output "Removing unnecessary files in $WORKDIR/dummysys"
+    
     rm -rf $WORKDIR/dummysys/etc/apt/sources.list.d/*.save &> /dev/null
     rm -rf $WORKDIR/dummysys/etc/apt/apt.conf.d/* &> /dev/null
     rm -rf $WORKDIR/dummysys/etc/apt/preferences.d/* &> /dev/null
@@ -258,35 +262,26 @@ cdfs (){
     rm -rf $WORKDIR/dummysys/var/lib/apt/lists/lock &> /dev/null
     rm -rf $WORKDIR/dummysys/var/cache/apt/archives/* &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/ureadahead/pack &> /dev/null
-    rm -f $WORKDIR/dummysys/etc/X11/xorg.conf* &> /dev/null
-    rm -f $WORKDIR/dummysys/etc/{hosts,hostname,mtab*,fstab}
-    if [ ! -L $WORKDIR/dummysys/etc/resolv.conf ]; then
-        rm -f $WORKDIR/dummysys/etc/resolv.conf
-    fi
-    rm -f $WORKDIR/dummysys/etc/udev/rules.d/70-persistent*
-    rm -f $WORKDIR/dummysys/etc/cups/ssl/{server.crt,server.key}
-    rm -f $WORKDIR/dummysys/etc/ssh/*key*
-    rm -f $WORKDIR/dummysys/var/lib/dbus/machine-id
-    
-    find $WORKDIR/dummysys/var/log/ $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
-
-    rm -f $WORKDIR/dummysys/etc/{group,passwd,shadow,shadow-,gshadow,gshadow-}
-
-    #rm -rf $WORKDIR/dummysys/etc/NetworkManager/system-connections/*  # i want to deliver a manual connection example
-    rm -f $WORKDIR/dummysys/etc/printcap
-    rm -f $WORKDIR/dummysys/etc/cups/printers.conf
-    touch $WORKDIR/dummysys/etc/printcap            #provide empty files
-    touch $WORKDIR/dummysys/etc/cups/printers.conf
     rm -rf $WORKDIR/dummysys/var/cache/gdm/*
     rm -rf $WORKDIR/dummysys/var/lib/sudo/*
     rm -rf $WORKDIR/dummysys/var/lib/AccountsService/users/*
     rm -rf $WORKDIR/dummysys/var/lib/kdm/*
     rm -rf $WORKDIR/dummysys/var/run/console/*
+    rm -f $WORKDIR/dummysys/etc/X11/xorg.conf* &> /dev/null
+    rm -f $WORKDIR/dummysys/etc/{hosts,hostname,mtab*,fstab}
+    rm -f $WORKDIR/dummysys/etc/udev/rules.d/70-persistent*
+    rm -f $WORKDIR/dummysys/etc/cups/ssl/{server.crt,server.key}
+    rm -f $WORKDIR/dummysys/etc/ssh/*key*
+    rm -f $WORKDIR/dummysys/var/lib/dbus/machine-id
+    rm -f $WORKDIR/dummysys/etc/{group,passwd,shadow,shadow-,gshadow,gshadow-}
     rm -f $WORKDIR/dummysys/etc/gdm/gdm.conf-custom
-    
-    
-
-    
+    rm -f $WORKDIR/dummysys/etc/cups/printers.conf  #comment out if you want to provide a default network printer
+    #rm -rf $WORKDIR/dummysys/etc/NetworkManager/system-connections/*  # i want to deliver a manual connection example
+    if [ ! -L $WORKDIR/dummysys/etc/resolv.conf ]; then
+        rm -f $WORKDIR/dummysys/etc/resolv.conf
+    fi
+    find $WORKDIR/dummysys/var/log/ $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
+    touch $WORKDIR/dummysys/etc/cups/printers.conf  #provide empty files
     if [ ! -d /run ]; then
         find $WORKDIR/dummysys/var/run/ $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
     else
@@ -295,6 +290,8 @@ cdfs (){
         cd $WORKDIR/dummysys/var
         ln -sf ../run run
     fi
+    
+    
     
     
     #Setting  auto login for sddm (makes user student autologin caus student is written into sddm.conf)
@@ -310,7 +307,10 @@ cdfs (){
         touch $WORKDIR/dummysys/var/log/${i}
     done
 
+    
+    
     output "Cleaning up passwd, group, shadow and gshadow files for the live system"
+    
     grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
     grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
     grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
@@ -328,28 +328,12 @@ cdfs (){
     cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
     rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
 
-    #cp /etc/shadow $WORKDIR/dummysys/etc/shadow
-    #cp /etc/gshadow $WORKDIR/dummysys/etc/gshadow
-
     cat $WORKDIR/tmpusers | while read LINE ;do
-
         echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
         echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
         echo $LINE | xargs -i sed -e 's/:{}$/:/g' $WORKDIR/dummysys/etc/group.new2 > $WORKDIR/dummysys/etc/group.new3
         echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
-
-        # /etc/shadow and /etc/gshadow needed for rescue mode boot root access - removed due to user creation issues for live boot
-        # echo $LINE | xargs -i sed -e '/^{}:/d' $WORKDIR/dummysys/etc/shadow > $WORKDIR/dummysys/etc/shadow.new
-        #sed -i -e 's/root:x:/root:!:/g' $WORKDIR/dummysys/etc/shadow.new
-        #mv $WORKDIR/dummysys/etc/shadow.new $WORKDIR/dummysys/etc/shadow
-        #echo $LINE | xargs -i sed -e '/^{}:/d' $WORKDIR/dummysys/etc/gshadow > $WORKDIR/dummysys/etc/gshadow.new1
-        #echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/gshadow.new1 > $WORKDIR/dummysys/etc/gshadow.new2
-        #echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/gshadow.new2 > $WORKDIR/dummysys/etc/gshadow.new3
-        #echo $LINE | xargs -i sed -e 's/:{}$/:/g' $WORKDIR/dummysys/etc/gshadow.new3 > $WORKDIR/dummysys/etc/gshadow.new4
-        #echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/gshadow.new4 > $WORKDIR/dummysys/etc/gshadow
-
         rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
-
     done
 
    
@@ -363,7 +347,6 @@ cdfs (){
     
     
     #copy some of the necessary stuff for the livecd
-    #copy any preseed files
     cp ${SCRIPTDIR}/preseed/* $WORKDIR/ISOTMP/preseed/
 
     #BOOT Type is isolinux
@@ -374,6 +357,7 @@ cdfs (){
     output "Copying EFI Boot for the live system"
     cp -a ${SCRIPTDIR}/boot/ $WORKDIR/ISOTMP/
     cp -a ${SCRIPTDIR}/EFI/ $WORKDIR/ISOTMP/
+    
     #cp $WORKDIR/ISOTMP/EFI/BOOT/BOOTx64.EFI $WORKDIR/ISOTMP/EFI/BOOT/fallback.efi
     sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/grub.cfg
     sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/loopback.cfg
@@ -386,12 +370,11 @@ cdfs (){
     
     # Check Architecture
     ARCH=`archdetect | awk -F "/" '{print $1}'`
-
     mkdir -p $WORKDIR/ISOTMP/pool
     cd $WORKDIR/ISOTMP/pool
-
+    
     apt-get download b43-fwcutter bcmwl-kernel-source efibootmgr grub-common grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed grub-efi-ia32 grub-efi-ia32-bin grub-pc-bin grub-pc grub2-common grub-gfxpayload-lists libefivar0 mokutil secureboot-db shim shim-signed &> /dev/null
-   
+
     mkdir -p $WORKDIR/ISOTMP/dists
     cd $WORKDIR/ISOTMP/
     dpkg-scanpackages -m pool /dev/null | sed '/^Depends:[[:space:]]*$/d'
@@ -421,7 +404,7 @@ cdfs (){
     cp ${SCRIPTDIR}/isolinux/splash.png $WORKDIR/ISOTMP/isolinux/splash.png
 
 
-    output "Checking the ARCH of the system and setting the README.diskdefines file"
+    output "Creating README.diskdefines"
     ARCH=`archdetect | awk -F "/" '{print $1}'`
 
     cat > $WORKDIR/ISOTMP/README.diskdefines <<FOO
@@ -439,7 +422,7 @@ FOO
 
     sleep 1
 
-    # Step 4 - Make the filesystem.manifest and filesystem.manifest-desktop
+    # Make the filesystem.manifest and filesystem.manifest-desktop
     output "Creating filesystem.manifest and filesystem.manifest-desktop"
     dpkg-query -W --showformat='${Package} ${Version}\n' > $WORKDIR/ISOTMP/casper/filesystem.manifest
 
@@ -449,10 +432,10 @@ FOO
 
     sleep 1
 
-    # Step 5 - Prepare casper.conf depending on whether this is a backup or dist
+    # Prepare casper.conf
 
     output "Creating the casper.conf file."
-    # Added FLAVOUR= as the new casper live boot will make it the first word from the Live CD Name if FLAVOUR is not set
+    
     cat > /etc/casper.conf <<FOO
 # This file should go in /etc/casper.conf
 # Supported variables are:
@@ -464,10 +447,11 @@ export HOST="$LIVEHOSTNAME"
 export BUILD_SYSTEM="Ubuntu"
 export FLAVOUR="$LIVEHOSTNAME"
 FOO
+    
     cp /etc/casper.conf $WORKDIR/dummysys/etc/
 
 
-    # make a new initial ramdisk including the casper scripts
+    # create a new initial ramdisk including the casper scripts
     output "Creating a new initial ramdisk for the live system"
     mkinitramfs -o /boot/initrd.img-`uname -r` `uname -r`
 
@@ -488,8 +472,9 @@ FOO
     
     
     ###############################
-    #   Make filesystem.squashfs
+    #   Make filesystem.squashfs  #
     ###############################
+    
     if [ -f $WORKDIR/ISOTMP/casper/filesystem.squashfs ]; then
         rm -f $WORKDIR/ISOTMP/casper/filesystem.squashfs &> /dev/null
     fi
@@ -510,15 +495,27 @@ FOO
     
     sleep 1
 
+
+    #checking the size of the compressed filesystem to ensure it meets the iso9660 spec for a single file" 
+    SQUASHFSSIZE=`ls -s $WORKDIR/ISOTMP/casper/filesystem.squashfs | awk -F " " '{print $1}'`
+    if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
+        output "The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
+        exit 1
+    fi
+
+    #add filesystem size 
+    output "Calculating the installed filesystem size for the installer"
+
+    unsquashfs -lls $WORKDIR/ISOTMP/casper/filesystem.squashfs | grep -v " inodes " | grep -v "unsquashfs:" | awk '{print $3}' | grep -v "," > /tmp/size.tmp
+
+    for i in `cat /tmp/size.tmp`; do a=$(($a+$i)); done
+    echo $a > $WORKDIR/ISOTMP/casper/filesystem.size
     
     
     
     
     
-    
-    
-    
-    #add some stuff the log in case of problems so I can troubleshoot it easier
+    #add some stuff the log in case of problems so we can troubleshoot it easier
     echo "Updating the lifebuilder.log"
     echo "------------------------------------------------------" >>$WORKDIR/lifebuilder.log
     echo "Mount information" >>$WORKDIR/lifebuilder.log
@@ -557,25 +554,6 @@ FOO
     echo "Command-line options = $@" >>$WORKDIR/lifebuilder.log
     echo "------------------------------------------------------" >>$WORKDIR/lifebuilder.log
 
-    
-    
-
-    sleep 1
-
-    #checking the size of the compressed filesystem to ensure it meets the iso9660 spec for a single file" 
-    SQUASHFSSIZE=`ls -s $WORKDIR/ISOTMP/casper/filesystem.squashfs | awk -F " " '{print $1}'`
-    if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
-        output "The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
-        exit 1
-    fi
-
-    #add filesystem size 
-    output "Calculating the installed filesystem size for the installer"
-
-    unsquashfs -lls $WORKDIR/ISOTMP/casper/filesystem.squashfs | grep -v " inodes " | grep -v "unsquashfs:" | awk '{print $3}' | grep -v "," > /tmp/size.tmp
-
-    for i in `cat /tmp/size.tmp`; do a=$(($a+$i)); done
-    echo $a > $WORKDIR/ISOTMP/casper/filesystem.size
 
 }
 
@@ -604,7 +582,7 @@ iso (){
     # check to see if the cd filesystem exists
 
     if [ ! -f "$WORKDIR/ISOTMP/casper/filesystem.squashfs" ]; then
-        output "The filesystem.squashfs filesystem is missing.  Either there was a problem creating the compressed filesystem or you are trying to run sudo lifebuilder dist iso before sudo lifebuilder dist cdfs"
+        output "The filesystem.squashfs filesystem is missing.  There was a problem creating the compressed filesystem."
         exit 1
     fi
 
@@ -614,7 +592,7 @@ iso (){
         exit 1
     fi
 
-    #Step 6.5 - Added by Tim Farley. Make ISO compatible with Ubuntu Startup Disk Creator (Karmic).
+    #Added by Tim Farley. Make ISO compatible with Ubuntu Startup Disk Creator (Karmic).
     output "Making disk compatible with Ubuntu Startup Disk Creator."
     . /etc/lsb-release
     touch $WORKDIR/ISOTMP/ubuntu
@@ -626,7 +604,7 @@ iso (){
     echo $DISKINFONAME $DISTRIB_RELEASE - Release $ARCH > $WORKDIR/ISOTMP/.disk/info
     echo $LIVECDURL > $WORKDIR/ISOTMP/.disk/release_notes_url
 
-    # Step 7 - Make md5sum.txt for the files on the livecd - this is used during the
+    # Make md5sum.txt for the files on the livecd - this is used during the
     # checking function of the livecd
     output "Creating md5sum.txt for the livecd/dvd"
     cd $WORKDIR/ISOTMP && find . -type f -print0 | xargs -0 md5sum > md5sum.txt
@@ -640,7 +618,7 @@ iso (){
 
     sleep 1
 
-    # Step 8 - Make the ISO file
+    # Make the ISO file
     output "Creating $CUSTOMISO in $WORKDIR"
     $CREATEISO -iso-level 3 -quiet -r -V "$LIVECDLABEL" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o $WORKDIR/$CUSTOMISO "$WORKDIR/ISOTMP" 2>>$WORKDIR/lifebuilder.log 1>>$WORKDIR/lifebuilder.log
     if [ ! -f $WORKDIR/$CUSTOMISO ]; then
@@ -680,7 +658,7 @@ iso (){
 output "Preparing CDFS"
 cdfs $@
 
-output "Creating the iso file"
+output "Creating the ISO file"
 iso $@
     
 
