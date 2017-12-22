@@ -181,7 +181,7 @@ cdfs (){
     
     output  "removing cache files"
     sudo rm /var/crash/* > /dev/null 2>&1
-    rm ${HOME}.xsession-errors
+    rm ${HOME}.xsession-errors > /dev/null 2>&1
     rm ${HOME}.life/EXAM/client.log > /dev/null 2>&1
 
     output "cleaning bash history"
@@ -377,7 +377,7 @@ cdfs (){
 
     mkdir -p $WORKDIR/ISOTMP/dists
     cd $WORKDIR/ISOTMP/
-    dpkg-scanpackages -m pool /dev/null | sed '/^Depends:[[:space:]]*$/d'
+    dpkg-scanpackages -m pool /dev/null | gzip -9c > dists/Packages.gz
 
 
 
