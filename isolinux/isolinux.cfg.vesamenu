@@ -5,20 +5,20 @@ timeout 20
 menu title life 16.04 neon
 menu background splash.png
 
+label persistent
+  menu label Start des Systems
+  kernel /casper/vmlinuz
+  append boot=casper persistent initrd=/casper/initrd.gz quiet nvme_load=YES nvd_load=YES noatime vga=current splash
+
 label live
   menu label Start des Live Systems
   kernel /casper/vmlinuz
-  append boot=casper initrd=/casper/initrd.gz nvme_load=YES nvd_load=YES quiet splash
+  append boot=casper initrd=/casper/initrd.gz noatime nvme_load=YES nvd_load=YES noatime quiet splash
 
 label toram
   menu label Lade Live System in den RAM 
   kernel /casper/vmlinuz
   append boot=casper toram initrd=/casper/initrd.gz
-  
-label install
-  menu label Start des System-Installationsprogrammes
-  kernel /casper/vmlinuz
-  append boot=casper initrd=/casper/initrd.gz finstall nvme_load=YES nvd_load=YES quiet splash
 
 label safe
   menu label Start des Live Systems in sicherem Grafikmodus

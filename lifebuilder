@@ -134,10 +134,10 @@ copyskel (){
         find /etc/skel/ | grep "$SKELUSER" | xargs rm -rf '{}' > /dev/null 2>&1
         find /etc/skel/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
         find /etc/skel/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
-        grep -Rl "$SKELUSER" /etc/skel | xargs rm -rf '{}' > /dev/null 2>&1
+        # grep -Rl "$SKELUSER" /etc/skel | xargs rm -rf '{}' > /dev/null 2>&1     #deletes all files that contain the name of the original user...  problematic if you want to transfer all settings (plasmaconfig applets)
         
         
-        mkdir /etc/skel/Downloads/   #we want this default folder
+        mkdir /etc/skel/Downloads/   > /dev/null 2>&1  #we want this default folder
         
         
         #fix permissions 
@@ -359,8 +359,8 @@ cdfs (){
     cp -a ${SCRIPTDIR}/EFI/ $WORKDIR/ISOTMP/
     
     #cp $WORKDIR/ISOTMP/EFI/BOOT/BOOTx64.EFI $WORKDIR/ISOTMP/EFI/BOOT/fallback.efi
-    sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/grub.cfg
-    sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/loopback.cfg
+    #sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/grub.cfg
+    #sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/loopback.cfg
 
     
     
