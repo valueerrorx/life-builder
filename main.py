@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys, os
 from PyQt5 import QtCore, uic, QtWidgets
@@ -40,12 +40,12 @@ class Builder(threading.Thread):
         proc = subprocess.Popen(cmd,  shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, bufsize=1)
         for line in iter(proc.stderr.readline, b''):
             if line:
-                self.mainui.line = line.decode()
+                self.mainui.line = line
                 self.mainui.updatesignal.emit()
         
         for line in iter(proc.stdout.readline, b''):
             if line:
-                self.mainui.line = line.decode()
+                self.mainui.line = line
                 self.mainui.updatesignal.emit()
         proc.communicate()     
         

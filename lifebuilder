@@ -54,10 +54,6 @@ output() {
 
 
 
-output "test that"
-
-exit 0
-
 
 
 copyskel (){
@@ -147,9 +143,11 @@ copyskel (){
         
         #fix permissions 
         chown -R root:root /etc/skel
+        
+        output "SKEL Copy - done"
 
     else
-        echo "$SKELUSER or home folder not found - exiting."
+        output "$SKELUSER or home folder not found - exiting."
         exit 1
     fi
 
