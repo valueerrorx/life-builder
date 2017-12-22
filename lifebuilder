@@ -48,10 +48,11 @@ fi
 
 
 output() {
-    printf "$1"
+    echo "-------------------------------------------"
+    echo "$1"
+    echo "-------------------------------------------"
     echo "$1" >>$WORKDIR/lifebuilder.log
 }
-
 
 
 
@@ -65,81 +66,76 @@ copyskel (){
         
         output "Cleaning /etc/skel ..."
         
-        rm -rf /etc/skel/Webroot
-        rm -rf /etc/skel/Downloads
-        rm -rf /etc/skel/.life
-        rm -rf /etc/skel/.arduino
-        rm -rf /etc/skel/.apps
-        rm -rf /etc/skel/.designer
-        rm -rf /etc/skel/.filius
-        rm -rf /etc/skel/.fonts
-        rm -rf /etc/skel/.gconf
-        rm -rf /etc/skel/.bashrc
-        rm -rf /etc/skel/.profile
-        rm -rf /etc/skel/.gconf
-        rm -rf /etc/skel/.gnome
-        rm -rf /etc/skel/.config
-        rm -rf /etc/skel/.local
-        rm -rf /etc/skel/.gtkrc*
-        rm -rf /etc/skel/.qt*
-        rm -rf /etc/skel/.kde*
-        rm -rf /etc/skel/.razor
-        rm -rf /etc/skel/.wbar
+        rm -rf /etc/skel/Webroot > /dev/null 2>&1
+        rm -rf /etc/skel/Downloads > /dev/null 2>&1
+        rm -rf /etc/skel/.life > /dev/null 2>&1
+        rm -rf /etc/skel/.arduino > /dev/null 2>&1
+        rm -rf /etc/skel/.apps > /dev/null 2>&1
+        rm -rf /etc/skel/.designer > /dev/null 2>&1
+        rm -rf /etc/skel/.filius > /dev/null 2>&1
+        rm -rf /etc/skel/.fonts > /dev/null 2>&1
+        rm -rf /etc/skel/.gconf > /dev/null 2>&1
+        rm -rf /etc/skel/.bashrc > /dev/null 2>&1
+        rm -rf /etc/skel/.profile > /dev/null 2>&1
+        rm -rf /etc/skel/.gconf > /dev/null 2>&1
+        rm -rf /etc/skel/.gnome > /dev/null 2>&1
+        rm -rf /etc/skel/.config > /dev/null 2>&1
+        rm -rf /etc/skel/.local > /dev/null 2>&1
+        rm -rf /etc/skel/.gtkrc* > /dev/null 2>&1
+        rm -rf /etc/skel/.kde* > /dev/null 2>&1
+        
       
         
         output "Copying config files to /etc/skel"
-        
-        
-
-        rsync -a Webroot /etc/skel/
-        rsync -a Downloads /etc/skel/
-        rsync -a .life /etc/skel/           # very important :)
-        rsync -a .arduino /etc/skel/
-        rsync -a .apps /etc/skel/
-        rsync -a .designer /etc/skel/
-        rsync -a .filius /etc/skel/
-        rsync -a .fonts /etc/skel/
-        rsync -a .gconf /etc/skel/
-        rsync -a .bashrc /etc/skel/
-        rsync -a .profile /etc/skel/
-        rsync -a .gnome /etc/skel/
-        rsync -a .config /etc/skel/
-        rsync -a .local /etc/skel/
-        rsync -a .gtkrc* /etc/skel/
-        rsync -a .qt* /etc/skel/
-        rsync -a .kde* /etc/skel/
+    
+        rsync -a Webroot /etc/skel/ > /dev/null 2>&1
+        rsync -a Downloads /etc/skel/ > /dev/null 2>&1
+        rsync -a .life /etc/skel/     > /dev/null 2>&1       # very important :)
+        rsync -a .arduino /etc/skel/ > /dev/null 2>&1
+        rsync -a .apps /etc/skel/ > /dev/null 2>&1
+        rsync -a .designer /etc/skel/ > /dev/null 2>&1
+        rsync -a .filius /etc/skel/ > /dev/null 2>&1
+        rsync -a .fonts /etc/skel/ > /dev/null 2>&1
+        rsync -a .gconf /etc/skel/ > /dev/null 2>&1
+        rsync -a .bashrc /etc/skel/ > /dev/null 2>&1
+        rsync -a .profile /etc/skel/ > /dev/null 2>&1
+        rsync -a .gnome /etc/skel/ > /dev/null 2>&1
+        rsync -a .config /etc/skel/ > /dev/null 2>&1
+        rsync -a .local /etc/skel/ > /dev/null 2>&1
+        rsync -a .gtkrc* /etc/skel/ > /dev/null 2>&1
+        rsync -a .kde* /etc/skel/ > /dev/null 2>&1
     
         
         output "clean up the mess a little bit more.."
         #google chrome history
-        rm -rf "/etc/skel/.config/google-chrome/History"
-        rm -rf "/etc/skel/.config/google-chrome/History Provider Cache" 
-        rm -rf "/etc/skel/.config/google-chrome/Login Data" 
-        rm -rf "/etc/skel/.config/google-chrome/Current Session" 
-        rm -rf "/etc/skel/.config/google-chrome/Current Tabs" 
-        rm -rf "/etc/skel/.config/google-chrome/Cookies" 
-        rm -rf "/etc/skel/.config/google-chrome/Top Sites" 
-        rm -rf "/etc/skel/.config/google-chrome/Visited Links" 
-        rm -rf "/etc/skel/.config/google-chrome/Web Data"
+        rm -rf "/etc/skel/.config/google-chrome/History" > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/History Provider Cache"  > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/Login Data"  > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/Current Session"  > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/Current Tabs"  > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/Cookies"  > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/Top Sites"  > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/Visited Links"  > /dev/null 2>&1
+        rm -rf "/etc/skel/.config/google-chrome/Web Data" > /dev/null 2>&1
         #firefox ?
      
-        rm -rf /etc/skel/.gconf/system/networking
-        rm -rf /etc/skel/.local/gvfs-metadata
-        rm -rf /etc/skel/.local/share/gvfs-metadata
-        rm -rf /etc/skel/.local/share/applications/wine-*
-        rm -rf /etc/skel/.local/share/Trash
-        rm -rf /etc/skel/.local/share/akonadi
-        rm -rf /etc/skel/.local/share/webkit
-        rm -rf /etc/skel/.kde/share/apps/klipper
-        rm -rf /etc/skel/.kde/share/apps/nepomuk
-        rm -rf /etc/skel/.kde/share/apps/RecentDocuments/*
+        rm -rf /etc/skel/.gconf/system/networking > /dev/null 2>&1
+        rm -rf /etc/skel/.local/gvfs-metadata > /dev/null 2>&1
+        rm -rf /etc/skel/.local/share/gvfs-metadata > /dev/null 2>&1
+        rm -rf /etc/skel/.local/share/applications/wine-* > /dev/null 2>&1
+        rm -rf /etc/skel/.local/share/Trash > /dev/null 2>&1
+        rm -rf /etc/skel/.local/share/akonadi > /dev/null 2>&1
+        rm -rf /etc/skel/.local/share/webkit > /dev/null 2>&1
+        rm -rf /etc/skel/.kde/share/apps/klipper > /dev/null 2>&1
+        rm -rf /etc/skel/.kde/share/apps/nepomuk > /dev/null 2>&1
+        rm -rf /etc/skel/.kde/share/apps/RecentDocuments/* > /dev/null 2>&1
         
         
-        for i in /etc/skel/.gnome2/keyrings/*; do rm $i; done
-        find /etc/skel/ | grep "$SKELUSER" | xargs rm -rf '{}'
-        find /etc/skel/ -name "*socket*" | xargs rm -rf '{}'
-        find /etc/skel/ -name "*cache*" | xargs rm -rf '{}'
-        grep -Rl "$SKELUSER" /etc/skel | xargs rm -rf '{}'
+        for i in /etc/skel/.gnome2/keyrings/*; do rm $i > /dev/null 2>&1; done
+        find /etc/skel/ | grep "$SKELUSER" | xargs rm -rf '{}' > /dev/null 2>&1
+        find /etc/skel/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
+        find /etc/skel/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
+        grep -Rl "$SKELUSER" /etc/skel | xargs rm -rf '{}' > /dev/null 2>&1
         
         #fix permissions 
         chown -R root:root /etc/skel
@@ -158,12 +154,6 @@ copyskel
 
 
 
-
-
-
-
- 
-
 cdfs (){
 
     output "Cleaning System before building"
@@ -171,12 +161,19 @@ cdfs (){
     apt-get -y -q autoremove
     apt-get clean
 
+    
     rm -rf ${HOME}.local/share/RecentDocuments/*  > /dev/null 2>&1
     rm -rf ${HOME}.kde/share/apps/RecentDocuments/*  > /dev/null 2>&1
     
     
     output "copy firststartwizard to autostart folder"
     cp ${HOME}.life/applications/life-firststart/firststart.sh ${HOME}.config/autostart-scripts/
+    
+    
+    ###########emergency stop here#############
+    exit 0
+    ###########################################
+    
     
     
     output  "removing cache files"

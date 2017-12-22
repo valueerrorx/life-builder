@@ -3,106 +3,47 @@
 import sys, os
 from PyQt5 import QtCore, uic, QtWidgets
 from PyQt5.QtGui import *
-
-import subprocess
-import threading
-import time
+from subprocess import Popen, PIPE, STDOUT
 import socket
-
-USER = subprocess.check_output("logname", shell=True).rstrip()
-USER_HOME_DIR = os.path.join("/home", str(USER))
-
-
-
-class Builder(threading.Thread):
-    """ in order to provide a NONBLocking loop that 
-    periodically checks the internet connection 
-    this is done it a separate thread
-    """
-    def __init__(self, mainui):
-        threading.Thread.__init__(self)
-        self.mainui= mainui
-        self.stop = False
-
-    def run(self):
-        self.onBuild()
-           
-            
-            
-    def onBuild(self):
-        #update life EXAM
-        line = "Starting buildprocess...\n"
- 
-        self.mainui.line = line
-        self.mainui.updatesignal.emit()
-    
-        cmd = "cd ~/.life/applications/life-builder && ./lifebuilder" 
-        proc = subprocess.Popen(cmd,  shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE, bufsize=1)
-        for line in iter(proc.stderr.readline, b''):
-            if line:
-                self.mainui.line = line
-                self.mainui.updatesignal.emit()
-        
-        for line in iter(proc.stdout.readline, b''):
-            if line:
-                self.mainui.line = line
-                self.mainui.updatesignal.emit()
-        proc.communicate()     
-        
-
-        self.mainui.finishedsignal.emit()
-        self.stop = True
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 class MeinDialog(QtWidgets.QDialog):
-    updatesignal = QtCore.pyqtSignal()
-    finishedsignal = QtCore.pyqtSignal()
-    
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
         scriptdir=os.path.dirname(os.path.abspath(__file__))
         uifile=os.path.join(scriptdir,'main.ui')
         winicon=os.path.join(scriptdir,'appicon.png')
-        
         self.ui = uic.loadUi(uifile)        # load UI
         self.ui.setWindowIcon(QIcon(winicon))
         self.ui.mkiso.clicked.connect(self.onISO)        # setup Slots
         self.ui.exit.clicked.connect(self.onAbbrechen)     
-       
-        self.updatesignal.connect(lambda: self.uiupdate())
-        self.finishedsignal.connect(lambda: self.uifinished())
-       
-        self.line = ""
-
+    
+        self.extraThread = QtCore.QThread()
+        self.worker = Worker(self)
+        self.worker.moveToThread(self.extraThread)
+        self.extraThread.started.connect(self.worker.doCopy)
+        self.worker.processed.connect(self.updateProgress)
+        self.worker.finished.connect(self.uifinished)
         
-    def uiupdate(self):
-        print (self.line)
-        self.ui.info.insertPlainText(self.line)  
+        
+    def updateProgress(self,line):  
+        print (line)
+        self.ui.info.insertPlainText(line)  
+        self.ui.info.setFocus(True)
+        self.ui.info.moveCursor(QTextCursor.End)
+
     
     def onISO(self): 
         self.ui.mkiso.setEnabled(False)
-        builder = Builder(self)
-        builder.start()
+        self.extraThread.start()
     
     def uifinished(self):
-        line = "ISO Erstellung Abgeschlossen!"
+        line = "<b>ISO Erstellung Abgeschlossen!</b>"
         self.ui.inet.setText(line)  
        
     def onAbbrechen(self):    # Exit button
+        command = "sudo pkill -f lifebuilder &"
+        os.system(command)  
         self.ui.close()
         os._exit(0)
 
@@ -110,7 +51,22 @@ class MeinDialog(QtWidgets.QDialog):
 
 
 
-
+class  Worker(QtCore.QObject):
+    def __init__(self, meindialog):
+        super(Worker, self).__init__()
+        self.meindialog = meindialog
+    
+    processed = QtCore.pyqtSignal(str)
+    finished = QtCore.pyqtSignal()
+    
+    def doCopy(self):
+        p=Popen(["./lifebuilder"],stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
+        with p.stdout:
+            for line in iter(p.stdout.readline, b''):
+                self.processed.emit(line)
+                
+        p.wait()
+        self.finished.emit()   
 
 
 
