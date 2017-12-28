@@ -48,11 +48,50 @@ fi
 
 
 output() {
-    echo "-------------------------------------------"
+    echo " "
     echo "$1"
     echo "-------------------------------------------"
     echo "$1" >>$WORKDIR/lifebuilder.log
 }
+
+
+
+#     output "Creating Squashfs file"
+#    
+#     
+#     #LIST=`ls -d /home/waldelf/Downloads/`
+#     #FILES=$(for i in $LIST; do find $i -printf "%i\n" | sort -u | wc -l ; done)
+# 
+#     REALFOLDERS="/home/waldelf/Downloads/ /home/waldelf/Nextcloud"
+#     
+#     FILES=0
+#     
+#     for k in $REALFOLDERS; do
+#         LIST=`ls -d $k`
+#         NEWFILES=$(for i in $LIST; do find $i -printf "%i\n" | sort -u | wc -l ; done)
+#         echo $NEWFILES
+#         FILES=$(( $FILES + $NEWFILES ))
+#     
+#     done
+#     
+#     
+#     
+#     #FILES=$(find /home/waldelf/Downloads/ -type f | wc -l)
+#     output "SQUASHSTART,$FILES"
+#     
+#     
+#     #mksquashfs /home/waldelf/Downloads/ /home/waldelf/filesystem.squashfs -no-duplicates -no-progress -info $SQUASHFSOPTS 
+# 
+#     output "SQUASHEND"
+
+
+    ###########emergency stop here#############
+    #exit 0
+    ###########################################
+    
+
+
+
 
 
 
@@ -491,7 +530,28 @@ FOO
             REALFOLDERS="$REALFOLDERS /$d"
     done
 
-    mksquashfs $REALFOLDERS $WORKDIR/ISOTMP/casper/filesystem.squashfs -no-duplicates $SQUASHFSOPTS -e /boot/efi/EFI /boot/grub $BASEWORKDIR $EXCLUDES 2>>$WORKDIR/lifebuilder.log
+    # we count all inodes in the REALFOLDERS in order to predict how many lines mksquashfs will produce (and we add 28 lines because of its additional output
+    FILES=28
+    for k in $REALFOLDERS; do
+        LIST=`ls -d $k`
+        NEWFILES=$(for i in $LIST; do find $i -printf "%i\n" | sort -u | wc -l ; done)
+        FILES=$(( $FILES + $NEWFILES ))
+    done
+    
+    
+    
+    
+    #we print a triggerword and the number of files to stdout in order for the pythonscript to grab it
+    output "SQUASHSTART,$FILES"
+ 
+    
+    mksquashfs $REALFOLDERS $WORKDIR/ISOTMP/casper/filesystem.squashfs -no-progress -info $SQUASHFSOPTS -e /boot/efi/EFI /boot/grub $BASEWORKDIR $EXCLUDES 2>>$WORKDIR/lifebuilder.log
+    
+    
+    # we send the finished process trigger word
+    output "SQUASHEND"
+    
+    
     
     sleep 1
 
@@ -619,7 +679,7 @@ iso (){
     sleep 1
 
     # Make the ISO file
-    output "Creating $CUSTOMISO in $WORKDIR"
+    output "Creating $CUSTOMISO in $WORKDIR - this can take a while..."
     $CREATEISO -iso-level 3 -quiet -r -V "$LIVECDLABEL" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o $WORKDIR/$CUSTOMISO "$WORKDIR/ISOTMP" 2>>$WORKDIR/lifebuilder.log 1>>$WORKDIR/lifebuilder.log
     if [ ! -f $WORKDIR/$CUSTOMISO ]; then
         output "The iso was not created. There was a problem. Exiting"

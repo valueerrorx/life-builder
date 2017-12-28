@@ -135,15 +135,27 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="widget_7" native="true">
+        <widget class="QWidget" name="widget_1" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QWidget" name="widget_4" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_2">
+           <widget class="QWidget" name="terminal" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="QTextBrowser" name="info">
-               <property name="styleSheet">
-                <string notr="true"/>
+              <widget class="QTextEdit" name="info">
+               <property name="acceptDrops">
+                <bool>false</bool>
+               </property>
+               <property name="undoRedoEnabled">
+                <bool>false</bool>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
