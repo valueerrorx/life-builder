@@ -32,66 +32,20 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# the output is formatted in a special way in order to be parsed by the python script
 output() {
-    echo " "
-    echo "$1"
-    echo "-------------------------------------------"
-    echo "$1" >>$WORKDIR/lifebuilder.log
+    echo "OUTPUT: $1 § $2"
+    echo "$1" >>$WORKDIR/lifebuilder.log     # also write it to the log file
 }
 
 
 
-#     output "Creating Squashfs file"
-#    
-#     
-#     #LIST=`ls -d /home/waldelf/Downloads/`
-#     #FILES=$(for i in $LIST; do find $i -printf "%i\n" | sort -u | wc -l ; done)
-# 
-#     REALFOLDERS="/home/waldelf/Downloads/ /home/waldelf/Nextcloud"
-#     
-#     FILES=0
-#     
-#     for k in $REALFOLDERS; do
-#         LIST=`ls -d $k`
-#         NEWFILES=$(for i in $LIST; do find $i -printf "%i\n" | sort -u | wc -l ; done)
-#         echo $NEWFILES
-#         FILES=$(( $FILES + $NEWFILES ))
-#     
-#     done
-#     
-#     
-#     
-#     #FILES=$(find /home/waldelf/Downloads/ -type f | wc -l)
-#     output "SQUASHSTART,$FILES"
-#     
-#     
-#     #mksquashfs /home/waldelf/Downloads/ /home/waldelf/filesystem.squashfs -no-duplicates -no-progress -info $SQUASHFSOPTS 
-# 
-#     output "SQUASHEND"
 
-
-    ###########emergency stop here#############
-    #exit 0
-    ###########################################
+  
+###########emergency stop here#############
+#exit 0
+###########################################
     
-
-
-
 
 
 
@@ -103,7 +57,8 @@ copyskel (){
     if [ -d "$SKELFOLDER" ]; then
         cd $SKELFOLDER
         
-        output "Cleaning /etc/skel ..."
+        # output 1
+        output "Cleaning /etc/skel ..." "1"
         
         rm -rf /etc/skel/Webroot > /dev/null 2>&1
         rm -rf /etc/skel/.life > /dev/null 2>&1
@@ -123,8 +78,8 @@ copyskel (){
         rm -rf /etc/skel/.kde* > /dev/null 2>&1
         
       
-        
-        output "Copying config files to /etc/skel"
+        # output2
+        output "Copying config files to /etc/skel" "3"
     
         rsync -a Webroot /etc/skel/ > /dev/null 2>&1
         rsync -a Downloads /etc/skel/ > /dev/null 2>&1
@@ -143,8 +98,8 @@ copyskel (){
         rsync -a .gtkrc* /etc/skel/ > /dev/null 2>&1
         rsync -a .kde* /etc/skel/ > /dev/null 2>&1
     
-        
-        output "clean up the mess a little bit more.."
+        # output3
+        output "clean up the mess a little bit more.." "7"
         #google chrome history
         rm -rf "/etc/skel/.config/google-chrome/History" > /dev/null 2>&1
         rm -rf "/etc/skel/.config/google-chrome/History Provider Cache"  > /dev/null 2>&1
@@ -181,10 +136,11 @@ copyskel (){
         
         #fix permissions 
         chown -R root:root /etc/skel
-        
-        output "SKEL Copy - done"
+        # output4
+        output "SKEL Copy - done" "9"
 
     else
+        # output 100    # FIXME  in case of an exit send trigger word to python script in order to display a correct error message
         output "$SKELUSER or home folder not found - exiting."
         exit 1
     fi
@@ -197,8 +153,8 @@ copyskel
 
 
 cdfs (){
-
-    output "Cleaning System before building"
+    # output5
+    output "Cleaning System before building" "11"
     apt-get update  &> /dev/null
     apt-get -y -q autoremove
     apt-get clean
@@ -207,8 +163,8 @@ cdfs (){
     rm -rf ${HOME}.local/share/RecentDocuments/*  > /dev/null 2>&1
     rm -rf ${HOME}.kde/share/apps/RecentDocuments/*  > /dev/null 2>&1
     
-    
-    output "copy firststartwizard to autostart folder"
+    # output6  
+    output "copy firststartwizard to autostart folder" "13"
     cp ${HOME}.life/applications/life-firststart/firststart.sh ${HOME}.config/autostart-scripts/
     
     
@@ -217,31 +173,36 @@ cdfs (){
     ###########################################
     
     
-    
-    output  "removing cache files"
+    # output7  
+    output  "removing cache files" "15"
     sudo rm /var/crash/* > /dev/null 2>&1
     rm ${HOME}.xsession-errors > /dev/null 2>&1
     rm ${HOME}.life/EXAM/client.log > /dev/null 2>&1
 
-    output "cleaning bash history"
+    # output8
+    output "cleaning bash history" "17"
     history -w
     history -c
     
     # remove all old kernel headers and tools
-    output "purging old kernel, tools and headers"
+    # output9
+    output "purging old kernel, tools and headers"  "19"
     dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | sed '/dev/d' | xargs apt-get -y purge
 
 
     #removing popularity-contest as it causes a problem when installing with ubiquity
-    output "Making sure popularity contest is not installed"
+    # output10
+    output "Making sure popularity contest is not installed"  "21"
     apt-get -y -q remove popularity-contest &> /dev/null
 
     #removing syslinux-themes as it causes problems
-    output "Making sure syslinux-themes is not installed"
+    # output11
+    output "Making sure syslinux-themes is not installed"  "23"
     apt-get -y -q purge syslinux-themes* &> /dev/null
 
      #Installing isolinux if needed
-    output "Making sure isolinux is installed"
+     # output12
+    output "Making sure isolinux is installed"  "25"
     apt-get -y -q install isolinux syslinux-utils &> /dev/null
 
     
@@ -252,8 +213,8 @@ cdfs (){
 
     rm -rf $WORKDIR/dummysys/
     rm -rf $WORKDIR/ISOTMP/
-    
-    output "Creating $WORKDIR folder tree"
+    # output13
+    output "Creating $WORKDIR folder tree"  "27"
    
     mkdir -p $WORKDIR/ISOTMP/{casper,preseed,isolinux,install,.disk}
     mkdir -p $WORKDIR/dummysys/{dev,etc,proc,tmp,sys,mnt,media/cdrom,var,run}
@@ -263,8 +224,8 @@ cdfs (){
     
     
     
-    
-    output "Copying /var and /etc to temp folder and excluding extra files  ... this will take a while.."
+    # output14
+    output "Copying /var and /etc to temp folder and excluding extra files  ... this will take a while.."  "29"
 
     if [ "$EXCLUDES" != "" ]; then
         for addvar in $EXCLUDES ; do
@@ -281,7 +242,8 @@ cdfs (){
     #Adding packages location to sources
     ARCH=`archdetect | awk -F "/" '{print $1}'`
     DISKINFONAME=`echo $LIVECDLABEL | awk '{print $1}'`
-    output "Adding CD-ROM to source list"
+    # output15
+    output "Adding CD-ROM to source list"  "33"
     . /etc/lsb-release
     sed -i '/cdrom:/d' $WORKDIR/dummysys/etc/apt/sources.list &> /dev/null
     echo "deb cdrom:[$DISKINFONAME $DISTRIB_RELEASE - Release $ARCH]/ dists/" >> $WORKDIR/dummysys/etc/apt/sources.list
@@ -291,8 +253,8 @@ cdfs (){
     cp ${SCRIPTDIR}/conf/grub.conf $WORKDIR/dummysys/etc/default/grub
     sed -i "s/LIVECDLABEL/$LIVECDLABEL/g" $WORKDIR/dummysys/etc/default/grub
 
-    
-    output "Removing unnecessary files in $WORKDIR/dummysys"
+    # output16
+    output "Removing unnecessary files in $WORKDIR/dummysys"  "35"
     
     rm -rf $WORKDIR/dummysys/etc/apt/sources.list.d/*.save &> /dev/null
     rm -rf $WORKDIR/dummysys/etc/apt/apt.conf.d/* &> /dev/null
@@ -347,8 +309,8 @@ cdfs (){
     done
 
     
-    
-    output "Cleaning up passwd, group, shadow and gshadow files for the live system"
+    # output17
+    output "Cleaning up passwd, group, shadow and gshadow files for the live system" "38"
     
     grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
     grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
@@ -377,8 +339,8 @@ cdfs (){
 
    
 
-
-    output "Making sure adduser and autologin functions of casper are set properly"
+    # output18
+    output "Making sure adduser and autologin functions of casper are set properly"  "41"
     
     mkdir $WORKDIR/dummysys/home
     chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
@@ -389,11 +351,13 @@ cdfs (){
     cp ${SCRIPTDIR}/preseed/* $WORKDIR/ISOTMP/preseed/
 
     #BOOT Type is isolinux
-    output "Copying memtest86+ for the live system"
+    # output19
+    output "Copying memtest86+ for the live system" "44"
     cp /boot/memtest86+.bin $WORKDIR/ISOTMP/install/memtest
 
     #EFI BOOT
-    output "Copying EFI Boot for the live system"
+    # output20
+    output "Copying EFI Boot for the live system" "46"
     cp -a ${SCRIPTDIR}/boot/ $WORKDIR/ISOTMP/
     cp -a ${SCRIPTDIR}/EFI/ $WORKDIR/ISOTMP/
     
@@ -405,7 +369,8 @@ cdfs (){
     
     
     #Downloading packages for offline install (needed by the systeminstaller in order to install the system to a disk)
-    output "Downloading packages for CD"
+    # output21
+    output "Downloading packages for CD" "49"
     
     # Check Architecture
     ARCH=`archdetect | awk -F "/" '{print $1}'`
@@ -423,8 +388,8 @@ cdfs (){
     
     
     #create isolinux folder and files
-    
-    output "Creating isolinux setup for the live system"
+    # output22
+    output "Creating isolinux setup for the live system" "54"
     find /usr -name 'isolinux.bin' -exec cp {} $WORKDIR/ISOTMP/isolinux/ \;
     #find fix for vesamenu.32 provided by Krasimir S. Stefanov <lokiisyourmaster@gmail.com>
     VESAMENU=`find /usr -print0 | grep -FzZ "bios/vesamenu.c32"`
@@ -442,8 +407,8 @@ cdfs (){
     sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg.vesamenu > $WORKDIR/ISOTMP/isolinux/isolinux.cfg
     cp ${SCRIPTDIR}/isolinux/splash.png $WORKDIR/ISOTMP/isolinux/splash.png
 
-
-    output "Creating README.diskdefines"
+    # output23
+    output "Creating README.diskdefines"  "56"
     ARCH=`archdetect | awk -F "/" '{print $1}'`
 
     cat > $WORKDIR/ISOTMP/README.diskdefines <<FOO
@@ -462,7 +427,8 @@ FOO
     sleep 1
 
     # Make the filesystem.manifest and filesystem.manifest-desktop
-    output "Creating filesystem.manifest and filesystem.manifest-desktop"
+    # output24
+    output "Creating filesystem.manifest and filesystem.manifest-desktop" "58"
     dpkg-query -W --showformat='${Package} ${Version}\n' > $WORKDIR/ISOTMP/casper/filesystem.manifest
 
     cp $WORKDIR/ISOTMP/casper/filesystem.manifest $WORKDIR/ISOTMP/casper/filesystem.manifest-desktop
@@ -472,8 +438,8 @@ FOO
     sleep 1
 
     # Prepare casper.conf
-
-    output "Creating the casper.conf file."
+    # output25
+    output "Creating the casper.conf file." "61"
     
     cat > /etc/casper.conf <<FOO
 # This file should go in /etc/casper.conf
@@ -491,19 +457,23 @@ FOO
 
 
     # create a new initial ramdisk including the casper scripts
-    output "Creating a new initial ramdisk for the live system"
+    # output26
+    output "Creating a new initial ramdisk for the live system" "64"
     mkinitramfs -o /boot/initrd.img-`uname -r` `uname -r`
 
-    output "Copying your kernel and initrd for the livecd"
+    # output27
+    output "Copying your kernel and initrd for the livecd" "67"
     cp /boot/vmlinuz-`uname -r` $WORKDIR/ISOTMP/casper/vmlinuz
     cp /boot/initrd.img-`uname -r` $WORKDIR/ISOTMP/casper/initrd.gz
     #check if that went well .. otherwise you can stop immediately
     if [ ! -f $WORKDIR/ISOTMP/casper/vmlinuz ]; then
-        output "Missing valid kernel. Exiting"
+        # output100
+        output "ERROR Missing valid kernel. Exiting"
         exit 1
     fi
     if [ ! -f $WORKDIR/ISOTMP/casper/initrd.gz ]; then
-        output "Missing valid initial ramdisk. Exiting"
+        # output100
+        output "ERROR Missing valid initial ramdisk. Exiting"
         exit 1
     fi
 
@@ -517,8 +487,8 @@ FOO
     if [ -f $WORKDIR/ISOTMP/casper/filesystem.squashfs ]; then
         rm -f $WORKDIR/ISOTMP/casper/filesystem.squashfs &> /dev/null
     fi
-
-    output "Creating filesystem.squashfs   ... this will take a while so be patient"
+    # output28
+    output "Creating filesystem.squashfs   ... this will take a while so be patient" "70"
 
     REALFOLDERS=""
 
@@ -542,14 +512,16 @@ FOO
     
     
     #we print a triggerword and the number of files to stdout in order for the pythonscript to grab it
-    output "SQUASHSTART,$FILES"
+    # output29
+    output "SQUASHSTART,$FILES" "72"
  
     
     mksquashfs $REALFOLDERS $WORKDIR/ISOTMP/casper/filesystem.squashfs -no-progress -info $SQUASHFSOPTS -e /boot/efi/EFI /boot/grub $BASEWORKDIR $EXCLUDES 2>>$WORKDIR/lifebuilder.log
     
     
     # we send the finished process trigger word
-    output "SQUASHEND"
+    # output30
+    output "SQUASHEND" "75"
     
     
     
@@ -559,12 +531,14 @@ FOO
     #checking the size of the compressed filesystem to ensure it meets the iso9660 spec for a single file" 
     SQUASHFSSIZE=`ls -s $WORKDIR/ISOTMP/casper/filesystem.squashfs | awk -F " " '{print $1}'`
     if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
-        output "The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
+        # output100
+        output "ERROR The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
         exit 1
     fi
 
     #add filesystem size 
-    output "Calculating the installed filesystem size for the installer"
+    # output31
+    output "Calculating the installed filesystem size for the installer" "78"
 
     unsquashfs -lls $WORKDIR/ISOTMP/casper/filesystem.squashfs | grep -v " inodes " | grep -v "unsquashfs:" | awk '{print $3}' | grep -v "," > /tmp/size.tmp
 
@@ -642,18 +616,21 @@ iso (){
     # check to see if the cd filesystem exists
 
     if [ ! -f "$WORKDIR/ISOTMP/casper/filesystem.squashfs" ]; then
-        output "The filesystem.squashfs filesystem is missing.  There was a problem creating the compressed filesystem."
+        # output100
+        output "ERROR The filesystem.squashfs filesystem is missing.  There was a problem creating the compressed filesystem."
         exit 1
     fi
 
     SQUASHFSSIZE=`ls -s $WORKDIR/ISOTMP/casper/filesystem.squashfs | awk -F " " '{print $1}'`
     if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
-        output "The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
+        # output100
+        output "ERROR The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
         exit 1
     fi
 
     #Added by Tim Farley. Make ISO compatible with Ubuntu Startup Disk Creator (Karmic).
-    output "Making disk compatible with Ubuntu Startup Disk Creator."
+    # output32
+    output "Making disk compatible with Ubuntu Startup Disk Creator." "81"
     . /etc/lsb-release
     touch $WORKDIR/ISOTMP/ubuntu
     touch $WORKDIR/ISOTMP/.disk/base_installable
@@ -666,7 +643,8 @@ iso (){
 
     # Make md5sum.txt for the files on the livecd - this is used during the
     # checking function of the livecd
-    output "Creating md5sum.txt for the livecd/dvd"
+    # output33
+    output "Creating md5sum.txt for the livecd/dvd" "84"
     cd $WORKDIR/ISOTMP && find . -type f -print0 | xargs -0 md5sum > md5sum.txt
 
     #isolinux mode
@@ -679,28 +657,32 @@ iso (){
     sleep 1
 
     # Make the ISO file
-    output "Creating $CUSTOMISO in $WORKDIR - this can take a while..."
+    # output34
+    output "Creating $CUSTOMISO in $WORKDIR - this can take a while..." "86"
     $CREATEISO -iso-level 3 -quiet -r -V "$LIVECDLABEL" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o $WORKDIR/$CUSTOMISO "$WORKDIR/ISOTMP" 2>>$WORKDIR/lifebuilder.log 1>>$WORKDIR/lifebuilder.log
     if [ ! -f $WORKDIR/$CUSTOMISO ]; then
-        output "The iso was not created. There was a problem. Exiting"
+        # output100
+        output "ERROR The iso was not created. There was a problem. Exiting"
         exit 1
     fi
     
     # Make the iso hybrid so it can be simply dd copied to a usb flash drive.
-    output "Making $CUSTOMISO a hybrid iso"
+    # output35
+    output "Making $CUSTOMISO a hybrid iso" "90"
     isohybrid --uefi $WORKDIR/$CUSTOMISO
 
     # create the md5 sum file so the user doesn't have to - this is good so the iso
     # file can later be tested to ensure it hasn't become corrupted
 
-    output "Creating $CUSTOMISO.md5 in $WORKDIR"
+    # output36
+    output "Creating $CUSTOMISO.md5 in $WORKDIR" "94"
 
     cd $WORKDIR
     md5sum $CUSTOMISO > $CUSTOMISO.md5
 
     sleep 1
-
-    output "Creating $CUSTOMISO.sha256 in $WORKDIR"
+    # output37
+    output "Creating $CUSTOMISO.sha256 in $WORKDIR" "97"
 
     cd $WORKDIR
     sha256sum $CUSTOMISO > $CUSTOMISO.sha256
@@ -709,16 +691,16 @@ iso (){
 
     ISOSIZE="`ls -hs $WORKDIR/$CUSTOMISO | awk '{print $1}'`"
 
-    output "$WORKDIR/$CUSTOMISO which is $ISOSIZE in size is ready to be burned or tested in a virtual machine."
+    # output38
+    output "$WORKDIR/$CUSTOMISO which is $ISOSIZE in size is ready to be burned or tested in a virtual machine." "100"
 
 }
 
 
 
-output "Preparing CDFS"
+
 cdfs $@
 
-output "Creating the ISO file"
 iso $@
     
 

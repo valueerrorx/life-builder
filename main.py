@@ -6,10 +6,11 @@ from PyQt5.QtGui import *
 from subprocess import Popen, PIPE, STDOUT
 import shlex
 import time
-
+import re
 
 class  BuildWorker(QtCore.QObject):
-    processed = QtCore.pyqtSignal(str)
+    processed = QtCore.pyqtSignal(str,int)
+    aborted = QtCore.pyqtSignal(str)
     finished = QtCore.pyqtSignal()
 
     def __init__(self, meindialog):
@@ -18,6 +19,7 @@ class  BuildWorker(QtCore.QObject):
 
     def doCopy(self):
         command = "./lifebuilder"
+        lasttotalpercent = 0 
         self.meindialog.buildprocess = Popen(shlex.split(command), stdout=PIPE, stdin=PIPE, stderr=STDOUT, bufsize=1, shell=True,universal_newlines=True)
         while True:
             output = self.meindialog.buildprocess.stdout.readline()    # wartet bei mksquashfs auf die line und blockiert weil keine line mehr kommt..  
@@ -26,25 +28,43 @@ class  BuildWorker(QtCore.QObject):
                 break
             
             if output:
-                print (output)
+                print (output)    #always print everything 
+               
+                if "OUTPUT:" in output:    #differentiate between our output and other output
+                    
+                    
+                    output = output.strip("OUTPUT: ")
+
+                    content = output.split("§")
+                    text = str(content[0])
+                    try:                # just in case the lifebuilder script does not provide a percentage with an output line
+                        totalpercentfinished = int(content[1])
+                        lasttotalpercent = totalpercentfinished
+                    except:
+                        totalpercentfinished = lasttotalpercent
+                       
+                    if "ERROR" in text: 
+                        self.aborted.emit(text) 
+                        return
                 
-                if "SQUASHSTART" in output:   # triggers a different logging structure
-                    number=output.split(",")
-                    number=int(number[1])  # lines produced by mksquashfs - the number of inodes (every inode produces a line in mksquashfs)
-                    print (number)
-                    step = 100/number  #calculate 1%
-                    self.meindialog.lineprocessing = False
-                    self.meindialog.extraThread1.start()
-                elif "SQUASHEND" in output:   # returns to normal logging
-                    output = "\nSquashfs creation finished \n"
-                    self.meindialog.lineprocessing = True
-                    self.meindialog.percent = 100
-  
+                    # this is a very tricky workaround in order to get mksquashfs percentage into the UI
+                    if "SQUASHSTART" in text:   # triggers a different logging structure
+                        number=text.split(",")
+                        number=int(number[1])  # lines produced by mksquashfs - the number of inodes (every inode produces a line in mksquashfs) calculated in the lifebuilder sh script
+                        print (number)
+                        step = 100/number  #calculate 1%
+                        self.meindialog.lineprocessing = False
+                        self.meindialog.extraThread1.start()    # we need to unchain this cause if we would send every change to the ui it would overload and block 
+                    elif "SQUASHEND" in text:   # returns to normal logging
+                        text = "\nSquashfs creation finished \n"
+                        self.meindialog.lineprocessing = True
+                        self.meindialog.percent = 100
+    
 
                 if self.meindialog.lineprocessing == True:
-                    line = output
-                    self.processed.emit(line)
-                else:
+                    line = text
+                    self.processed.emit(line, totalpercentfinished)
+                else:   #stop emmiting every output line - to much overhead - just set percent variable on mydialog and CheckWorker will poll the current value every .5 seconds - thats accurate enough
                     self.meindialog.percent += step
                     print (self.meindialog.percent)
         self.finished.emit()  
@@ -53,7 +73,7 @@ class  BuildWorker(QtCore.QObject):
 
 
 class  CheckWorker(QtCore.QObject):
-    processed1 = QtCore.pyqtSignal(str)
+    processed1 = QtCore.pyqtSignal(str, int)
     finished1 = QtCore.pyqtSignal()
 
     def __init__(self, meindialog):
@@ -63,11 +83,11 @@ class  CheckWorker(QtCore.QObject):
     def doCheck(self): 
         while self.meindialog.percent < 100:
             line = "Percent done: %s \n" %(self.meindialog.percent)
-            self.processed1.emit(line)
+            self.processed1.emit(line, self.meindialog.percent)
             time.sleep(0.5)
         
         line = "Percent done: %s \n" %(self.meindialog.percent)
-        self.processed1.emit(line)
+        self.processed1.emit(line, self.meindialog.percent)
         self.finished1.emit() 
   
 
@@ -91,6 +111,7 @@ class MeinDialog(QtWidgets.QDialog):
         self.extraThread.started.connect(self.worker.doCopy)
         self.worker.processed.connect(self.updateProgress)
         self.worker.finished.connect(self.buildfinished)
+        self.worker.aborted.connect(self.builderror)
         
         #one worker1 to check other things while worker1 is occupied
         self.extraThread1 = QtCore.QThread()
@@ -104,11 +125,9 @@ class MeinDialog(QtWidgets.QDialog):
         self.lineprocessing = True
         self.percent = 0
         
-    def updateProgress(self,line):  
-        self.ui.info.insertPlainText(line)  
-        self.ui.info.setFocus(True)
-        self.ui.info.moveCursor(QTextCursor.End)
-
+    def updateProgress(self,line, totalpercentfinished):  
+        self.ui.progressBar.setValue(int(totalpercentfinished))
+        self.ui.info.setText(line)  
     
     def onISO(self): 
         self.ui.mkiso.setEnabled(False)
@@ -120,11 +139,16 @@ class MeinDialog(QtWidgets.QDialog):
     
     def buildfinished(self):
         line = "<b>ISO Erstellung Abgeschlossen!</b>"
-        self.extraThread.quit()
         self.ui.inet.setText(line) 
-      
-       
-    def onAbbrechen(self):    # Exit button
+        self.stopall()
+        
+    def builderror(self,line):
+        self.ui.info.setText(line) 
+        infoline = "<b>ISO Erstellung Abgebrochen!</b>"
+        self.ui.inet.setText(infoline) 
+        self.stopall()
+
+    def stopall(self):
         command = "sudo pkill -f mksquashfs &"
         os.system(command)  
         command = "sudo pkill -f unsquashfs &"
@@ -134,14 +158,16 @@ class MeinDialog(QtWidgets.QDialog):
         command = "sudo pkill -f mkisofs &"
         os.system(command)  
         command = "sudo pkill -f lifebuilder &"
+        os.system(command) 
         self.extraThread.quit()
         self.extraThread1.quit()
-        
-        os.system(command)  
+       
+    def onAbbrechen(self):    # Exit button
+        self.stopall()
         self.ui.close()
         os._exit(0)
 
-
+    
 
 
 
