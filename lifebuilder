@@ -662,6 +662,15 @@ iso (){
 
     # Make the ISO file
     # output34
+    
+    if [ -f $WORKDIR/$CUSTOMISO ]; then
+        #there already is an ISO file with that name.. rename or delete it
+        mv -f $WORKDIR/$CUSTOMISO $WORKDIR/$CUSTOMISO-old
+        
+    fi
+    
+    
+    
     output "Creating $CUSTOMISO in $WORKDIR - this can take a while..." "86"
     $CREATEISO -iso-level 3 -quiet -r -V "$LIVECDLABEL" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o $WORKDIR/$CUSTOMISO "$WORKDIR/ISOTMP" 2>>$WORKDIR/lifebuilder.log 1>>$WORKDIR/lifebuilder.log
     if [ ! -f $WORKDIR/$CUSTOMISO ]; then
