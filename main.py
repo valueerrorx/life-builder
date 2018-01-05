@@ -12,7 +12,7 @@ from conf.config import *
 USER = check_output("logname", shell=True).rstrip().decode('UTF-8') #python3 adds a b'' to any byte objects need to decode
 USER_HOME_DIR = os.path.join("/home", USER)   
 WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/applications/life-builder")
-
+WORK_DIRECTORY_USBCREATOR = os.path.join(USER_HOME_DIR, ".life/applications/life-usbcreator")
 
 
 class  BuildWorker(QtCore.QObject):
@@ -148,11 +148,23 @@ class MeinDialog(QtWidgets.QDialog):
         self.extraThread.start()
         
     def onBurnISO(self):
-        command = "cd  %s/.life/applications/life-usbcreator/ && sudo python %s/.life/applications/life-usbcreator/usbcreator.py %s &"  %(USER_HOME_DIR, USER_HOME_DIR, self.isolocation)
+        #command = "cd  %s/.life/applications/life-usbcreator/ && sudo python %s/.life/applications/life-usbcreator/usbcreator.py %s &"  %(USER_HOME_DIR, USER_HOME_DIR, self.isolocation)
+       # print(command)
+       
+        command = "nohup bash -c 'cd %s && sudo python %s/usbcreator.py %s </dev/null >usbcreator.log 2>&1 &'  " % (WORK_DIRECTORY_USBCREATOR, WORK_DIRECTORY_USBCREATOR, self.isolocation)
         print(command)
+        
         os.system(command) 
+        #process = QtCore.QProcess()
+        #process.setWorkingDirectory(WORK_DIRECTORY_USBCREATOR)
+        #process.startDetached("nohup 'sudo python %s/usbcreator.py %s' </dev/null &>/dev/null &" % (WORK_DIRECTORY_USBCREATOR, self.isolocation))
+        
+       # process.startDetached("nohup sudo python %s/usbcreator.py %s </dev/null >usbcreator.log 2>&1 &" % (WORK_DIRECTORY_USBCREATOR, self.isolocation))
+
+        #process.startDetached("python %s/usbcreator.py" %WORK_DIRECTORY_USBCREATOR)
         #call(command, shell=True)
         self.ui.close()
+        
         #self.onAbbrechen()
     
     def worker1finished(self):
