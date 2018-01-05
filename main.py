@@ -16,7 +16,7 @@ WORK_DIRECTORY_USBCREATOR = os.path.join(USER_HOME_DIR, ".life/applications/life
 
 
 class  BuildWorker(QtCore.QObject):
-    processed = QtCore.pyqtSignal(str,int)
+    processed = QtCore.pyqtSignal(str,int,str)
     aborted = QtCore.pyqtSignal(str)
     finished = QtCore.pyqtSignal()
 
@@ -37,7 +37,7 @@ class  BuildWorker(QtCore.QObject):
             if output:
                 print (output)    #always print everything 
                 if "OUTPUT:" in output:    #differentiate between our output and other output
-                    output = output.strip("OUTPUT: ")
+                    output = output.strip("OUTPUT:").strip(" ")    #strip in two steps otherwise O U T P U T - all letters will be removed from the text
                     content = output.split("§")
                     text = str(content[0])
                     try:                # just in case the lifebuilder script does not provide a percentage with an output line
@@ -49,7 +49,14 @@ class  BuildWorker(QtCore.QObject):
                     if "ERROR" in text: 
                         self.aborted.emit(text) 
                         return
-                
+                    
+                    if "PART" in text: 
+                        part = text.split(",")
+                        part = part[1]
+                    else: 
+                        part = ""
+                        
+                        
                     # this is a very tricky workaround in order to get mksquashfs percentage into the UI
                     if "SQUASHSTART" in text:   # triggers a different logging structure
                         number=text.split(",")
@@ -66,11 +73,12 @@ class  BuildWorker(QtCore.QObject):
                     if "ISOLOCATION" in text:
                         self.meindialog.isolocation=text.split(",")
                         self.meindialog.isolocation=self.meindialog.isolocation[1]
+                        text = "Pfad: %s" % (self.meindialog.isolocation)
                         
 
                 if self.meindialog.lineprocessing == True:
                     line = text
-                    self.processed.emit(line, totalpercentfinished)
+                    self.processed.emit(line, totalpercentfinished, part)
                 else:   #stop emmiting every output line - to much overhead - just set percent variable on mydialog and CheckWorker will poll the current value every .5 seconds - thats accurate enough
                     self.meindialog.percent += step
                     print (self.meindialog.percent)
@@ -90,9 +98,10 @@ class  CheckWorker(QtCore.QObject):
   
     def doCheck(self): 
         while self.meindialog.percent < 100:
-            line = "Percent done: %s \n" %(self.meindialog.percent)
+            roundedpercent = "%.2f" % round(self.meindialog.percent,2)
+            line = "Percent done: %s" %(roundedpercent)
             self.processed1.emit(line, self.meindialog.percent)
-            time.sleep(0.5)
+            time.sleep(0.2)
         
         line = "Percent done: %s \n" %(self.meindialog.percent)
         self.processed1.emit(line, self.meindialog.percent)
@@ -137,9 +146,11 @@ class MeinDialog(QtWidgets.QDialog):
         self.isolocation = ""
         self.getconfig()
         
-    def updateProgress(self,line, totalpercentfinished):  
+    def updateProgress(self,line, totalpercentfinished, part=""):  
         self.ui.progressBar.setValue(int(totalpercentfinished))
         self.ui.info.setText(line)  
+        if not part is "":
+            self.ui.part.setText("<b>%s</b>" % part)
     
     def onISO(self): 
         self.ui.mkiso.setEnabled(False)
@@ -148,21 +159,8 @@ class MeinDialog(QtWidgets.QDialog):
         self.extraThread.start()
         
     def onBurnISO(self):
-        #command = "cd  %s/.life/applications/life-usbcreator/ && sudo python %s/.life/applications/life-usbcreator/usbcreator.py %s &"  %(USER_HOME_DIR, USER_HOME_DIR, self.isolocation)
-       # print(command)
-       
-        command = "nohup bash -c 'cd %s && sudo python %s/usbcreator.py %s </dev/null >usbcreator.log 2>&1 &'  " % (WORK_DIRECTORY_USBCREATOR, WORK_DIRECTORY_USBCREATOR, self.isolocation)
-        print(command)
-        
+        command = "nohup bash -c 'cd %s && sudo python %s/usbcreator.py %s  >usbcreator.log 2>&1 &'  " % (WORK_DIRECTORY_USBCREATOR, WORK_DIRECTORY_USBCREATOR, self.isolocation)
         os.system(command) 
-        #process = QtCore.QProcess()
-        #process.setWorkingDirectory(WORK_DIRECTORY_USBCREATOR)
-        #process.startDetached("nohup 'sudo python %s/usbcreator.py %s' </dev/null &>/dev/null &" % (WORK_DIRECTORY_USBCREATOR, self.isolocation))
-        
-       # process.startDetached("nohup sudo python %s/usbcreator.py %s </dev/null >usbcreator.log 2>&1 &" % (WORK_DIRECTORY_USBCREATOR, self.isolocation))
-
-        #process.startDetached("python %s/usbcreator.py" %WORK_DIRECTORY_USBCREATOR)
-        #call(command, shell=True)
         self.ui.close()
         
         #self.onAbbrechen()
@@ -173,7 +171,7 @@ class MeinDialog(QtWidgets.QDialog):
     
     def buildfinished(self):
         line = "<b>ISO Erstellung Abgeschlossen!</b>"
-        self.ui.inet.setText(line) 
+        self.ui.part.setText(line) 
         self.stopall()
         if self.isolocation != "":
             self.ui.burniso.setEnabled(True)
@@ -183,7 +181,7 @@ class MeinDialog(QtWidgets.QDialog):
     def builderror(self,line):
         self.ui.info.setText(line) 
         infoline = "<b>ISO Erstellung Abgebrochen!</b>"
-        self.ui.inet.setText(infoline) 
+        self.ui.part.setText(infoline) 
         self.stopall()
 
     def stopall(self):

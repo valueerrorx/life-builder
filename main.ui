@@ -172,6 +172,22 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="part">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="indent">
+          <number>2</number>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="info">
          <property name="text">
           <string>LiFE Builder erzeugt aus dem laufenden System ein ISO Abbild.</string>
@@ -238,11 +254,17 @@
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
            <widget class="QLineEdit" name="liveuser">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="maximumSize">
              <size>
               <width>440</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Do NOT change this if you are remastering a &quot;LiFE&quot; system</string>
             </property>
            </widget>
           </item>
@@ -420,6 +442,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
            <widget class="QLineEdit" name="squashfsopts">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="maximumSize">
              <size>
               <width>440</width>
