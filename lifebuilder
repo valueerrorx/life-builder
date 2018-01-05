@@ -125,7 +125,7 @@ copyskel (){
         
         
         for i in /etc/skel/.gnome2/keyrings/*; do rm $i > /dev/null 2>&1; done
-        find /etc/skel/ | grep "$SKELUSER" | xargs rm -rf '{}' > /dev/null 2>&1
+        # find /etc/skel/ | grep "$SKELUSER" | xargs rm -rf '{}' > /dev/null 2>&1   # this would delete all files with the name "student" in it 
         find /etc/skel/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
         find /etc/skel/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
         # grep -Rl "$SKELUSER" /etc/skel | xargs rm -rf '{}' > /dev/null 2>&1     #deletes all files that contain the name of the original user...  problematic if you want to transfer all settings (plasmaconfig applets)
