@@ -3,10 +3,11 @@
 import sys, os
 from PyQt5 import QtCore, uic, QtWidgets
 from PyQt5.QtGui import *
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT, call
 import shlex
 import time
 import re
+from conf.config import *
 
 class  BuildWorker(QtCore.QObject):
     processed = QtCore.pyqtSignal(str,int)
@@ -29,12 +30,8 @@ class  BuildWorker(QtCore.QObject):
             
             if output:
                 print (output)    #always print everything 
-               
                 if "OUTPUT:" in output:    #differentiate between our output and other output
-                    
-                    
                     output = output.strip("OUTPUT: ")
-
                     content = output.split("§")
                     text = str(content[0])
                     try:                # just in case the lifebuilder script does not provide a percentage with an output line
@@ -60,6 +57,10 @@ class  BuildWorker(QtCore.QObject):
                         self.meindialog.lineprocessing = True
                         self.meindialog.percent = 100
     
+                    if "ISOLOCATION" in text:
+                        self.meindialog.isolocation=text.split(",")
+                        self.meindialog.isolocation=self.meindialog.isolocation[1]
+                        
 
                 if self.meindialog.lineprocessing == True:
                     line = text
@@ -69,6 +70,7 @@ class  BuildWorker(QtCore.QObject):
                     print (self.meindialog.percent)
         self.finished.emit()  
       
+
 
 
 
@@ -93,15 +95,17 @@ class  CheckWorker(QtCore.QObject):
 
 
 
+
 class MeinDialog(QtWidgets.QDialog):
     def __init__(self):
         QtWidgets.QDialog.__init__(self)
-        scriptdir=os.path.dirname(os.path.abspath(__file__))
-        uifile=os.path.join(scriptdir,'main.ui')
-        winicon=os.path.join(scriptdir,'appicon.png')
+        self.scriptdir=os.path.dirname(os.path.abspath(__file__))
+        uifile=os.path.join(self.scriptdir,'main.ui')
+        winicon=os.path.join(self.scriptdir,'pixmaps/appicon.png')
         self.ui = uic.loadUi(uifile)        # load UI
         self.ui.setWindowIcon(QIcon(winicon))
         self.ui.mkiso.clicked.connect(self.onISO)        # setup Slots
+        self.ui.burniso.clicked.connect(self.onBurnISO) 
         self.ui.exit.clicked.connect(self.onAbbrechen)   
     
         #one worker to start the life iso creator 
@@ -124,6 +128,8 @@ class MeinDialog(QtWidgets.QDialog):
         self.buildprocess = ""
         self.lineprocessing = True
         self.percent = 0
+        self.isolocation = ""
+        self.getconfig()
         
     def updateProgress(self,line, totalpercentfinished):  
         self.ui.progressBar.setValue(int(totalpercentfinished))
@@ -131,7 +137,17 @@ class MeinDialog(QtWidgets.QDialog):
     
     def onISO(self): 
         self.ui.mkiso.setEnabled(False)
+        self.writeConfigToFile()
+        time.sleep(1)
         self.extraThread.start()
+        
+    def onBurnISO(self):
+        command = "cd  ~/.life/applications/life-usbcreator/ && sudo python ~/.life/applications/life-usbcreator/usbcreator.py %s &"  %(self.isolocation)
+        print(command)
+        #os.system(command) 
+        call(command, shell=True)
+        self.ui.close()
+        #self.onAbbrechen()
     
     def worker1finished(self):
         self.extraThread1.quit()
@@ -141,6 +157,10 @@ class MeinDialog(QtWidgets.QDialog):
         line = "<b>ISO Erstellung Abgeschlossen!</b>"
         self.ui.inet.setText(line) 
         self.stopall()
+        if self.isolocation != "":
+            self.ui.burniso.setEnabled(True)
+        
+        
         
     def builderror(self,line):
         self.ui.info.setText(line) 
@@ -166,12 +186,61 @@ class MeinDialog(QtWidgets.QDialog):
         self.stopall()
         self.ui.close()
         os._exit(0)
-
-    
-
-
+        
+    def getconfig(self):
+        self.ui.baseworkdir.setText(BASEWORKDIR)
+        self.ui.liveuser.setText(LIVEUSER)
+        self.ui.livehostname.setText(LIVEHOSTNAME)
+        self.ui.customiso.setText(CUSTOMISO)
+        self.ui.skeluser.setText(SKELUSER)
+        self.ui.livecdlabel.setText(LIVECDLABEL)
+        self.ui.livecdurl.setText(LIVECDURL)
+        self.ui.excludes.setText(EXCLUDES)
+        self.ui.squashfsopts.setText(SQUASHFSOPTS)
+        
+    def writeConfigToFile(self):
+        BASEWORKDIR=self.ui.baseworkdir.text()
+        LIVEUSER=self.ui.liveuser.text()
+        LIVEHOSTNAME=self.ui.livehostname.text()
+        CUSTOMISO=self.ui.customiso.text()
+        SKELUSER=self.ui.skeluser.text()
+        LIVECDLABEL=self.ui.livecdlabel.text()
+        LIVECDURL=self.ui.livecdurl.text()
+        EXCLUDES=self.ui.excludes.text()
+        SQUASHFSOPTS=self.ui.squashfsopts.text()
+        
+        #write config to .conf file for bashscript
+        filepath = os.path.join(self.scriptdir,'conf/config.py')
+        f = open(filepath,"w")
+        configcontent = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nBASEWORKDIR='%s'\nLIVEUSER='%s'\nLIVEHOSTNAME='%s'\nCUSTOMISO='%s'\nSKELUSER='%s'\nLIVECDLABEL='%s'\nLIVECDURL='%s'\nEXCLUDES='%s'\nSQUASHFSOPTS='%s'\n" %(str(BASEWORKDIR),str(LIVEUSER),str(LIVEHOSTNAME),str(CUSTOMISO),str(SKELUSER),str(LIVECDLABEL),str(LIVECDURL),str(EXCLUDES),str(SQUASHFSOPTS))
+        print(configcontent)
+        f.write(configcontent)
+        
+        
+        
+        
+        
 
 app = QtWidgets.QApplication(sys.argv)
 dialog = MeinDialog()
 dialog.ui.show()   #show user interface
 sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

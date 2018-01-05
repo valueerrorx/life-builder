@@ -17,11 +17,13 @@ USER=$(logname)
 HOME="/home/${USER}/"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  
 
-source ${SCRIPTDIR}/conf/lifebuilder.conf
+source ${SCRIPTDIR}/conf/config.py
 
 
 
 #prepare workdirectory and logfile
+
+WORKDIR="$BASEWORKDIR/lifebuilder"
 if [ ! -d $WORKDIR ]; then
     mkdir -p $WORKDIR
     touch $WORKDIR/lifebuilder.log
@@ -41,8 +43,10 @@ output() {
 
 
 
-  
+
 ###########emergency stop here#############
+#output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "50"
+#output "$WORKDIR/$CUSTOMISO which is in size is ready to be burned or tested in a virtual machine." "100"
 #exit 0
 ###########################################
     
@@ -692,7 +696,7 @@ iso (){
     ISOSIZE="`ls -hs $WORKDIR/$CUSTOMISO | awk '{print $1}'`"
 
     # output38
-    output "$WORKDIR/$CUSTOMISO which is $ISOSIZE in size is ready to be burned or tested in a virtual machine." "100"
+    output "$WORKDIR/$CUSTOMISO which is $ISOSIZE in size is ready to be tested." "100"
 
 }
 
@@ -702,6 +706,9 @@ iso (){
 cdfs $@
 
 iso $@
-    
+  
+  
+output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "100"
+
 
 exit 0
