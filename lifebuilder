@@ -44,11 +44,11 @@ output() {
 
 
 
-###########emergency stop here#############
-#output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "50"
-#output "$WORKDIR/$CUSTOMISO which is in size is ready to be burned or tested in a virtual machine." "100"
-#exit 0
-###########################################
+##########emergency stop here#############
+output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "50"
+output "$WORKDIR/$CUSTOMISO which is in size is ready to be burned or tested in a virtual machine." "100"
+exit 0
+##########################################
     
 
 
