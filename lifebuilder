@@ -79,7 +79,7 @@ cleanhome (){
             DUMMYSYSHOME="/etc/skel"
         fi
         
-        output "cleanup home : ${DUMMYSYSHOME}"
+        output "Cleaning up home : ${DUMMYSYSHOME}"
         
         #google chrome history
         rm -rf "${DUMMYSYSHOME}/.config/google-chrome/History" > /dev/null 2>&1
@@ -304,7 +304,7 @@ cdfs (){
     
     
     # output14
-    output "Copying /var /home and /etc to temp folder. this will take a while."  "45"
+    output "Copying /var /home and /etc to temp folder. This will take a while."  "45"
     rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a /var/. $WORKDIR/dummysys/var/.
     rsync --exclude-from="${EXCLUDESFILE}" -a /etc/. $WORKDIR/dummysys/etc/.
 
