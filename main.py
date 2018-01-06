@@ -77,7 +77,13 @@ class  BuildWorker(QtCore.QObject):
                         
 
                 if self.meindialog.lineprocessing == True:
-                    line = text
+                    try:
+                        line = text
+                    except:
+                        line = "some error occured - check log or console output"
+                        totalpercentfinished = 0
+                        part = ""
+                        
                     self.processed.emit(line, totalpercentfinished, part)
                 else:   #stop emmiting every output line - to much overhead - just set percent variable on mydialog and CheckWorker will poll the current value every .5 seconds - thats accurate enough
                     self.meindialog.percent += step
@@ -158,12 +164,15 @@ class MeinDialog(QtWidgets.QDialog):
         time.sleep(1)
         self.extraThread.start()
         
-    def onBurnISO(self):
+    def onBurnISO(self):   
+        """completely disconnect child thread from parent with nohup - qprocess or subprocess did not work here
+           at some point in the usb creation process (rsync start) suddenly the UI was closed but only if you started the life-builder with kdesu (it worked flawlessly from terminal)
+           so "nohup" it is !
+        """
         command = "nohup bash -c 'cd %s && sudo python %s/usbcreator.py %s  >usbcreator.log 2>&1 &'  " % (WORK_DIRECTORY_USBCREATOR, WORK_DIRECTORY_USBCREATOR, self.isolocation)
         os.system(command) 
         self.ui.close()
-        
-        #self.onAbbrechen()
+
     
     def worker1finished(self):
         self.extraThread1.quit()
@@ -205,10 +214,10 @@ class MeinDialog(QtWidgets.QDialog):
         
     def getconfig(self):
         self.ui.baseworkdir.setText(BASEWORKDIR)
-        self.ui.liveuser.setText(LIVEUSER)
+        self.ui.liveuser.setText(USER)
         self.ui.livehostname.setText(LIVEHOSTNAME)
         self.ui.customiso.setText(CUSTOMISO)
-        self.ui.skeluser.setText(SKELUSER)
+        self.ui.skeluser.setText(USER)
         self.ui.livecdlabel.setText(LIVECDLABEL)
         self.ui.livecdurl.setText(LIVECDURL)
         self.ui.excludes.setText(EXCLUDES)
@@ -225,10 +234,18 @@ class MeinDialog(QtWidgets.QDialog):
         EXCLUDES=self.ui.excludes.text()
         SQUASHFSOPTS=self.ui.squashfsopts.text()
         
+        COPYDEFAULTUSER = self.ui.copydefaultuser.isChecked()
+        
+        
+        if self.ui.copydefaultuser.isChecked():   # only if the default usersettings are going to be kept it makes sense to copy them for all new installer users
+            COPYSKEL = self.ui.copyskel.isChecked()
+        else:
+            COPYSKEL = "False"
+        
         #write config to .conf file for bashscript
         filepath = os.path.join(self.scriptdir,'conf/config.py')
         f = open(filepath,"w")
-        configcontent = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nBASEWORKDIR='%s'\nLIVEUSER='%s'\nLIVEHOSTNAME='%s'\nCUSTOMISO='%s'\nSKELUSER='%s'\nLIVECDLABEL='%s'\nLIVECDURL='%s'\nEXCLUDES='%s'\nSQUASHFSOPTS='%s'\n" %(str(BASEWORKDIR),str(LIVEUSER),str(LIVEHOSTNAME),str(CUSTOMISO),str(SKELUSER),str(LIVECDLABEL),str(LIVECDURL),str(EXCLUDES),str(SQUASHFSOPTS))
+        configcontent = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nBASEWORKDIR='%s'\nLIVEUSER='%s'\nLIVEHOSTNAME='%s'\nCUSTOMISO='%s'\nSKELUSER='%s'\nLIVECDLABEL='%s'\nLIVECDURL='%s'\nEXCLUDES='%s'\nSQUASHFSOPTS='%s'\nCOPYSKEL='%s'\nCOPYDEFAULTUSER='%s'\n" %(str(BASEWORKDIR),str(LIVEUSER),str(LIVEHOSTNAME),str(CUSTOMISO),str(SKELUSER),str(LIVECDLABEL),str(LIVECDURL),str(EXCLUDES),str(SQUASHFSOPTS),str(COPYSKEL),str(COPYDEFAULTUSER))
         print(configcontent)
         f.write(configcontent)
         
