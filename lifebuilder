@@ -68,6 +68,10 @@ output() {
 
 
 cleanhome (){
+        # delete all files that would compromise privacy or produce conflicts 
+        # .xsession files, ssh keys, kwallet, trash, cache, recent documents, history browser, shell, cookies, configs with passwords
+
+
         DUMMYSYSHOME=$1
         
         if [[( $DUMMYSYSHOME = ""  )]]
@@ -96,14 +100,26 @@ cleanhome (){
         rm -rf ${DUMMYSYSHOME}/.local/share/Trash > /dev/null 2>&1
         rm -rf ${DUMMYSYSHOME}/.local/share/akonadi > /dev/null 2>&1
         rm -rf ${DUMMYSYSHOME}/.local/share/webkit > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.local/share/kwalletd > /dev/null 2>&1
         rm -rf ${DUMMYSYSHOME}/.kde/share/apps/klipper > /dev/null 2>&1
         rm -rf ${DUMMYSYSHOME}/.kde/share/apps/nepomuk > /dev/null 2>&1
         
         rm -rf ${DUMMYSYSHOME}/.kde/share/apps/RecentDocuments/* > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/apps/RecentDocuments/* > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.life/EXAM/client.log > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.local/share/RecentDocuments/* > /dev/null 2>&1
+    
         
-            
+        rm -rf ${DUMMYSYSHOME}/.life/EXAM/client.log > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.bash_history > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.gitconfig > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.gksu.lock > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.history > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.Xauthority > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.xsession-errors > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.recently-used > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.dbus > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.cache > /dev/null 2>&1
+        rm -rf ${DUMMYSYSHOME}/.ssh > /dev/null 2>&1
+         
         for i in ${DUMMYSYSHOME}/.gnome2/keyrings/*; do rm $i > /dev/null 2>&1; done
         find ${DUMMYSYSHOME}/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
         find ${DUMMYSYSHOME}/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
@@ -128,7 +144,9 @@ copyhome (){
         rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/.
         
         cleanhome $DUMMYSYSHOME
-        chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1
+        
+        # change ownership to user 999 (the live system user)  OR do not restructure /etc/passwd and /etc/groups ???
+        chown -R 999:999 ${DUMMYSYSHOME}   > /dev/null 2>&1   
     fi
 
 }
@@ -379,26 +397,35 @@ cdfs (){
     #  mess with users and groups for the live system
     ##########################
     
-    # output17
-    output "Cleaning up passwd, group, shadow and gshadow files for the live system" "70"
+#     if [[( $COPYDEFAULTUSER = "False"  )]]
+#     then
+#         #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied
+#     
+#     fi
     
+    # output17
+    output "Cleaning up passwd, group, files for the live system" "70"
+    
+    #re-build passwd file without those users above UID 999 and below 9999
     grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
     grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
     grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
     grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
 
+    #re-build group file without those groups that belong to the users
     grep '^[^:]*:[^:]*:[0-9]:' /etc/group > $WORKDIR/dummysys/etc/group
     grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
     grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
     grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
 
+    # get the usernames of the current users on the system and write them into tmpusers
     grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
     grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
     grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
-
     cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
     rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
 
+    #get rid of all tmpusers entries in the group file
     cat $WORKDIR/tmpusers | while read LINE ;do
         echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
         echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
