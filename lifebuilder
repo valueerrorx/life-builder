@@ -16,7 +16,7 @@ lifebuilderVERSION="0.9"
 USER=$(logname)  
 HOME="/home/${USER}/"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  
-
+EXCLUDESFILE="${SCRIPTDIR}/excludes"
 
 
 #################
@@ -37,6 +37,18 @@ if [ ! -d $WORKDIR ]; then
 fi
 
 
+#################
+# prepare excludes for rsync  (rsync doesn't like strings in variables as parameters therefore we work with a file
+##########################
+
+rm $EXCLUDESFILE
+touch $EXCLUDESFILE
+if [ "$EXCLUDES" != "" ]; then
+    for addvar in $EXCLUDES ; do
+        echo $addvar >> $EXCLUDESFILE
+    done
+fi
+
 
 #################
 # OUTPUT # the output is formatted in a special way in order to be parsed by the python script - do not change !! § is the split character
@@ -44,7 +56,6 @@ fi
 output() {
     echo "OUTPUT: $1 § $2"
 }
-
 
 
 # 
@@ -105,49 +116,22 @@ copyhome (){
     # this copies the whole HOME folder of the current user to the lifesystem home in order to be used if the username is the same
     HOMEOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
     DUMMYSYSHOME="$WORKDIR/dummysys/home"
+    rm -rf ${DUMMYSYSHOME}/*
     
-    output "Copying $HOMEOLDER   "
+    output "Copying $HOMEOLDER" "52"
     
     if [ -d "$HOMEOLDER" ]; then
         cd $HOMEOLDER
         history -w
         history -c
         
-        if [ "$EXCLUDES" != "" ]; then
-            for addvar in $EXCLUDES ; do
-               
-                VAREXCLUDES="$VAREXCLUDES --exclude='$addvar' "  #note the space
-            done
-        fi
- 
-  output "$EXCLUDES"
- output "$VAREXCLUDES"
- 
-        COMMAND="rsync $VAREXCLUDES --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/."
-        output "$COMMAND"
-        
-        exec $COMMAND
-        
-        
-       # exec rsync --exclude='Nextcloud' $VAREXCLUDES --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/.
-      
+        rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/.
         
         cleanhome $DUMMYSYSHOME
-        
         chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1
     fi
 
 }
-
-copyhome
-
-#########emergency stop here#############
-output "$WORKDIR/$CUSTOMISO which is in size is ready to be burned or tested in a virtual machine." "10"
-output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "100"
-exit 0
-#########################################
-
-
 
 
 
@@ -249,29 +233,29 @@ cdfs (){
     apt-get clean   
     
      # output7  
-    output  "removing cache files" "25"
+    output  "removing cache files" "20"
     sudo rm /var/crash/* > /dev/null 2>&1
     
     
     # remove all old kernel headers and tools
     # output9
-    output "purging old kernel, tools and headers"  "33"
+    output "purging old kernel, tools and headers"  "25"
     dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | sed '/dev/d' | xargs apt-get -y purge
 
 
     #removing popularity-contest as it causes a problem when installing with ubiquity
     # output10
-    output "Making sure popularity contest is not installed"  "38"
+    output "Making sure popularity contest is not installed"  "28"
     apt-get -y -q remove popularity-contest &> /dev/null
 
     #removing syslinux-themes as it causes problems
     # output11
-    output "Making sure syslinux-themes is not installed"  "42"
+    output "Making sure syslinux-themes is not installed"  "32"
     apt-get -y -q purge syslinux-themes* &> /dev/null
 
      #Installing isolinux if needed
      # output12
-    output "Making sure isolinux is installed"  "46"
+    output "Making sure isolinux is installed"  "36"
     apt-get -y -q install isolinux syslinux-utils &> /dev/null
 
     
@@ -286,7 +270,7 @@ cdfs (){
     rm -rf $WORKDIR/ISOTMP/
   
   # output13
-    output "Creating $WORKDIR folder tree"  "51"
+    output "Creating $WORKDIR folder tree"  "40"
    
     mkdir -p $WORKDIR/ISOTMP/{casper,preseed,isolinux,install,.disk} 
     mkdir -p $WORKDIR/dummysys/{dev,etc,cdrom,proc,tmp,sys,mnt,media/cdrom,var,run,home}
@@ -302,40 +286,30 @@ cdfs (){
     
     
     # output14
-    output "Copying /var /home and /etc to temp folder and excluding extra files  ... this will take a while.."  "56"
+    output "Copying /var /home and /etc to temp folder. this will take a while."  "45"
+    rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a /var/. $WORKDIR/dummysys/var/.
+    rsync --exclude-from="${EXCLUDESFILE}" -a /etc/. $WORKDIR/dummysys/etc/.
 
-    if [ "$EXCLUDES" != "" ]; then
-        for addvar in $EXCLUDES ; do
-            VAREXCLUDES="$VAREXCLUDES --exclude='$addvar' "  #note the space
-        done
-    fi
-
-    rsync --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' $VAREXCLUDES-a /var/. $WORKDIR/dummysys/var/.
-    rsync $VAREXCLUDES-a /etc/. $WORKDIR/dummysys/etc/.
-
+    
+    
+    
         
+    #################
+    #  Copy the whole home folder to dummysys in order to preserve all configurations (if checkbox in UI is checked)
+    ##########################
+    
     if [[( $COPYDEFAULTUSER = "True"  )]]
     then
         copyhome
-        output "copy home..........."
     fi
-    
-    
-    #########emergency stop here#############
-output "$WORKDIR/$CUSTOMISO which is in size is ready to be burned or tested in a virtual machine." "10"
-output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "100"
-exit 0
-#########################################
-
-    
-    
+       
     
     
     #Adding packages location to sources
     ARCH=`archdetect | awk -F "/" '{print $1}'`
     DISKINFONAME=`echo $LIVECDLABEL | awk '{print $1}'`
     # output15
-    output "Adding CD-ROM to source list"  "62"
+    output "Adding CD-ROM to source list"  "60"
     . /etc/lsb-release
     sed -i '/cdrom:/d' $WORKDIR/dummysys/etc/apt/sources.list &> /dev/null
     echo "deb cdrom:[$DISKINFONAME $DISTRIB_RELEASE - Release $ARCH]/ dists/" >> $WORKDIR/dummysys/etc/apt/sources.list
@@ -807,12 +781,15 @@ iso (){
 
 ##############
 # check if we should copy the default configuration into the squashfs SKEL folder for all new users
+# this only makes sense if the default user config is also used for the live user (COPYDEFAULTUSER)
 ###############################
 if [[( $COPYDEFAULTUSER = "True"  )]]
 then
     if [[( $COPYSKEL = "True"  )]]   
     then
         copyskel
+    else
+        sudo rm -rf /etc/skel   > /dev/null 2>&1
     fi
 fi
 
