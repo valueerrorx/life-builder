@@ -246,8 +246,8 @@ cleansystem (){
     # remove unwanted packages and usage history 
 
     # clear kde plasma clipboard and recend applications
-    qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory
-    dbus-send --session --dest=org.kde.ActivityManager --type=method_call /ActivityManager/Resources/Scoring org.kde.ActivityManager.ResourcesScoring.DeleteStatsForResource string:":current" string:":any" string:"applications:*"
+    sudo -u $SKELUSER  -H qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory
+    sudo -u $SKELUSER  -H dbus-send --session --dest=org.kde.ActivityManager --type=method_call /ActivityManager/Resources/Scoring org.kde.ActivityManager.ResourcesScoring.DeleteStatsForResource string:":current" string:":any" string:"applications:*"
 
     
     # output5
