@@ -263,23 +263,27 @@ cleansystem (){
     
     # remove all old kernel headers and tools
     # output9
-    output "purging old kernel, tools and headers"  "25"
+    output "purging old kernel, tools and headers"  "22"
     dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | sed '/dev/d' | xargs apt-get -y purge
 
 
     #removing popularity-contest as it causes a problem when installing with ubiquity
     # output10
-    output "Making sure popularity contest is not installed"  "28"
+    output "Making sure popularity contest is not installed"  "25"
     apt-get -y -q remove popularity-contest &> /dev/null
 
     #removing syslinux-themes as it causes problems
     # output11
-    output "Making sure syslinux-themes is not installed"  "32"
+    output "Making sure syslinux-themes is not installed"  "28"
     apt-get -y -q purge syslinux-themes* &> /dev/null
 
+    
+    
     #remove some proprietary assets (important if you want to distribute this iso in public) 
     if [[( $REMOVERESTRICTED = "True"  )]]  
     then
+        output "Removing proprietary content from the system"  "30"
+    
         sudo apt-get purge ttf-mscorefonts-installer
         sudo apt-get purge kubuntu-restricted-extras lubuntu-restricted-extras ubuntu-restricted-extras xubuntu-restricted-extras
         sudo apt-get purge kubuntu-restricted-addons lubuntu-restricted-addons ubuntu-restricted-addons xubuntu-restricted-addons
