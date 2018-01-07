@@ -284,13 +284,13 @@ cleansystem (){
     then
         output "Removing proprietary content from the system"  "30"
     
-        sudo apt-get purge ttf-mscorefonts-installer
-        sudo apt-get purge kubuntu-restricted-extras lubuntu-restricted-extras ubuntu-restricted-extras xubuntu-restricted-extras
-        sudo apt-get purge kubuntu-restricted-addons lubuntu-restricted-addons ubuntu-restricted-addons xubuntu-restricted-addons
-        sudo apt-get purge acroread adobereader-enu acroread-bin:i386
-        sudo apt-get purge flashplugin-installer adobe-flashplugin flashplugin-downloader
-        sudo apt-get autoremove
-        sudo apt-get autoclean
+        sudo apt-get -y -q purge ttf-mscorefonts-installer
+        sudo apt-get -y -q purge kubuntu-restricted-extras lubuntu-restricted-extras ubuntu-restricted-extras xubuntu-restricted-extras
+        sudo apt-get -y -q purge kubuntu-restricted-addons lubuntu-restricted-addons ubuntu-restricted-addons xubuntu-restricted-addons
+        sudo apt-get -y -q purge acroread adobereader-enu acroread-bin:i386
+        sudo apt-get -y -q purge flashplugin-installer adobe-flashplugin flashplugin-downloader
+        sudo apt-get -y -q autoremove
+        sudo apt-get -y -q autoclean
         
         SKELFOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
 
