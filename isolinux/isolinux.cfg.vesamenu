@@ -8,12 +8,12 @@ menu background splash.png
 label persistent
   menu label Start des Systems
   kernel /casper/vmlinuz
-  append boot=casper persistent initrd=/casper/initrd.gz nvme_load=YES nvd_load=YES vt.global_cursor_default=0 rd.systemd.show_status=auto rd.udev.log-priority=3 loglevel=3 quiet vga=current splash
+  append boot=casper persistent initrd=/casper/initrd.gz nvme_load=YES nvd_load=YES vt.global_cursor_default=0 rd.systemd.show_status=auto rd.udev.log-priority=3 quiet loglevel=3 vga=current splash
 
 label live
   menu label Start des Live Systems
   kernel /casper/vmlinuz
-  append boot=casper initrd=/casper/initrd.gz nvme_load=YES nvd_load=YES vt.global_cursor_default=0 rd.systemd.show_status=auto rd.udev.log-priority=3 loglevel=3 quiet vga=current splash
+  append boot=casper initrd=/casper/initrd.gz nvme_load=YES nvd_load=YES vt.global_cursor_default=0 rd.systemd.show_status=auto rd.udev.log-priority=3 quiet loglevel=3 vga=current splash
 
 label toram
   menu label Lade Live System in den RAM 
