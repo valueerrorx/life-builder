@@ -282,7 +282,7 @@ cleansystem (){
     #remove some proprietary assets (important if you want to distribute this iso in public) 
     if [[( $REMOVERESTRICTED = "True"  )]]  
     then
-        output "Removing proprietary content from the system"  "30"
+        output "Removing proprietary packages from the system"  "30"
     
         sudo apt-get -y -q purge ttf-mscorefonts-installer
         sudo apt-get -y -q purge kubuntu-restricted-extras lubuntu-restricted-extras ubuntu-restricted-extras xubuntu-restricted-extras
@@ -292,8 +292,8 @@ cleansystem (){
         sudo apt-get -y -q autoremove
         sudo apt-get -y -q autoclean
         
+        output "Removing all fonts from the userdirectory"  "34"
         SKELFOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
-
         if [ -d "$SKELFOLDER" ]; then
             #don't delete the whole font folder otherwise rescan will just skip and not remove fonts
             rm -rf $SKELFOLDER/.fonts/*     
@@ -321,7 +321,7 @@ cdfs (){
      
     #Installing isolinux if needed
     # output12
-    output "Making sure isolinux is installed"  "36"
+    output "Making sure isolinux is installed"  "38"
     apt-get -y -q install isolinux syslinux-utils &> /dev/null
 
     
