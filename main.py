@@ -235,7 +235,7 @@ class MeinDialog(QtWidgets.QDialog):
         SQUASHFSOPTS=self.ui.squashfsopts.text()
         
         COPYDEFAULTUSER = self.ui.copydefaultuser.isChecked()
-        
+        REMOVERESTRICTED = self.ui.restricted.isChecked()
         
         if self.ui.copydefaultuser.isChecked():   # only if the default usersettings are going to be kept it makes sense to copy them for all new installer users
             COPYSKEL = self.ui.copyskel.isChecked()
@@ -245,7 +245,7 @@ class MeinDialog(QtWidgets.QDialog):
         #write config to .conf file for bashscript
         filepath = os.path.join(self.scriptdir,'conf/config.py')
         f = open(filepath,"w")
-        configcontent = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nBASEWORKDIR='%s'\nLIVEUSER='%s'\nLIVEHOSTNAME='%s'\nCUSTOMISO='%s'\nSKELUSER='%s'\nLIVECDLABEL='%s'\nLIVECDURL='%s'\nEXCLUDES='%s'\nSQUASHFSOPTS='%s'\nCOPYSKEL='%s'\nCOPYDEFAULTUSER='%s'\n" %(str(BASEWORKDIR),str(LIVEUSER),str(LIVEHOSTNAME),str(CUSTOMISO),str(SKELUSER),str(LIVECDLABEL),str(LIVECDURL),str(EXCLUDES),str(SQUASHFSOPTS),str(COPYSKEL),str(COPYDEFAULTUSER))
+        configcontent = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nBASEWORKDIR='%s'\nLIVEUSER='%s'\nLIVEHOSTNAME='%s'\nCUSTOMISO='%s'\nSKELUSER='%s'\nLIVECDLABEL='%s'\nLIVECDURL='%s'\nEXCLUDES='%s'\nSQUASHFSOPTS='%s'\nCOPYSKEL='%s'\nCOPYDEFAULTUSER='%s'\nREMOVERESTRICTED='%s'\n" %(str(BASEWORKDIR),str(LIVEUSER),str(LIVEHOSTNAME),str(CUSTOMISO),str(SKELUSER),str(LIVECDLABEL),str(LIVECDURL),str(EXCLUDES),str(SQUASHFSOPTS),str(COPYSKEL),str(COPYDEFAULTUSER),str(REMOVERESTRICTED))
         print(configcontent)
         f.write(configcontent)
         

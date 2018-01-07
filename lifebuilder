@@ -30,17 +30,17 @@ source ${SCRIPTDIR}/conf/config.py
 #################
 # prepare workdirectory and logfile
 ##########################
-
 WORKDIR="$BASEWORKDIR/lifebuilder"
 if [ ! -d $WORKDIR ]; then
     mkdir -p $WORKDIR
 fi
 
 
+
+
 #################
 # prepare excludes for rsync  (rsync doesn't like strings in variables as parameters therefore we work with a file
 ##########################
-
 rm $EXCLUDESFILE
 touch $EXCLUDESFILE
 if [ "$EXCLUDES" != "" ]; then
@@ -58,6 +58,12 @@ output() {
 }
 
 
+#-----------------------------#
+output "PART,Part 1" "0"
+#-----------------------------#
+
+
+
 # 
 # #########emergency stop here#############
 # output "$WORKDIR/$CUSTOMISO which is in size is ready to be burned or tested in a virtual machine." "10"
@@ -67,11 +73,12 @@ output() {
 
 
 
+
+
+
 cleanhome (){
         # delete all files that would compromise privacy or produce conflicts 
         # .xsession files, ssh keys, kwallet, trash, cache, recent documents, history browser, shell, cookies, configs with passwords
-
-
         DUMMYSYSHOME=$1
         
         if [[( $DUMMYSYSHOME = ""  )]]
@@ -123,13 +130,18 @@ cleanhome (){
         for i in ${DUMMYSYSHOME}/.gnome2/keyrings/*; do rm $i > /dev/null 2>&1; done
         find ${DUMMYSYSHOME}/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
         find ${DUMMYSYSHOME}/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
-     
-        
-      
 }
+
+
+
+
+
+
 
 copyhome (){
     # this copies the whole HOME folder of the current user to the lifesystem home in order to be used if the username is the same
+    # ATTENTION we could just copy the userhome directory to skel and it would be used as default for the live session user
+    # but this will slow down the boot process on "persistent" live systems enormously because skel is copied to casper-rw on boot time 
     HOMEOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
     DUMMYSYSHOME="$WORKDIR/dummysys/home"
     rm -rf ${DUMMYSYSHOME}/*
@@ -160,7 +172,6 @@ copyskel (){
     # the content of /etc/skel is used as default userconfiguration for every new user and the live user if the home directory does not exist already
     # only selected files and folders are copied there.. and then cleaned up
     
-    
     SKELFOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
 
     if [ -d "$SKELFOLDER" ]; then
@@ -189,7 +200,6 @@ copyskel (){
         rm -rf /etc/skel/.gtkrc* > /dev/null 2>&1
         rm -rf /etc/skel/.kde* > /dev/null 2>&1
         
-      
         # output2
         output "Copying config files to /etc/skel" "5"
     
@@ -218,32 +228,28 @@ copyskel (){
         mkdir /etc/skel/Downloads/   > /dev/null 2>&1  #we want this default folder
         cp .life/applications/life-firststart/firststart.sh /etc/skel/.config/autostart-scripts/
     
-        
         #fix permissions 
         chown -R root:root /etc/skel
         # output4
         output "skel Copy - done" "13"
-
     else
         # output 100    
         output "ERROR $SKELUSER or home folder not found - exiting."
         exit 1
     fi
-
 }
 
-#-----------------------------#
-output "PART,Part 1" "0"
-#-----------------------------#
 
 
 
-cdfs (){
-    #################
-    #  clean up
-    ##########################
+cleansystem (){
+    # remove unwanted packages and usage history 
 
+    # clear kde plasma clipboard and recend applications
+    qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory
+    dbus-send --session --dest=org.kde.ActivityManager --type=method_call /ActivityManager/Resources/Scoring org.kde.ActivityManager.ResourcesScoring.DeleteStatsForResource string:":current" string:":any" string:"applications:*"
 
+    
     # output5
     output "Cleaning System before building" "17"
     apt-get update  &> /dev/null
@@ -271,15 +277,48 @@ cdfs (){
     output "Making sure syslinux-themes is not installed"  "32"
     apt-get -y -q purge syslinux-themes* &> /dev/null
 
-     #Installing isolinux if needed
-     # output12
-    output "Making sure isolinux is installed"  "36"
-    apt-get -y -q install isolinux syslinux-utils &> /dev/null
+    #remove some proprietary assets (important if you want to distribute this iso in public) 
+    if [[( $REMOVERESTRICTED = "True"  )]]  
+    then
+        sudo apt-get purge ttf-mscorefonts-installer
+        sudo apt-get purge kubuntu-restricted-extras lubuntu-restricted-extras ubuntu-restricted-extras xubuntu-restricted-extras
+        sudo apt-get purge kubuntu-restricted-addons lubuntu-restricted-addons ubuntu-restricted-addons xubuntu-restricted-addons
+        sudo apt-get purge acroread adobereader-enu acroread-bin:i386
+        sudo apt-get purge flashplugin-installer adobe-flashplugin flashplugin-downloader
+        sudo apt-get autoremove
+        sudo apt-get autoclean
+        
+        SKELFOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
 
+        if [ -d "$SKELFOLDER" ]; then
+            #don't delete the whole font folder otherwise rescan will just skip and not remove fonts
+            rm -rf $SKELFOLDER/.fonts/*     
+            fc-cache -rv
+        fi
+    fi
+    
+    
+}
+
+
+
+cdfs (){
+    #################
+    #  clean up
+    ##########################
+    cleansystem
+    
+    
+    
     
     #################
     #  Create the FILESYSTEM tree in $WORKDIR/ISOTMP
     ##########################
+     
+    #Installing isolinux if needed
+    # output12
+    output "Making sure isolinux is installed"  "36"
+    apt-get -y -q install isolinux syslinux-utils &> /dev/null
 
     
     sleep 1
@@ -809,6 +848,8 @@ iso (){
 ##############
 # check if we should copy the default configuration into the squashfs SKEL folder for all new users
 # this only makes sense if the default user config is also used for the live user (COPYDEFAULTUSER)
+# ATTENTION we could just copy the userhome directory to skel and it would be used as default for the live session user
+# but this will slow down the boot process on "persistent" live systems enormously because skel is copied to casper-rw on boot time 
 ###############################
 if [[( $COPYDEFAULTUSER = "True"  )]]
 then
