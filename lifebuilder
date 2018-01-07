@@ -409,6 +409,8 @@ cdfs (){
         rm -f $WORKDIR/dummysys/etc/resolv.conf
     fi
     find $WORKDIR/dummysys/var/log/ $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
+    rm -rf $WORKDIR/dummysys/var/tmp/*
+    
     touch $WORKDIR/dummysys/etc/cups/printers.conf  #provide empty files
     if [ ! -d /run ]; then
         find $WORKDIR/dummysys/var/run/ $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
