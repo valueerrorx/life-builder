@@ -490,15 +490,14 @@ cdfs (){
     #################
     #  add other stuff like preseed, memtest, efi 
     ##########################
+    #copy some of the necessary stuff for the livecd
+    cp ${SCRIPTDIR}/preseed/* $WORKDIR/ISOTMP/preseed/
+    #BOOT Type is isolinux
+    # output19
+    output "Copying memtest86+ for the live system" "78"
+    cp /boot/memtest86+.bin $WORKDIR/ISOTMP/install/memtest
+
     
-#     #copy some of the necessary stuff for the livecd
-#     cp ${SCRIPTDIR}/preseed/* $WORKDIR/ISOTMP/preseed/
-#     #BOOT Type is isolinux
-#     # output19
-#     output "Copying memtest86+ for the live system" "78"
-#     cp /boot/memtest86+.bin $WORKDIR/ISOTMP/install/memtest
-# 
-#     
     
     
     
@@ -517,19 +516,19 @@ cdfs (){
     
     
     # output21
-#     output "Downloading packages for CD" "82"
-#     
-#     # Check Architecture
-#     ARCH=`archdetect | awk -F "/" '{print $1}'`
-#     mkdir -p $WORKDIR/ISOTMP/pool
-#     cd $WORKDIR/ISOTMP/pool
-#     
-#     apt-get download b43-fwcutter bcmwl-kernel-source efibootmgr grub-common grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed grub-efi-ia32 grub-efi-ia32-bin grub-pc-bin grub-pc grub2-common grub-gfxpayload-lists libefivar0 mokutil secureboot-db shim shim-signed &> /dev/null
-# 
-#     mkdir -p $WORKDIR/ISOTMP/dists
-#     cd $WORKDIR/ISOTMP/
-#     dpkg-scanpackages -m pool /dev/null | gzip -9c > dists/Packages.gz
-# 
+    output "Downloading packages for CD" "82"
+    
+    # Check Architecture
+    ARCH=`archdetect | awk -F "/" '{print $1}'`
+    mkdir -p $WORKDIR/ISOTMP/pool
+    cd $WORKDIR/ISOTMP/pool
+    
+    apt-get download b43-fwcutter bcmwl-kernel-source efibootmgr grub-common grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed grub-efi-ia32 grub-efi-ia32-bin grub-pc-bin grub-pc grub2-common grub-gfxpayload-lists libefivar0 mokutil secureboot-db shim shim-signed &> /dev/null
+
+    mkdir -p $WORKDIR/ISOTMP/dists
+    cd $WORKDIR/ISOTMP/
+    dpkg-scanpackages -m pool /dev/null | gzip -9c > dists/Packages.gz
+
 
 
     #################
