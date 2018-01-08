@@ -349,7 +349,8 @@ cdfs (){
     # output14
     output "Copying /var /home and /etc to temp folder. This will take a while."  "45"
     rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a /var/. $WORKDIR/dummysys/var/.
-    rsync --exclude-from="${EXCLUDESFILE}" -a /etc/. $WORKDIR/dummysys/etc/.
+    #rsync --exclude-from="${EXCLUDESFILE}" -a /etc/. $WORKDIR/dummysys/etc/.  #using excludes here is dangerous. most files here are needed
+    rsync -a /etc/. $WORKDIR/dummysys/etc/.
 
     
     
