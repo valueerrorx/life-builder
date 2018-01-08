@@ -408,7 +408,7 @@ cdfs (){
     if [ ! -L $WORKDIR/dummysys/etc/resolv.conf ]; then
         rm -f $WORKDIR/dummysys/etc/resolv.conf
     fi
-    find $WORKDIR/dummysys/var/log/ $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
+    find $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
     rm -rf $WORKDIR/dummysys/var/tmp/*
     
     touch $WORKDIR/dummysys/etc/cups/printers.conf  #provide empty files
@@ -423,6 +423,14 @@ cdfs (){
     
     
     
+    #create empty logfiles
+    find $WORKDIR/dummysys/var/log -regex '.*?[0-9].*?' -exec rm -v {} \;
+    find $WORKDIR/dummysys/var/log -type f | while read file
+    do
+            cat /dev/null | tee $file
+    done
+    
+    
     
     #Setting  auto login for sddm (makes user student autologin caus student is written into sddm.conf)
     cp -a ${SCRIPTDIR}/conf/sddm.conf $WORKDIR/dummysys/etc/
@@ -431,11 +439,6 @@ cdfs (){
     
 
     
-    #create empty logfiles
-    for i in dpkg.log lastlog mail.log syslog auth.log daemon.log faillog lpr.log mail.warn user.log boot debug mail.err messages wtmp bootstrap.log dmesg kern.log mail.info
-    do
-        touch $WORKDIR/dummysys/var/log/${i}
-    done
 
     
     #################
