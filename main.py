@@ -11,8 +11,9 @@ from conf.config import *
 
 USER = check_output("logname", shell=True).rstrip().decode('UTF-8') #python3 adds a b'' to any byte objects need to decode
 USER_HOME_DIR = os.path.join("/home", USER)   
-WORK_DIRECTORY = os.path.join(USER_HOME_DIR, ".life/applications/life-builder")
-WORK_DIRECTORY_USBCREATOR = os.path.join(USER_HOME_DIR, ".life/applications/life-usbcreator")
+
+WORK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+WORK_DIRECTORY_USBCREATOR = os.path.join(WORK_DIRECTORY, "usbcreator")
 
 
 class  BuildWorker(QtCore.QObject):
@@ -127,6 +128,7 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.setWindowIcon(QIcon(winicon))
         self.ui.mkiso.clicked.connect(self.onISO)        # setup Slots
         self.ui.burniso.clicked.connect(self.onBurnISO) 
+        self.ui.testiso.clicked.connect(self.onTestISO) 
         self.ui.exit.clicked.connect(self.onAbbrechen)   
     
         #one worker to start the life iso creator 
@@ -173,6 +175,44 @@ class MeinDialog(QtWidgets.QDialog):
         os.system(command) 
         self.ui.close()
 
+    def onTestISO(self):  
+        if self.isolocation == "":
+            testisolocation = self.selectFile()
+        else: 
+            testisolocation = self.isolocation
+        
+        command = "nohup bash -c 'kvm -cdrom %s -boot d -m 512'  " % (testisolocation)
+        os.system(command) 
+        
+    
+    
+    def selectFile(self):
+        
+        self.lines = []
+        
+        filedialog = QtWidgets.QFileDialog()
+        filedialog.setDirectory(USER_HOME_DIR)  # set default directory
+        #filedialog.selectNameFilter("Text Files (*.txt)")
+        
+        file_path = filedialog.getOpenFileName(self,"Bitte wählen sie eine Datei", "","ISO Images (*.iso)")  # parent, caption, directory, filter
+        file_path = file_path[0]
+       
+        if os.path.isfile(file_path):
+            filename = file_path.rsplit('/', 1)
+            self.isolocation = file_path
+        
+        return self.isolocation
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     def worker1finished(self):
         self.extraThread1.quit()

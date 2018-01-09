@@ -335,9 +335,11 @@ cdfs (){
      
     #Installing isolinux and ubiquity (installer)
     # output12
-    output "Making sure isolinux is installed"  "38"
+    output "Making sure isolinux and other packages are installed"  "38"
     apt-get -y -q install isolinux syslinux-utils &> /dev/null
     apt-get -y -q install ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
+    apt-get -y -q install qemu-kvm
+    
     
     sleep 1
     
@@ -649,13 +651,13 @@ FOO
     #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
     ##########################
     
-     # since this is backup mode, prevent user-setup-apply from running during install
-    if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
-        mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
-    fi
-    echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
-    chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
-
+     # since this is backup mode, prevent user-setup-apply from running during install - this will install no user at all !!!!!
+#     if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
+#         mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
+#     fi
+#     echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
+#     chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
+#     
 
     
     
@@ -738,7 +740,7 @@ FOO
     
     
     ##############
-    #  Make the fracking squashfs NOW
+    #  Make the fracking squashfs NOW     # squashfsopts uses -comp xz for highest compression - excluding bootfiles from compression
     ###############################
     
     mksquashfs $REALFOLDERS $WORKDIR/ISOTMP/casper/filesystem.squashfs -no-progress -info $SQUASHFSOPTS -e /boot/efi/EFI /boot/grub $BASEWORKDIR $EXCLUDES
@@ -897,6 +899,12 @@ cdfs $@
 iso $@
   
 output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "100"      #the trigger word ISOLOCATION will be used in the pythonscript to display and store the iso location
+
+
+## test this image with 
+#   kvm -cdrom life-dist1.iso -boot d -m 1024
+#####
+
 
 
 
