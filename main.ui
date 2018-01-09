@@ -623,7 +623,7 @@
           <item>
            <widget class="QLineEdit" name="liveuser">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="minimumSize">
              <size>
@@ -847,6 +847,22 @@
     <hint type="destinationlabel">
      <x>276</x>
      <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>copydefaultuser</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>liveuser</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>276</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>330</x>
+     <y>328</y>
     </hint>
    </hints>
   </connection>

@@ -534,10 +534,16 @@ cdfs (){
             rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
         done
         
-            # output18
-            output "Making sure adduser and autologin functions of casper are set properly"  "74"
-            chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
+        # output18
+        output "Making sure adduser and autologin functions of casper are set properly"  "74"
+        chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
 
+        # make sure user-setup-apply is present in case backup mode (also inclued user home config ) was last used
+
+        if [ -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
+            cp /usr/lib/ubiquity/user-setup/user-setup-apply.orig /usr/lib/ubiquity/user-setup/user-setup-apply
+        fi
+            
 
     fi
     
