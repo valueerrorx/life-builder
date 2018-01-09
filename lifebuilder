@@ -19,12 +19,27 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 EXCLUDESFILE="${SCRIPTDIR}/excludes"
 
 
+
+
+#################
+# OUTPUT # the output is formatted in a special way in order to be parsed by the python script - do not change !! § is the split character
+##########################
+output() {
+    echo "OUTPUT: $1 § $2"
+}
+
 #################
 #  load the system config file (written buy main.py)
 ##########################
 source ${SCRIPTDIR}/conf/config.py
 
 
+
+if [[( $BASEWORKDIR = "" ) || ( $LIVEUSER = "" ) || ( $LIVEHOSTNAME = "" ) || ( $CUSTOMISO = "" ) || ( $SKELUSER = "" ) || ( $LIVECDLABEL = "" )]]; then
+
+    output "At least one important setting is missin!" "0"
+    exit 0
+fi
 
 
 #################
@@ -50,12 +65,6 @@ if [ "$EXCLUDES" != "" ]; then
 fi
 
 
-#################
-# OUTPUT # the output is formatted in a special way in order to be parsed by the python script - do not change !! § is the split character
-##########################
-output() {
-    echo "OUTPUT: $1 § $2"
-}
 
 
 #-----------------------------#
@@ -374,7 +383,7 @@ cdfs (){
     
     
     # output14
-    output "Copying /var /home and /etc to temp folder. This will take a while."  "45"
+    output "Copying /var and /etc to temp folder. This will take a while."  "45"
     rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a /var/. $WORKDIR/dummysys/var/.
     #rsync --exclude-from="${EXCLUDESFILE}" -a /etc/. $WORKDIR/dummysys/etc/.  #using excludes here is dangerous. most files here are needed
     rsync -a /etc/. $WORKDIR/dummysys/etc/.
@@ -470,6 +479,22 @@ cdfs (){
     if [[( $COPYDEFAULTUSER = "True"  )]]
     then
         copyhome
+        # remove exec rights from add user scripts so no new live system user is added
+        output "Making sure adduser and autologin functions of casper are set properly"  "74"
+        chmod 644 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin
+        
+        #################
+        #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
+        ##########################
+        
+        # since this is sort of backup mode, prevent user-setup-apply from running during install - this will install no user at all (installed system should have the same user as life system 
+        if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
+            mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
+        fi
+        echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
+        chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
+        
+            
     else
        
         #################
@@ -508,30 +533,15 @@ cdfs (){
             echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
             rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
         done
+        
+            # output18
+            output "Making sure adduser and autologin functions of casper are set properly"  "74"
+            chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
+
 
     fi
     
 
-    
-    #################
-    #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
-    ##########################
-    
-     # since this is backup mode, prevent user-setup-apply from running during install - this will install no user at all !!!!!
-#     if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
-#         mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
-#     fi
-#     echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
-#     chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
-#     
-
-    
-   
-
-    # output18
-    output "Making sure adduser and autologin functions of casper are set properly"  "74"
-    chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
-   
     
     
     #################
