@@ -2,7 +2,7 @@ default vesamenu.c32
 prompt 0
 timeout 20
 
-menu title life 16.04 neon
+menu title __LIVECDLABEL__
 menu background splash.png
 
 label persistent

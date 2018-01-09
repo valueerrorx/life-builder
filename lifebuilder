@@ -158,7 +158,8 @@ copyhome (){
         cleanhome $DUMMYSYSHOME
         
         # change ownership to user 999 (the live system user)  OR do not restructure /etc/passwd and /etc/groups ???
-        chown -R 999:999 ${DUMMYSYSHOME}   > /dev/null 2>&1   
+        #chown -R 999:999 ${DUMMYSYSHOME}   > /dev/null 2>&1   
+        chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1   
     fi
 
 }
@@ -319,13 +320,24 @@ cdfs (){
     #  Create the FILESYSTEM tree in $WORKDIR/ISOTMP
     ##########################
      
-    #Installing isolinux if needed
+    #Installing isolinux and ubiquity (installer)
     # output12
     output "Making sure isolinux is installed"  "38"
     apt-get -y -q install isolinux syslinux-utils &> /dev/null
-
+    apt-get -y -q install ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
     
     sleep 1
+    
+    # prevent the installer from changing the apt sources.list
+    sed -i '/rm/d' /usr/share/ubiquity/apt-setup
+    sed -i '/boot/d' /usr/share/ubiquity/apt-setup
+    sed -i '/cdrom:/d' /usr/share/ubiquity/apt-setup
+    echo "mkdir -p /target/boot/efi" >> /usr/share/ubiquity/apt-setup
+    echo "rm -f /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
+    echo "touch /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
+    echo 'echo "fs0:\EFI\ubuntu\grubx64.efi" >> /target/boot/efi/startup.nsh' >> /usr/share/ubiquity/apt-setup
+    
+    
 
     rm -rf $WORKDIR/dummysys/
     rm -rf $WORKDIR/ISOTMP/
@@ -381,6 +393,10 @@ cdfs (){
     cp ${SCRIPTDIR}/conf/grub.conf $WORKDIR/dummysys/etc/default/grub
     sed -i "s/LIVECDLABEL/$LIVECDLABEL/g" $WORKDIR/dummysys/etc/default/grub
 
+    
+    
+    
+    
     # output16
     output "Removing unnecessary files in $WORKDIR/dummysys"  "66"
     
@@ -446,42 +462,47 @@ cdfs (){
     #  mess with users and groups for the live system
     ##########################
     
-#     if [[( $COPYDEFAULTUSER = "False"  )]]
-#     then
-#         #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied
-#     
-#     fi
+    if [[( $COPYDEFAULTUSER = "False"  )]]
+    then
+        #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied
+        
+        # output17
+        output "Cleaning up passwd, group, files for the live system" "70"
+        
+        #re-build passwd file without those users above UID 999 and below 9999
+        grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
+        grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+        grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+        grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+
+        #re-build group file without those groups that belong to the users
+        grep '^[^:]*:[^:]*:[0-9]:' /etc/group > $WORKDIR/dummysys/etc/group
+        grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+        grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+        grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+
+        # get the usernames of the current users on the system and write them into tmpusers
+        grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
+        grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
+        grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
+        cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
+        rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
+
+        #get rid of all tmpusers entries in the group file
+        cat $WORKDIR/tmpusers | while read LINE ;do
+            echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
+            echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
+            echo $LINE | xargs -i sed -e 's/:{}$/:/g' $WORKDIR/dummysys/etc/group.new2 > $WORKDIR/dummysys/etc/group.new3
+            echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
+            rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
+        done
     
-    # output17
-    output "Cleaning up passwd, group, files for the live system" "70"
     
-    #re-build passwd file without those users above UID 999 and below 9999
-    grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
-    grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-    grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-    grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+    
+    
+    fi
+    
 
-    #re-build group file without those groups that belong to the users
-    grep '^[^:]*:[^:]*:[0-9]:' /etc/group > $WORKDIR/dummysys/etc/group
-    grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-    grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-    grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-
-    # get the usernames of the current users on the system and write them into tmpusers
-    grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
-    grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
-    grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
-    cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
-    rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
-
-    #get rid of all tmpusers entries in the group file
-    cat $WORKDIR/tmpusers | while read LINE ;do
-        echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
-        echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
-        echo $LINE | xargs -i sed -e 's/:{}$/:/g' $WORKDIR/dummysys/etc/group.new2 > $WORKDIR/dummysys/etc/group.new3
-        echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
-        rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
-    done
 
    
 
@@ -496,13 +517,6 @@ cdfs (){
     ##########################
     #copy some of the necessary stuff for the livecd
     cp ${SCRIPTDIR}/preseed/* $WORKDIR/ISOTMP/preseed/
-    #BOOT Type is isolinux
-    # output19
-    output "Copying memtest86+ for the live system" "78"
-    cp /boot/memtest86+.bin $WORKDIR/ISOTMP/install/memtest
-
-    
-     
     
     
     #EFI BOOT
@@ -554,6 +568,8 @@ cdfs (){
     cp $LIBCOM $WORKDIR/ISOTMP/isolinux/
     MENU=`find /usr -print0 | grep -FzZ "bios/menu.c32"`
     cp $MENU $WORKDIR/ISOTMP/isolinux/
+    
+    
     # setup isolinux for the livecd
     VERSION=`lsb_release -r | awk '{print $2}' | awk -F "." '{print $1}'`
     sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg.vesamenu > $WORKDIR/ISOTMP/isolinux/isolinux.cfg
@@ -614,6 +630,24 @@ FOO
     
     cp /etc/casper.conf $WORKDIR/dummysys/etc/
 
+    
+    
+    #################
+    #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
+    ##########################
+    
+     # since this is backup mode, prevent user-setup-apply from running during install
+    if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
+        mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
+    fi
+    echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
+    chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
+
+
+    
+    
+    
+    
 
     #################
     #  create a new initial ramdisk including the casper scripts and kernel
@@ -756,20 +790,6 @@ iso (){
         CREATEISO="`which genisoimage`"
     fi
 
-    # check to see if the cd filesystem exists
-
-    if [ ! -f "$WORKDIR/ISOTMP/casper/filesystem.squashfs" ]; then
-        # output100
-        output "ERROR The filesystem.squashfs filesystem is missing.  There was a problem creating the compressed filesystem."
-        exit 1
-    fi
-
-    SQUASHFSSIZE=`ls -s $WORKDIR/ISOTMP/casper/filesystem.squashfs | awk -F " " '{print $1}'`
-    if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
-        # output100
-        output "ERROR The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
-        exit 1
-    fi
 
     ##############
     # Make ISO compatible with Ubuntu Startup Disk Creator
