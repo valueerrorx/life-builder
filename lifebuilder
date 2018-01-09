@@ -376,10 +376,6 @@ cdfs (){
     mkdir -p $WORKDIR/ISOTMP/{casper,preseed,isolinux,install,.disk} 
     mkdir -p $WORKDIR/dummysys/{dev,etc,cdrom,proc,tmp,sys,mnt,media/cdrom,var,run,home}
     
-    
-   
-      
-      
     rsync -a /dev/urandom $WORKDIR/dummysys/dev/    # why? what do we need urandom for - isn't it created on boot time ?
     chmod ug+rwx,o+rwt $WORKDIR/dummysys/tmp        # needs to be accessable by everybody
     
@@ -417,28 +413,22 @@ cdfs (){
     # output16
     output "Removing unnecessary files in $WORKDIR/dummysys"  "66"
     
-    rm -rf $WORKDIR/dummysys/etc/apt/sources.list.d/*.save &> /dev/null
-    rm -rf $WORKDIR/dummysys/etc/apt/apt.conf.d/* &> /dev/null
-    rm -rf $WORKDIR/dummysys/etc/apt/preferences.d/* &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/apt/lists/* -vf &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/apt/lists/lock &> /dev/null
     rm -rf $WORKDIR/dummysys/var/cache/apt/archives/* &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/ureadahead/pack &> /dev/null
-    rm -rf $WORKDIR/dummysys/var/cache/gdm/*
-    rm -f $WORKDIR/dummysys/etc/udev/rules.d/70-persistent*
-    rm -f $WORKDIR/dummysys/etc/cups/ssl/{server.crt,server.key}
-    rm -f $WORKDIR/dummysys/etc/ssh/*key*
-    rm -f $WORKDIR/dummysys/var/lib/dbus/machine-id
+    rm -rf $WORKDIR/dummysys/var/cache/gdm/* &> /dev/null
+    rm -f $WORKDIR/dummysys/etc/cups/ssl/server.crt &> /dev/null
+    rm -f $WORKDIR/dummysys/etc/cups/ssl/server.key &> /dev/null
+    rm -f $WORKDIR/dummysys/etc/ssh/*key* &> /dev/null
+    rm -f $WORKDIR/dummysys/var/lib/dbus/machine-id &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/tmp/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/backups/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/lock/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/crash/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/lib/ubiquity/* &> /dev/null
     
-    find $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
-    rm -rf $WORKDIR/dummysys/var/tmp/*
-    
-    if [ ! -L $WORKDIR/dummysys/etc/resolv.conf ]; then
-        rm -f $WORKDIR/dummysys/etc/resolv.conf
-    fi
-    
-    
-    
+
     
     #create empty logfiles
     find $WORKDIR/dummysys/var/log -regex '.*?[0-9].*?' -exec rm -v {} \;
