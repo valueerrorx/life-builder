@@ -144,6 +144,7 @@ copyhome (){
     # but this will slow down the boot process on "persistent" live systems enormously because skel is copied to casper-rw on boot time 
     HOMEOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
     DUMMYSYSHOME="$WORKDIR/dummysys/home"
+    DUMMYSYSHOMEUSERDIR="$WORKDIR/dummysys/home/$SKELUSER"
     rm -rf ${DUMMYSYSHOME}/*
     
     output "Copying $HOMEOLDER" "52"
@@ -155,17 +156,14 @@ copyhome (){
         
         rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/.
         
-        cleanhome $DUMMYSYSHOME
+        cleanhome $DUMMYSYSHOMEUSERDIR
         
         # change ownership to user 999 (the live system user)  OR do not restructure /etc/passwd and /etc/groups ???
-        chown -R 999:999 ${DUMMYSYSHOME}   > /dev/null 2>&1   
+        chown -R 999:999 ${DUMMYSYSHOMEUSERDIR}   > /dev/null 2>&1   
         #chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1   
     fi
 
 }
-
-
-
 
 
 
@@ -260,7 +258,7 @@ cleansystem (){
      # output7  
     output  "removing cache files" "20"
     sudo rm /var/crash/* > /dev/null 2>&1
-    
+    sudo rm -rf /etc/skel/*   > /dev/null 2>&1
     
     # remove all old kernel headers and tools
     # output9
@@ -314,6 +312,21 @@ cdfs (){
     cleansystem
     
     
+    ##############
+    # check if we should copy the default configuration into the squashfs SKEL folder for all new users
+    # this only makes sense if the default user config is also used for the live user (COPYDEFAULTUSER)
+    # ATTENTION we could just copy the userhome directory to skel and it would be used as default for the live session user
+    # but this will slow down the boot process on "persistent" live systems enormously because skel is copied to casper-rw on boot time 
+    ###############################
+    if [[( $COPYDEFAULTUSER = "True"  )]]
+    then
+        if [[( $COPYSKEL = "True"  )]]   
+        then
+            copyskel
+        fi
+    fi
+        
+        
     
     
     #################
@@ -874,21 +887,7 @@ iso (){
 }
 
 
-##############
-# check if we should copy the default configuration into the squashfs SKEL folder for all new users
-# this only makes sense if the default user config is also used for the live user (COPYDEFAULTUSER)
-# ATTENTION we could just copy the userhome directory to skel and it would be used as default for the live session user
-# but this will slow down the boot process on "persistent" live systems enormously because skel is copied to casper-rw on boot time 
-###############################
-if [[( $COPYDEFAULTUSER = "True"  )]]
-then
-    if [[( $COPYSKEL = "True"  )]]   
-    then
-        copyskel
-    else
-        sudo rm -rf /etc/skel   > /dev/null 2>&1
-    fi
-fi
+
 
 
 
