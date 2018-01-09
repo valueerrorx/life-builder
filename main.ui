@@ -797,6 +797,25 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>mkiso</tabstop>
+  <tabstop>burniso</tabstop>
+  <tabstop>livecdlabel</tabstop>
+  <tabstop>livehostname</tabstop>
+  <tabstop>skeluser</tabstop>
+  <tabstop>copydefaultuser</tabstop>
+  <tabstop>copyskel</tabstop>
+  <tabstop>exit</tabstop>
+  <tabstop>baseworkdir</tabstop>
+  <tabstop>customiso</tabstop>
+  <tabstop>livecdurl</tabstop>
+  <tabstop>excludes</tabstop>
+  <tabstop>liveuser</tabstop>
+  <tabstop>squashfsopts</tabstop>
+  <tabstop>restricted</tabstop>
+  <tabstop>testiso</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
