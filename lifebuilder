@@ -336,10 +336,10 @@ cdfs (){
     #Installing isolinux and ubiquity (installer)
     # output12
     output "Making sure isolinux and other packages are installed"  "38"
-    apt-get -y -q install isolinux syslinux-utils &> /dev/null
+    apt-get -y -q install isolinux syslinux-utils syslinux syslinux-common &> /dev/null
     apt-get -y -q install ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
     apt-get -y -q install qemu-kvm
-    
+
     
     sleep 1
     
@@ -589,7 +589,7 @@ cdfs (){
     VERSION=`lsb_release -r | awk '{print $2}' | awk -F "." '{print $1}'`
     sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg.vesamenu > $WORKDIR/ISOTMP/isolinux/isolinux.cfg
     cp ${SCRIPTDIR}/isolinux/splash.png $WORKDIR/ISOTMP/isolinux/splash.png
-
+    cp ${SCRIPTDIR}/isolinux/syslinux.cfg $WORKDIR/ISOTMP/isolinux/syslinux.cfg    #some usbcreators use isolinux path and file and some syslinux ?? !!
     
     #################
     #  add more stuff like .diskdefines .manifest etc.
