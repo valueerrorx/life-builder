@@ -158,9 +158,9 @@ copyhome (){
         
         cleanhome $DUMMYSYSHOMEUSERDIR
         
-        # change ownership to user 999 (the live system user)  OR do not restructure /etc/passwd and /etc/groups ???
-        chown -R 999:999 ${DUMMYSYSHOMEUSERDIR}   > /dev/null 2>&1   
-        #chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1   
+        # change ownership 
+        chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1  
+     
     fi
 
 }
@@ -382,17 +382,6 @@ cdfs (){
     
     
     
-        
-    #################
-    #  Copy the whole home folder to dummysys in order to preserve all configurations (if checkbox in UI is checked)
-    ##########################
-    
-    if [[( $COPYDEFAULTUSER = "True"  )]]
-    then
-        copyhome
-    fi
-       
-    
     
     #Adding packages location to sources
     ARCH=`archdetect | awk -F "/" '{print $1}'`
@@ -464,22 +453,30 @@ cdfs (){
     
     
     
-    #Setting  auto login for sddm (makes user student autologin caus student is written into sddm.conf)
+    
+    #Setting  auto login for sddm (makes user $LIVEUSER autologin )  
     cp -a ${SCRIPTDIR}/conf/sddm.conf $WORKDIR/dummysys/etc/
+    sed -i "s/LIVEUSER/$LIVEUSER/g" $WORKDIR/dummysys/etc/sddm.conf
     chmod +x $WORKDIR/dummysys/etc/sddm.conf
     chmod 755 $WORKDIR/dummysys/etc/sddm.conf
     
 
     
 
-    
-    #################
-    #  mess with users and groups for the live system
+        #################
+    #  Copy the whole home folder to dummysys in order to preserve all configurations (if checkbox in UI is checked)
     ##########################
     
-#     if [[( $COPYDEFAULTUSER = "False"  )]]
-#     then
-        #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied
+    if [[( $COPYDEFAULTUSER = "True"  )]]
+    then
+        copyhome
+    else
+       
+        #################
+        #  mess with users and groups for the live system
+        ##########################
+    
+        #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied - the live user gets the uuid 999 - the first user on an installed system is 1000
         
         # output17
         output "Cleaning up passwd, group, files for the live system" "70"
@@ -511,14 +508,24 @@ cdfs (){
             echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
             rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
         done
+
+    fi
     
+
     
+    #################
+    #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
+    ##########################
     
-#     
+     # since this is backup mode, prevent user-setup-apply from running during install - this will install no user at all !!!!!
+#     if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
+#         mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
 #     fi
+#     echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
+#     chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
 #     
 
-
+    
    
 
     # output18
@@ -646,20 +653,7 @@ FOO
     cp /etc/casper.conf $WORKDIR/dummysys/etc/
 
     
-    
-    #################
-    #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
-    ##########################
-    
-     # since this is backup mode, prevent user-setup-apply from running during install - this will install no user at all !!!!!
-#     if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
-#         mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
-#     fi
-#     echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
-#     chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
-#     
 
-    
     
     
     
