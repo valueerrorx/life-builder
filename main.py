@@ -181,7 +181,7 @@ class MeinDialog(QtWidgets.QDialog):
         else: 
             testisolocation = self.isolocation
         
-        command = "nohup bash -c 'kvm -cdrom %s -boot d -m 512'  " % (testisolocation)
+        command = "nohup bash -c 'kvm -cdrom %s -boot d -m 2048'  " % (testisolocation)
         os.system(command) 
         
     

@@ -107,7 +107,7 @@
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">background-color:rgba(100,200,100,0.5);</string>
                </property>
                <property name="text">
                 <string>ISO Datei erstellen</string>
@@ -722,7 +722,7 @@
              <item>
               <widget class="QPushButton" name="testiso">
                <property name="toolTip">
-                <string/>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kvm bootet nur im &amp;quot;debug mode&amp;quot; in eine login shell.&lt;/p&gt;&lt;p&gt;Loggen sie sich ein und starten sie den Desktop mit dem Befehl &amp;quot;startx&amp;quot; oder&lt;br/&gt;testen sie das ISO Abbild in Virtualbox bzw. kopieren sie es auf einen USB Stick.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>ISO in KVM(Qemu) testen</string>

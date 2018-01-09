@@ -169,6 +169,10 @@ copyhome (){
         
         # change ownership 
         chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1  
+    else
+        # output 100    
+        output "ERROR $SKELUSER or home folder not found - exiting."
+        exit 1
      
     fi
 
@@ -469,8 +473,8 @@ cdfs (){
             #################
             #  copy default user and make sure the live system does not create a new user - nor ubiquity installer
             ##########################
-            
             copyhome
+            
             # remove exec rights from add user scripts so no new live system user is added
             output "Making sure adduser and autologin functions of casper are deactivated"  "74"
             chmod 644 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin
