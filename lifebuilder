@@ -158,8 +158,8 @@ copyhome (){
         cleanhome $DUMMYSYSHOME
         
         # change ownership to user 999 (the live system user)  OR do not restructure /etc/passwd and /etc/groups ???
-        #chown -R 999:999 ${DUMMYSYSHOME}   > /dev/null 2>&1   
-        chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1   
+        chown -R 999:999 ${DUMMYSYSHOME}   > /dev/null 2>&1   
+        #chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1   
     fi
 
 }
@@ -462,8 +462,8 @@ cdfs (){
     #  mess with users and groups for the live system
     ##########################
     
-    if [[( $COPYDEFAULTUSER = "False"  )]]
-    then
+#     if [[( $COPYDEFAULTUSER = "False"  )]]
+#     then
         #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied
         
         # output17
@@ -499,9 +499,9 @@ cdfs (){
     
     
     
-    
-    fi
-    
+#     
+#     fi
+#     
 
 
    
