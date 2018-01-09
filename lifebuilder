@@ -516,7 +516,9 @@ cdfs (){
         
             # output17
             output "Cleaning up passwd, group, files for the live system" "70"
-            
+            # if the mode is dist then renumber the uid's for any user with a uid greater than 1000
+            # and make the passwdrestore file so the uid's are restored before the script finishes
+            # if this is not done, the livecd user will not be created properly
             #re-build passwd file without those users above UID 999 and below 9999
             grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
             grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
