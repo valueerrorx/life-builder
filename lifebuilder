@@ -421,35 +421,18 @@ cdfs (){
     rm -rf $WORKDIR/dummysys/var/cache/apt/archives/* &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/ureadahead/pack &> /dev/null
     rm -rf $WORKDIR/dummysys/var/cache/gdm/*
-    rm -rf $WORKDIR/dummysys/var/lib/sudo/*
-    rm -rf $WORKDIR/dummysys/var/lib/AccountsService/users/*
-    rm -rf $WORKDIR/dummysys/var/lib/kdm/*
-    rm -rf $WORKDIR/dummysys/var/run/console/*
-    rm -f $WORKDIR/dummysys/etc/X11/xorg.conf* &> /dev/null
-    rm -f $WORKDIR/dummysys/etc/{hosts,hostname,mtab*,fstab}
     rm -f $WORKDIR/dummysys/etc/udev/rules.d/70-persistent*
     rm -f $WORKDIR/dummysys/etc/cups/ssl/{server.crt,server.key}
     rm -f $WORKDIR/dummysys/etc/ssh/*key*
     rm -f $WORKDIR/dummysys/var/lib/dbus/machine-id
-    rm -f $WORKDIR/dummysys/etc/{group,passwd,shadow,shadow-,gshadow,gshadow-}
-    rm -f $WORKDIR/dummysys/etc/gdm/gdm.conf-custom
-    rm -f $WORKDIR/dummysys/etc/cups/printers.conf  #comment out if you want to provide a default network printer
-    #rm -rf $WORKDIR/dummysys/etc/NetworkManager/system-connections/*  # i want to deliver a manual connection example
-    if [ ! -L $WORKDIR/dummysys/etc/resolv.conf ]; then
-        rm -f $WORKDIR/dummysys/etc/resolv.conf
-    fi
+    
     find $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
     rm -rf $WORKDIR/dummysys/var/tmp/*
     
-    touch $WORKDIR/dummysys/etc/cups/printers.conf  #provide empty files
-    if [ ! -d /run ]; then
-        find $WORKDIR/dummysys/var/run/ $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
-    else
-        find $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
-        unlink $WORKDIR/dummysys/var/run
-        cd $WORKDIR/dummysys/var
-        ln -sf ../run run
+    if [ ! -L $WORKDIR/dummysys/etc/resolv.conf ]; then
+        rm -f $WORKDIR/dummysys/etc/resolv.conf
     fi
+    
     
     
     
@@ -462,7 +445,6 @@ cdfs (){
     
     
     
-    
     #Setting  auto login for sddm (makes user $LIVEUSER autologin )  
     cp -a ${SCRIPTDIR}/conf/sddm.conf $WORKDIR/dummysys/etc/
     sed -i "s/LIVEUSER/$LIVEUSER/g" $WORKDIR/dummysys/etc/sddm.conf
@@ -471,83 +453,133 @@ cdfs (){
     
 
     
+    
+  
+    
+    
+    
+    
 
-        #################
+    #################
     #  Copy the whole home folder to dummysys in order to preserve all configurations (if checkbox in UI is checked)
     ##########################
     
     if [[( $COPYDEFAULTUSER = "True"  )]]
     then
-        copyhome
-        # remove exec rights from add user scripts so no new live system user is added
-        output "Making sure adduser and autologin functions of casper are set properly"  "74"
-        chmod 644 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin
-        
-        #################
-        #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
-        ##########################
-        
-        # since this is sort of backup mode, prevent user-setup-apply from running during install - this will install no user at all (installed system should have the same user as life system 
-        if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
-            mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
-        fi
-        echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
-        chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
-        
+            #################
+            #  copy default user and make sure the live system does not create a new user - nor ubiquity installer
+            ##########################
+            
+            copyhome
+            # remove exec rights from add user scripts so no new live system user is added
+            output "Making sure adduser and autologin functions of casper are deactivated"  "74"
+            chmod 644 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin
+            
+            #################
+            #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
+            ##########################
+            
+            # since this is sort of backup mode, prevent user-setup-apply from running during install - this will install no user at all (installed system should have the same user as life system 
+            if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
+                mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
+            fi
+            echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
+            chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
+            
             
     else
        
-        #################
-        #  mess with users and groups for the live system
-        ##########################
-    
-        #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied - the live user gets the uuid 999 - the first user on an installed system is 1000
-        
-        # output17
-        output "Cleaning up passwd, group, files for the live system" "70"
-        
-        #re-build passwd file without those users above UID 999 and below 9999
-        grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
-        grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-        grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-        grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-
-        #re-build group file without those groups that belong to the users
-        grep '^[^:]*:[^:]*:[0-9]:' /etc/group > $WORKDIR/dummysys/etc/group
-        grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-        grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-        grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-
-        # get the usernames of the current users on the system and write them into tmpusers
-        grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
-        grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
-        grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
-        cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
-        rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
-
-        #get rid of all tmpusers entries in the group file
-        cat $WORKDIR/tmpusers | while read LINE ;do
-            echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
-            echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
-            echo $LINE | xargs -i sed -e 's/:{}$/:/g' $WORKDIR/dummysys/etc/group.new2 > $WORKDIR/dummysys/etc/group.new3
-            echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
-            rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
-        done
-        
-        # output18
-        output "Making sure adduser and autologin functions of casper are set properly"  "74"
-        chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
-
-        # make sure user-setup-apply is present in case backup mode (also inclued user home config ) was last used
-
-        if [ -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
-            cp /usr/lib/ubiquity/user-setup/user-setup-apply.orig /usr/lib/ubiquity/user-setup/user-setup-apply
-        fi
+            #################
+            #  remove current users and groups for the live system
+            ##########################
+            #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied - the live user gets the uuid 999 - the first user on an installed system is 1000
             
+            rm -rf $WORKDIR/dummysys/var/lib/sudo/*
+            rm -rf $WORKDIR/dummysys/var/lib/AccountsService/users/*
+            rm -rf $WORKDIR/dummysys/var/lib/kdm/*
+            rm -rf $WORKDIR/dummysys/var/run/console/*
+            rm -f $WORKDIR/dummysys/etc/X11/xorg.conf* &> /dev/null
+            rm -f $WORKDIR/dummysys/etc/{hosts,hostname,mtab*,fstab}
+            rm -f $WORKDIR/dummysys/etc/{group,passwd,shadow,shadow-,gshadow,gshadow-}
+            rm -f $WORKDIR/dummysys/etc/gdm/gdm.conf-custom
+            rm -f $WORKDIR/dummysys/etc/cups/printers.conf  #comment out if you want to provide a default network printer
+            rm -rf $WORKDIR/dummysys/etc/NetworkManager/system-connections/*  # i want to deliver a manual connection example
+            touch $WORKDIR/dummysys/etc/cups/printers.conf  #provide empty files
+            if [ ! -d /run ]; then
+                find $WORKDIR/dummysys/var/run/ $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
+            else
+                find $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
+                unlink $WORKDIR/dummysys/var/run
+                cd $WORKDIR/dummysys/var
+                ln -sf ../run run
+            fi
+        
+            # output17
+            output "Cleaning up passwd, group, files for the live system" "70"
+            
+            #re-build passwd file without those users above UID 999 and below 9999
+            grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
+            grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+            grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+            grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+
+            #re-build group file without those groups that belong to the users
+            grep '^[^:]*:[^:]*:[0-9]:' /etc/group > $WORKDIR/dummysys/etc/group
+            grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+            grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+            grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+
+            # get the usernames of the current users on the system and write them into tmpusers
+            grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
+            grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
+            grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
+            cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
+            rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
+
+            #get rid of all tmpusers entries in the group file
+            cat $WORKDIR/tmpusers | while read LINE ;do
+                echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
+                echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
+                echo $LINE | xargs -i sed -e 's/:{}$/:/g' $WORKDIR/dummysys/etc/group.new2 > $WORKDIR/dummysys/etc/group.new3
+                echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
+                rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
+            done
+            
+            # output18
+            output "Making sure adduser and autologin functions of casper are activated"  "74"
+            chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
+
+            # make sure user-setup-apply is present in case backup mode (also inclued user home config ) was last used
+            if [ -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
+                cp /usr/lib/ubiquity/user-setup/user-setup-apply.orig /usr/lib/ubiquity/user-setup/user-setup-apply
+            fi
+                
 
     fi
     
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     #################
@@ -728,8 +760,14 @@ FOO
     done
 
     for d in `ls / | grep -v etc | grep -v run | grep -v tmp | grep -v sys | grep -v var | grep -v dev | grep -v media | grep -v cdrom | grep -v mnt | grep -v lost+found | grep -v proc | grep -v home`; do
-            REALFOLDERS="$REALFOLDERS /$d"
+        REALFOLDERS="$REALFOLDERS /$d"
     done
+    
+#     in case of  $COPYDEFAULTUSER = "True"  we could just use the original HOME folder instead of copying it via copyhome()  - that way we cant change anything in it anymore - does it make a difference ?
+#     for d in `ls / | grep -v etc | grep -v run | grep -v tmp | grep -v sys | grep -v var | grep -v dev | grep -v media | grep -v cdrom | grep -v mnt | grep -v lost+found | grep -v proc`; do
+#         REALFOLDERS="$REALFOLDERS /$d"
+#     done
+    
 
     ##############
     #   Calculate the number of files to include (for the python script progress bar)
