@@ -379,7 +379,7 @@
           <string/>
          </property>
          <property name="text">
-          <string>Original Benutzer Einstellungen übertragen</string>
+          <string>Original Benutzer Einstellungen einbinden</string>
          </property>
          <property name="checked">
           <bool>true</bool>
