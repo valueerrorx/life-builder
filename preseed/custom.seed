@@ -1,7 +1,77 @@
-# Only install the standard system and language packs.
-tasksel	tasksel/first	multiselect
-d-i	pkgsel/language-pack-patterns	string
-# No language support packages.
-d-i	pkgsel/install-language-support	boolean false
-# Enable extras.ubuntu.com.
-d-i     apt-setup/extras        boolean true
+#### Contents of the preconfiguration file (for xenial)
+### Localization
+
+# Preseeding only locale sets language, country and locale.
+d-i debian-installer/locale string de_DE
+
+
+# Keyboard selection.
+# Disable automatic (interactive) keymap detection.
+d-i console-setup/ask_detect boolean false
+d-i keyboard-configuration/xkb-keymap select de
+# To select a variant of the selected layout:
+# d-i keyboard-configuration/xkb-keymap select us(dvorak)
+# d-i keyboard-configuration/toggle select No toggling
+
+
+
+### Network configuration
+# Disable network configuration entirely. This is useful for cdrom
+# installations on non-networked devices where the network questions,
+# warning and long timeouts are a nuisance.
+d-i netcfg/enable boolean false
+
+
+# Set to true if you want to encrypt the first user's home directory.
+d-i user-setup/encrypt-home boolean false
+
+
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string Europe/Vienna
+
+
+d-i passwd/user-fullname string student
+d-i passwd/username string student
+d-i passwd/auto-login boolean true
+
+### Partitioning
+
+
+
+# You can choose one of the three predefined partitioning recipes:
+# - atomic: all files in one partition
+# - home:   separate /home partition
+# - multi:  separate /home, /var, and /tmp partitions
+d-i partman-auto/choose_recipe select atomic
+ubiquity partman-auto/choose_recipe select atomic
+
+
+
+
+# Some versions of the installer can report back on what software you have
+# installed, and what software you use. The default is not to report back,
+# but sending reports helps the project determine what software is most
+# popular and include it on CDs.
+popularity-contest popularity-contest/participate boolean false
+
+# By default, the system's locate database will be updated after the
+# installer has finished installing most packages. This may take a while, so
+# if you don't want it, you can set this to "false" to turn it off.
+d-i pkgsel/updatedb boolean false
+
+
+
+d-i base-installer/install-recommends boolean false
+d-i pkgsel/upgrade select none
+d-i pkgsel/update-policy select none
+popularity-contest popularity-contest/participate boolean false
+
+
+
+
+
+
+
+
