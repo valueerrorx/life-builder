@@ -8,12 +8,17 @@ import shlex
 import time
 import re
 from conf.config import *
+import shutil
+from PIL import Image
 
 USER = check_output("logname", shell=True).rstrip().decode('UTF-8') #python3 adds a b'' to any byte objects need to decode
 USER_HOME_DIR = os.path.join("/home", USER)   
 
 WORK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 WORK_DIRECTORY_USBCREATOR = os.path.join(WORK_DIRECTORY, "usbcreator")
+
+SPLASHDIR1 = os.path.join(WORK_DIRECTORY, "isolinux")
+SPLASHDIR2 = os.path.join(WORK_DIRECTORY, "boot/grub")
 
 
 class  BuildWorker(QtCore.QObject):
@@ -130,6 +135,7 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.burniso.clicked.connect(self.onBurnISO) 
         self.ui.testiso.clicked.connect(self.onTestISO) 
         self.ui.exit.clicked.connect(self.onAbbrechen)   
+        self.ui.splashimage.clicked.connect(self.getSplash)   
     
         #one worker to start the life iso creator 
         self.extraThread = QtCore.QThread()
@@ -186,10 +192,7 @@ class MeinDialog(QtWidgets.QDialog):
         
     
     
-    def selectFile(self):
-        
-        self.lines = []
-        
+    def selectFile(self):       
         filedialog = QtWidgets.QFileDialog()
         filedialog.setDirectory(USER_HOME_DIR)  # set default directory
         #filedialog.selectNameFilter("Text Files (*.txt)")
@@ -203,10 +206,55 @@ class MeinDialog(QtWidgets.QDialog):
         
         return self.isolocation
     
+
+    
+    def getSplash(self):
+        filedialog = QtWidgets.QFileDialog()
+        filedialog.setDirectory(USER_HOME_DIR)
+        file_path = filedialog.getOpenFileName(self,"Bitte wählen sie eine Datei", "","Images (*.png)")
+        file_path = file_path[0]
+        print (file_path)
+        
+        if file_path != "":
+        
+            filename = file_path.rsplit('/', 1)
+            filename = filename[1]
+            size = 640, 480 
+            print (filename)
+            with Image.open(file_path) as img:
+                width, height = img.size
+                
+                img = img.resize((640,480))
+                
+                newpath1 = os.path.join(SPLASHDIR1, "splash.png")
+                newpath2 = os.path.join(SPLASHDIR2, "splash.png")
+                
+                img.save(newpath1, "PNG")
+                img.save(newpath2, "PNG")
+                
+        
+                self.fixFilePermissions(SPLASHDIR1)  # fix filepermission of transferred file
+                self.fixFilePermissions(SPLASHDIR2) 
+                
+                self.ui.splashimage.setIcon(QIcon(newpath1))
+            
+        return
+
+
+        
     
     
     
-    
+    def fixFilePermissions(self,folder):
+        if folder:
+            if folder.startswith('/home/'):  # don't EVER change permissions outside of /home/
+                chowncommand = "sudo chown -R %s:%s %s" % (USER, USER, folder)
+                os.system(chowncommand)
+            else:
+                print ("exam folder location outside of /home/ is not allowed")
+        else:
+            print ("no folder given")
+        
     
     
     

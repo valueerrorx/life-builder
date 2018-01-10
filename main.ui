@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>553</width>
-    <height>561</height>
+    <height>602</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,12 +18,6 @@
    </sizepolicy>
   </property>
   <property name="minimumSize">
-   <size>
-    <width>553</width>
-    <height>561</height>
-   </size>
-  </property>
-  <property name="maximumSize">
    <size>
     <width>553</width>
     <height>561</height>
@@ -48,12 +42,6 @@
       <bool>true</bool>
      </property>
      <property name="minimumSize">
-      <size>
-       <width>541</width>
-       <height>491</height>
-      </size>
-     </property>
-     <property name="maximumSize">
       <size>
        <width>541</width>
        <height>491</height>
@@ -469,6 +457,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QWidget" name="widget_16" native="true">
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_14">
           <item>
            <widget class="QLabel" name="label_6">
@@ -480,6 +471,49 @@
             </property>
             <property name="pixmap">
              <pixmap>pixmaps/appiconblue.png</pixmap>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="splashimage">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>isolinux/splash.png</normaloff>isolinux/splash.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>96</width>
+              <height>72</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="splashlabel">
+            <property name="minimumSize">
+             <size>
+              <width>114</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Splash</string>
             </property>
            </widget>
           </item>
@@ -510,6 +544,12 @@
           </item>
           <item>
            <widget class="QLabel" name="label_3">
+            <property name="minimumSize">
+             <size>
+              <width>103</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Workdirectory</string>
             </property>
@@ -542,6 +582,12 @@
           </item>
           <item>
            <widget class="QLabel" name="label_5">
+            <property name="minimumSize">
+             <size>
+              <width>103</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>ISO Filename</string>
             </property>
@@ -574,6 +620,12 @@
           </item>
           <item>
            <widget class="QLabel" name="label_8">
+            <property name="minimumSize">
+             <size>
+              <width>103</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>URL</string>
             </property>
@@ -606,6 +658,12 @@
           </item>
           <item>
            <widget class="QLabel" name="label_9">
+            <property name="minimumSize">
+             <size>
+              <width>103</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Excludes</string>
             </property>
@@ -644,6 +702,12 @@
           </item>
           <item>
            <widget class="QLabel" name="label_4">
+            <property name="minimumSize">
+             <size>
+              <width>103</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Live Username</string>
             </property>
@@ -679,6 +743,12 @@
           </item>
           <item>
            <widget class="QLabel" name="label_10">
+            <property name="minimumSize">
+             <size>
+              <width>103</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Squashfs Options</string>
             </property>
