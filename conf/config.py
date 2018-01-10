@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 BASEWORKDIR='/home/lifebuilder'
-LIVEUSER='waldelf'
+LIVEUSER='student'
 LIVEHOSTNAME='life'
 CUSTOMISO='life-dist1.iso'
-SKELUSER='waldelf'
+SKELUSER='student'
 LIVECDLABEL='life'
 LIVECDURL='http://life-edu.eu'
 EXCLUDES='Nextcloud ownCloud'
