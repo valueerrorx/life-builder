@@ -14,6 +14,6 @@ Tested with KDE Neon 16.04 but should work with most Ubuntu derivates. (minor ad
 All "life" applications need to be copied to ~/.life/applications/ for now in order to work properly
 
 ![Image of life-builder](http://life-edu.eu/images/life-builder1.png)
-![Image of life-builder](http://life-edu.eu/images/life-builder2.png)
+![Image of life-builder](http://life-edu.eu/images/life-builder3.png)
 ![Image of life-builder](http://life-edu.eu/images/life-usbcreator.png)
 
