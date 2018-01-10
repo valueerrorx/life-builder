@@ -636,11 +636,12 @@ cdfs (){
     cp $MENU $WORKDIR/ISOTMP/isolinux/
     
     
-    # setup isolinux for the livecd
+    # setup isolinux for the livecd   (iso linux is used for liveCD .. syslinux is used for live USB
     VERSION=`lsb_release -r | awk '{print $2}' | awk -F "." '{print $1}'`
-    sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg.vesamenu > $WORKDIR/ISOTMP/isolinux/isolinux.cfg
+    sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg > $WORKDIR/ISOTMP/isolinux/isolinux.cfg
+    sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg > $WORKDIR/ISOTMP/isolinux/syslinux.cfg    #usb creator would rename the folder to syslinux later
     cp ${SCRIPTDIR}/isolinux/splash.png $WORKDIR/ISOTMP/isolinux/splash.png
-    cp ${SCRIPTDIR}/isolinux/syslinux.cfg $WORKDIR/ISOTMP/isolinux/syslinux.cfg    #some usbcreators use isolinux path and file and some syslinux ?? !!
+    
     
     #################
     #  add more stuff like .diskdefines .manifest etc.
