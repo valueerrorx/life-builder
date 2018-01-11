@@ -107,6 +107,34 @@ cleanhome (){
         rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Top Sites"  > /dev/null 2>&1
         rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Visited Links"  > /dev/null 2>&1
         rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Web Data" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cookies" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cookies-journal" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Current Session" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Current Tabs " > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Extension Cookies" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Extension Cookies-journal" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History-journal" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History Provider Cache" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Last Session" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Last Tabs" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Login Data" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Login Data-journal" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Top Sites" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Top Sites-journal" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Web Data" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Web Data-journal" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/databases/*" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Shortcuts" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Thumbnails" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Visited Links" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Session Storage" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cache" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Google Profile Picture.png" > /dev/null 2>&1
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cache" > /dev/null 2>&1 
+        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Media Cache" > /dev/null 2>&1 
+        #rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Bookmarks" > /dev/null 2>&1   
+          
         #firefox ?
      
         rm -rf ${DUMMYSYSHOME}/.gconf/system/networking > /dev/null 2>&1
