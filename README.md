@@ -10,8 +10,7 @@ life-usbcreator is included in this application.
 Tested with KDE Neon 16.04 but should work with most Ubuntu derivates. (minor adjustments needed)
 
 #
-
-All "life" applications need to be copied to ~/.life/applications/ for now in order to work properly
+The application also removes private information like ssh keys, password store files, browserhistory, bashhistory, klipper contents, recent documents and unused kernels and packages...
 
 ![Image of life-builder](http://life-edu.eu/images/life-builder1.png)
 ![Image of life-builder](http://life-edu.eu/images/life-builder3.png)
