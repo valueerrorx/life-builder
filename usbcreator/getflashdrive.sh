@@ -1,6 +1,11 @@
 #!/bin/bash
-# by: thomas michael weissel
-# you may use and alter this script - please report fixes and enchancements to valueerror@gmail.com 
+#
+# Copyright (C) 2017 Thomas Michael Weissel
+#
+# This software may be modified and distributed under the terms
+# of the GPLv3 license.  See the LICENSE file for details.
+#
+# please report fixes and enchancements to valueerror@gmail.com 
 # or to the google+ community "Free Open Source Software in Schools"
 #
 #   this bashscript is started via usbcreator.py which collects all the neccesary information
