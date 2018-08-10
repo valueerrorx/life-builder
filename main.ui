@@ -80,9 +80,24 @@
        <item>
         <widget class="QWidget" name="widget" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QWidget" name="widget_3" native="true">
             <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>6</number>
+             </property>
              <item>
               <widget class="QPushButton" name="mkiso">
                <property name="enabled">
@@ -159,20 +174,10 @@
                <property name="pixmap">
                 <pixmap>pixmaps/appiconblue.png</pixmap>
                </property>
+               <property name="margin">
+                <number>0</number>
+               </property>
               </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </widget>
@@ -366,6 +371,9 @@
          <property name="toolTip">
           <string/>
          </property>
+         <property name="styleSheet">
+          <string notr="true">margin-left:6px</string>
+         </property>
          <property name="text">
           <string>Original Benutzer Einstellungen einbinden</string>
          </property>
@@ -381,6 +389,9 @@
          </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">margin-left:6px;</string>
          </property>
          <property name="text">
           <string>Standard für alle Nutzer</string>
@@ -472,6 +483,9 @@
             <property name="pixmap">
              <pixmap>pixmaps/appiconblue.png</pixmap>
             </property>
+            <property name="margin">
+             <number>8</number>
+            </property>
            </widget>
           </item>
           <item>
@@ -508,8 +522,14 @@
            <widget class="QLabel" name="splashlabel">
             <property name="minimumSize">
              <size>
-              <width>114</width>
+              <width>103</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>103</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="text">
@@ -776,6 +796,9 @@
           <item>
            <widget class="QWidget" name="widget_18" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
              <item>
               <spacer name="horizontalSpacer_6">
                <property name="orientation">
@@ -829,6 +852,9 @@
    <item>
     <widget class="QWidget" name="widget_2" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QPushButton" name="exit">
         <property name="minimumSize">
