@@ -423,7 +423,7 @@ then
     ##############
     sudo syslinux -if -d /syslinux ${SDX}2
     sleep 3
-    sudo install-mbr ${SDX}
+    sudo install-mbr ${SDX} --force
     
 
 
