@@ -175,6 +175,15 @@ class MeinDialog(QtWidgets.QDialog):
     
     def onISO(self): 
         self.ui.mkiso.setEnabled(False)
+       
+        self.ui.livehostname.setEnabled(False)
+       
+        self.ui.skeluser.setEnabled(False)
+        self.ui.livecdlabel.setEnabled(False)
+        self.ui.copydefaultuser.setEnabled(False)
+        self.ui.copyskel.setEnabled(False)
+        self.ui.tab_2.setEnabled(False)
+        
         self.writeConfigToFile()
         time.sleep(1)
         self.extraThread.start()
@@ -278,6 +287,7 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.part.setText(line) 
         self.stopall()
         if self.isolocation != "":
+            self.ui.tab_2.setEnabled(True)
             self.ui.burniso.setEnabled(True)
         
         
