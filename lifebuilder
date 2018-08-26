@@ -644,7 +644,7 @@ cdfs (){
     cd $WORKDIR/ISOTMP/pool
     
     #the list below is copied from the kubuntu 1804 original install image
-    apt-get download b43-fwcutter binutils binutils-common binutils-x86-64-linux-gnu libbinutils build-essential bcmwl-kernel-source dkms dpkg-dev fakeroot libfakeroot g++-7 g++ gcc gcc-7 gcc-5 grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed libasan4  libatomic1 libc-dev-bin libc6-dev libc6-i386 libcilkrts5 libfakeroot libgcc-7-dev libstdc++-7-dev libitm1 liblsan0 libmpx2 libquadmath0 libtsan0 libubsan0 linux-libc-dev lupin-support libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl make manpages-dev mokutil mouseemu oem-config oem-config-kde user-setup patch setserial shim shim-signed
+    apt-get download b43-fwcutter binutils binutils-common binutils-x86-64-linux-gnu libbinutils build-essential bcmwl-kernel-source dkms dpkg-dev fakeroot libfakeroot g++-7 g++ gcc gcc-7 gcc-5 grub-pc grub-pc-bin grub-gfxpayload-lists grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed libasan4  libatomic1 libc-dev-bin libc6-dev libc6-i386 libcilkrts5 libfakeroot libgcc-7-dev libstdc++-7-dev libitm1 liblsan0 libmpx2 libquadmath0 libtsan0 libubsan0 linux-libc-dev lupin-support libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl make manpages-dev mokutil mouseemu oem-config oem-config-kde user-setup patch setserial shim shim-signed
 
     
     mkdir -p $WORKDIR/ISOTMP/dists
