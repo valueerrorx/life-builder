@@ -20,7 +20,7 @@ fi
 
 #  load basic configuration 
 
-lifebuilderVERSION="0.9"
+lifebuilderVERSION="1.0"
 USER=$(logname)  
 HOME="/home/${USER}/"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  
@@ -274,6 +274,7 @@ copyskel (){
         cleanhome
         
         mkdir /etc/skel/Downloads/   > /dev/null 2>&1  #we want this default folder
+        # life specific first start wizard.. you can remove this line
         cp .life/applications/life-firststart/firststart.sh /etc/skel/.config/autostart-scripts/
     
         #fix permissions 
@@ -384,31 +385,51 @@ cdfs (){
      
     #Installing isolinux and ubiquity (installer)
     # output12
-    output "Making sure isolinux and other packages are installed"  "38"
+    output "Making sure isolinux, casper and other packages are installed"  "38"
     apt-get -y -q install isolinux syslinux-utils syslinux syslinux-common &> /dev/null
-    apt-get -y -q install ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
-    apt-get -y -q install qemu-kvm
+    apt-get -y -q install casper ubiquity ubiquity-casper ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
+    apt-get -y -q install qemu-kvm overlayroot mbr
 
+    output "Patching casper..."  "39"
+    #fix casper script (change boot order from persistent 1st root 2nd  to root 1st persistent 2nd
+    # BUG https://bugs.launchpad.net/ubuntu/+source/casper/+bug/1489855
     
+    sudo cp -a ${SCRIPTDIR}/conf/casper_patched /usr/share/initramfs-tools/scripts/casper
     sleep 1
     
+    
+    
+    output "Patching apt-setup..."  "40"
     # prevent the installer from changing the apt sources.list
     sed -i '/rm/d' /usr/share/ubiquity/apt-setup
     sed -i '/boot/d' /usr/share/ubiquity/apt-setup
     sed -i '/cdrom:/d' /usr/share/ubiquity/apt-setup
+    
+    # FIXME why are we doing this ??  is this responsible for the EFI mess in some way ?
     echo "mkdir -p /target/boot/efi" >> /usr/share/ubiquity/apt-setup
     echo "rm -f /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
     echo "touch /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
     echo 'echo "fs0:\EFI\ubuntu\grubx64.efi" >> /target/boot/efi/startup.nsh' >> /usr/share/ubiquity/apt-setup
+    sleep 1
     
     
-
-    rm -rf $WORKDIR/dummysys/
-    rm -rf $WORKDIR/ISOTMP/
+    
+    output "Adding overlayfs to initramfs modules..."  "41"
+    echo "overlayfs" >> /etc/initramfs-tools/modules
+    sleep 0.5
+    
+    # every install media that isn't called 'ubuntu' will cause EFI Grub to drop to rescue mode 
+    # the path /EFI/ubuntu is hardcoded in ubuntu grub as location for grub.cfg but grub-installer will read the live media hostname and copy it to /EFI/life for example
+    output "Patching grub-installer..."  "43"
+    sudo cp -a ${SCRIPTDIR}/conf/grub-installer_patched /usr/share/grub-installer/grub-installer
+    sleep 1
   
   # output13
-    output "Creating $WORKDIR folder tree"  "40"
-   
+    output "Creating $WORKDIR folder tree"  "45"
+    
+    rm -rf $WORKDIR/dummysys/
+    rm -rf $WORKDIR/ISOTMP/
+    
     mkdir -p $WORKDIR/ISOTMP/{casper,preseed,isolinux,install,.disk} 
     mkdir -p $WORKDIR/dummysys/{dev,etc,cdrom,proc,tmp,sys,mnt,media/cdrom,var,run,home}
     
@@ -419,7 +440,7 @@ cdfs (){
     
     
     # output14
-    output "Copying /var and /etc to temp folder. This will take a while."  "45"
+    output "Copying /var and /etc to temp folder. This will take a while."  "48"
     rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a /var/. $WORKDIR/dummysys/var/.
     #rsync --exclude-from="${EXCLUDESFILE}" -a /etc/. $WORKDIR/dummysys/etc/.  #using excludes here is dangerous. most files here are needed
     rsync -a /etc/. $WORKDIR/dummysys/etc/.
