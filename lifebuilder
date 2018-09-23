@@ -198,6 +198,8 @@ copyhome (){
         cd $HOMEOLDER
         history -w
         history -c
+        rm .cache/konsole/*
+        rm .bash_history
         
         rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/.
         
@@ -297,6 +299,7 @@ cleansystem (){
     # clear kde plasma clipboard and recend applications
     sudo -u $SKELUSER  -H qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory
     sudo -u $SKELUSER  -H dbus-send --session --dest=org.kde.ActivityManager --type=method_call /ActivityManager/Resources/Scoring org.kde.ActivityManager.ResourcesScoring.DeleteStatsForResource string:":current" string:":any" string:"applications:*"
+    sudo -u ${SKELUSER} -H qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardContents
 
     
     # output5
@@ -309,6 +312,8 @@ cleansystem (){
     output  "removing cache files" "20"
     sudo rm /var/crash/* > /dev/null 2>&1
     sudo rm -rf /etc/skel/*   > /dev/null 2>&1
+    sudo rm /var/tmp/kdecache-root/*  > /dev/null 2>&1
+    sudo rm /var/tmp/kdecache-student/* > /dev/null 2>&1
     
     # remove all old kernel headers and tools
     # output9

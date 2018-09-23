@@ -261,7 +261,19 @@ then
         sleep 0.5
         ##############
     
+    
+    
+        #some big flashdrives may have non-multiple total sectors of sectors per track - this would make label test fail
+        CONFCHECK=$(grep skip_check=1 /etc/mtools.conf | wc -l)
+        if test $CONFCHECK = "1" 
+        then
+            echo "mtoolsconf ok !"
+        else
+            echo "mtools_skip_check=1" >> /etc/mtools.conf
+        fi
+        
         ISLIVE=$(sudo mlabel -si /dev/${USB}2 |awk '{print $4}') 
+        
         if [[ ( "$ISLIVE" = "LIFECLIENT" ) ]];   #check if string not empty or null  (if life usb is found this ISLIVE returns a line
         then
             ##############10
