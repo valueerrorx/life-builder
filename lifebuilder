@@ -391,7 +391,7 @@ cdfs (){
     #Installing isolinux  (installer)
     # output12
     output "Making sure isolinux, casper and other packages are installed"  "38"
-    apt-get -y -q install isolinux syslinux-utils syslinux syslinux-common &> /dev/null
+    apt-get -y -q install isolinux syslinux-utils syslinux syslinux-common archdetect-deb &> /dev/null
     #apt-get -y -q install casper ubiquity ubiquity-casper ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
     apt-get -y -q install casper  &> /dev/null
     apt-get -y -q install qemu-kvm overlayroot mbr
@@ -651,7 +651,7 @@ cdfs (){
     #EFI BOOT
     # output20
     output "Copying EFI Boot for the live system" "80"
-    cp -a ${SCRIPTDIR}/boot/ $WORKDIR/ISOTMP/
+    cp -a ${SCRIPTDIR}/usbcreator/boot/ $WORKDIR/ISOTMP/
     cp -a ${SCRIPTDIR}/EFI/ $WORKDIR/ISOTMP/
     
     
