@@ -416,8 +416,9 @@ then
     then
         sudo mv ${MOUNTPOINT}/isolinux/ ${MOUNTPOINT}/syslinux/   > /dev/null 2>&1  #hide output
     fi
-    sudo cp ../isolinux/* ${MOUNTPOINT}/syslinux/   > /dev/null 2>&1  #hide output
-    sudo cp ../boot/grub/* ${MOUNTPOINT}/boot/grub/  > /dev/null 2>&1  #hide output
+    
+    sudo cp ${DIR}/isolinux/* ${MOUNTPOINT}/syslinux/   > /dev/null 2>&1  #hide output
+    sudo cp ${DIR}/boot/grub/* ${MOUNTPOINT}/boot/grub/  > /dev/null 2>&1  #hide output
 
 
 

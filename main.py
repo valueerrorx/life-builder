@@ -24,8 +24,8 @@ USER_HOME_DIR = os.path.join("/home", USER)
 WORK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 WORK_DIRECTORY_USBCREATOR = os.path.join(WORK_DIRECTORY, "usbcreator")
 
-SPLASHDIR1 = os.path.join(WORK_DIRECTORY, "isolinux")
-SPLASHDIR2 = os.path.join(WORK_DIRECTORY, "boot/grub")
+SPLASHDIR1 = os.path.join(WORK_DIRECTORY, "usbcreator/isolinux")
+SPLASHDIR2 = os.path.join(WORK_DIRECTORY, "usbcreator/boot/grub")
 
 
 class  BuildWorker(QtCore.QObject):

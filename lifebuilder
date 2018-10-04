@@ -388,11 +388,12 @@ cdfs (){
     #  Create the FILESYSTEM tree in $WORKDIR/ISOTMP
     ##########################
      
-    #Installing isolinux and ubiquity (installer)
+    #Installing isolinux  (installer)
     # output12
     output "Making sure isolinux, casper and other packages are installed"  "38"
     apt-get -y -q install isolinux syslinux-utils syslinux syslinux-common &> /dev/null
-    apt-get -y -q install casper ubiquity ubiquity-casper ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
+    #apt-get -y -q install casper ubiquity ubiquity-casper ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
+    apt-get -y -q install casper  &> /dev/null
     apt-get -y -q install qemu-kvm overlayroot mbr
 
     output "Patching casper..."  "39"
@@ -406,16 +407,16 @@ cdfs (){
     
     output "Patching apt-setup..."  "40"
     # prevent the installer from changing the apt sources.list
-    sed -i '/rm/d' /usr/share/ubiquity/apt-setup
-    sed -i '/boot/d' /usr/share/ubiquity/apt-setup
-    sed -i '/cdrom:/d' /usr/share/ubiquity/apt-setup
-    
+#     sed -i '/rm/d' /usr/share/ubiquity/apt-setup
+#     sed -i '/boot/d' /usr/share/ubiquity/apt-setup
+#     sed -i '/cdrom:/d' /usr/share/ubiquity/apt-setup
+#     
     # FIXME why are we doing this ??  is this responsible for the EFI mess in some way ?
-    echo "mkdir -p /target/boot/efi" >> /usr/share/ubiquity/apt-setup
-    echo "rm -f /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
-    echo "touch /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
-    echo 'echo "fs0:\EFI\ubuntu\grubx64.efi" >> /target/boot/efi/startup.nsh' >> /usr/share/ubiquity/apt-setup
-    sleep 1
+#     echo "mkdir -p /target/boot/efi" >> /usr/share/ubiquity/apt-setup
+#     echo "rm -f /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
+#     echo "touch /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
+#     echo 'echo "fs0:\EFI\ubuntu\grubx64.efi" >> /target/boot/efi/startup.nsh' >> /usr/share/ubiquity/apt-setup
+#     sleep 1
     
     
     
@@ -702,9 +703,9 @@ cdfs (){
     
     # setup isolinux for the livecd   (iso linux is used for liveCD .. syslinux is used for live USB
     VERSION=`lsb_release -r | awk '{print $2}' | awk -F "." '{print $1}'`
-    sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg > $WORKDIR/ISOTMP/isolinux/isolinux.cfg
-    sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/isolinux/isolinux.cfg > $WORKDIR/ISOTMP/isolinux/syslinux.cfg    #usb creator would rename the folder to syslinux later
-    cp ${SCRIPTDIR}/isolinux/splash.png $WORKDIR/ISOTMP/isolinux/splash.png
+    sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/usbcreator/isolinux/isolinux.cfg > $WORKDIR/ISOTMP/isolinux/isolinux.cfg
+    sed -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' ${SCRIPTDIR}/usbcreator/isolinux/isolinux.cfg > $WORKDIR/ISOTMP/isolinux/syslinux.cfg    #usb creator would rename the folder to syslinux later
+    cp ${SCRIPTDIR}/usbcreator/isolinux/splash.png $WORKDIR/ISOTMP/isolinux/splash.png
     
     
     #################
