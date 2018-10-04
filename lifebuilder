@@ -388,12 +388,11 @@ cdfs (){
     #  Create the FILESYSTEM tree in $WORKDIR/ISOTMP
     ##########################
      
-    #Installing isolinux  (installer)
+    #Installing isolinux and calamares (installer)
     # output12
     output "Making sure isolinux, casper and other packages are installed"  "38"
     apt-get -y -q install isolinux syslinux-utils syslinux syslinux-common archdetect-deb &> /dev/null
-    #apt-get -y -q install casper ubiquity ubiquity-casper ubiquity-frontend-kde ubiquity-slideshow-neon   &> /dev/null
-    apt-get -y -q install casper  &> /dev/null
+    apt-get -y -q install casper calamares &> /dev/null
     apt-get -y -q install qemu-kvm overlayroot mbr
 
     output "Patching casper..."  "39"
@@ -404,31 +403,17 @@ cdfs (){
     sleep 1
     
     
+    output "Apply branding and setup for calamares installer..."  "41"
+    # you may change the installer behaviour and the branding on your own.. it's quite easy
     
-    output "Patching apt-setup..."  "40"
-    # prevent the installer from changing the apt sources.list
-#     sed -i '/rm/d' /usr/share/ubiquity/apt-setup
-#     sed -i '/boot/d' /usr/share/ubiquity/apt-setup
-#     sed -i '/cdrom:/d' /usr/share/ubiquity/apt-setup
-#     
-    # FIXME why are we doing this ??  is this responsible for the EFI mess in some way ?
-#     echo "mkdir -p /target/boot/efi" >> /usr/share/ubiquity/apt-setup
-#     echo "rm -f /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
-#     echo "touch /target/boot/efi/startup.nsh" >> /usr/share/ubiquity/apt-setup
-#     echo 'echo "fs0:\EFI\ubuntu\grubx64.efi" >> /target/boot/efi/startup.nsh' >> /usr/share/ubiquity/apt-setup
-#     sleep 1
+    sudo cp -a ${SCRIPTDIR}/conf/calamares /etc
+    sleep 1
     
     
     
-    output "Adding overlayfs to initramfs modules..."  "41"
+    output "Adding overlayfs to initramfs modules..."  "44"
     echo "overlayfs" >> /etc/initramfs-tools/modules
     sleep 0.5
-    
-    # every install media that isn't called 'ubuntu' will cause EFI Grub to drop to rescue mode 
-    # the path /EFI/ubuntu is hardcoded in ubuntu grub as location for grub.cfg but grub-installer will read the live media hostname and copy it to /EFI/life for example
-    output "Patching grub-installer..."  "43"
-    sudo cp -a ${SCRIPTDIR}/conf/grub-installer_patched /usr/share/grub-installer/grub-installer
-    sleep 1
   
   # output13
     output "Creating $WORKDIR folder tree"  "45"

@@ -1,0 +1,27 @@
+---
+componentName: life
+
+strings:
+    productName:         LiFE Neon
+    shortProductName:    LiFE Neon
+    version:             18.04
+    shortVersion:        bionic
+    versionedName:       LiFE Neon
+    shortVersionedName:  LiFE Neon 18.04
+    bootloaderEntryName: LiFE Neon 18.04
+    productUrl:          http://life-edu.eu/
+    supportUrl:          http://life-edu.eu/
+    knownIssuesUrl:      http://life-edu.eu/
+    releaseNotesUrl:     http://life-edu.eu/
+
+images:
+    productLogo:         "logo.png"
+    productIcon:         "icon.png"
+    productWelcome:      "welcome.png"
+
+slideshow:               "show.qml"
+
+style:
+   sidebarBackground:    "#808080"
+   sidebarText:          "#FFFFFF"
+   sidebarTextSelect:    "#0068C8"
