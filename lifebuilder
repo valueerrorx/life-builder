@@ -6,7 +6,6 @@
 # of the GPLv3 license.  See the LICENSE file for details.
 
 
-
 # make sure script is running with root privileges
 if [ "$(whoami)" != "root" ]; then
     echo "Need to be root or run with sudo. Exiting."
@@ -14,19 +13,12 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 
-
-
-
-
 #  load basic configuration 
-
-lifebuilderVERSION="1.0"
+lifebuilderVERSION="1.1"
 USER=$(logname)  
 HOME="/home/${USER}/"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  
 EXCLUDESFILE="${SCRIPTDIR}/excludes"
-
-
 
 
 #################
@@ -41,10 +33,7 @@ output() {
 ##########################
 source ${SCRIPTDIR}/conf/config.py
 
-
-
-if [[( $BASEWORKDIR = "" ) || ( $LIVEUSER = "" ) || ( $LIVEHOSTNAME = "" ) || ( $CUSTOMISO = "" ) || ( $SKELUSER = "" ) || ( $LIVECDLABEL = "" )]]; then
-
+if [[( $BASEWORKDIR = "" ) || ( $LIVEUSER = "" ) || ( $LIVEHOSTNAME = "" ) || ( $CUSTOMISO = "" ) || ( $LIVECDLABEL = "" )]]; then
     output "At least one important setting is missing!" "0"
     exit 0
 fi
@@ -57,8 +46,6 @@ WORKDIR="$BASEWORKDIR/lifebuilder"
 if [ ! -d $WORKDIR ]; then
     mkdir -p $WORKDIR
 fi
-
-
 
 
 #################
@@ -79,9 +66,6 @@ fi
 output "PART,Part 1" "0"
 #-----------------------------#
 
-
-
-# 
 # #########emergency stop here#############
 # output "$WORKDIR/$CUSTOMISO which is in size is ready to be burned or tested in a virtual machine." "10"
 # output "ISOLOCATION,$WORKDIR/$CUSTOMISO" "100"
@@ -90,91 +74,80 @@ output "PART,Part 1" "0"
 
 
 
-
-
-
 cleanhome (){
-        # delete all files that would compromise privacy or produce conflicts 
-        # .xsession files, ssh keys, kwallet, trash, cache, recent documents, history browser, shell, cookies, configs with passwords
-        DUMMYSYSHOME=$1
+    # delete all files that would compromise privacy or produce conflicts 
+    # .xsession files, ssh keys, kwallet, trash, cache, recent documents, history browser, shell, cookies, configs with passwords
+    DUMMYSYSHOME=$1
+    if [[( $DUMMYSYSHOME = ""  )]]
+    then
+        DUMMYSYSHOME="/etc/skel"
+    fi
+    output "Cleaning up home : ${DUMMYSYSHOME}"
+    #google chrome history
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/History" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/History Provider Cache"  > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Login Data"  > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Current Session"  > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Current Tabs"  > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Cookies"  > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Top Sites"  > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Visited Links"  > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Web Data" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cookies" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cookies-journal" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Current Session" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Current Tabs " > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Extension Cookies" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Extension Cookies-journal" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History-journal" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History Provider Cache" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Last Session" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Last Tabs" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Login Data" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Login Data-journal" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Top Sites" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Top Sites-journal" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Web Data" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Web Data-journal" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/databases/*" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Shortcuts" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Thumbnails" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Visited Links" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Session Storage" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cache" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Google Profile Picture.png" > /dev/null 2>&1
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cache" > /dev/null 2>&1 
+    rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Media Cache" > /dev/null 2>&1 
+    #rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Bookmarks" > /dev/null 2>&1   
+    #firefox ?
+    rm -rf ${DUMMYSYSHOME}/.gconf/system/networking > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/gvfs-metadata > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/share/gvfs-metadata > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/share/applications/wine-* > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/share/Trash > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/share/akonadi > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/share/webkit > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/share/kwalletd > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.kde/share/apps/klipper > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.kde/share/apps/nepomuk > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.kde/share/apps/RecentDocuments/* > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.local/share/RecentDocuments/* > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.life/EXAM/client.log > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.bash_history > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.gitconfig > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.gksu.lock > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.history > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.Xauthority > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.xsession-errors > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.recently-used > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.dbus > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.cache > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.ssh > /dev/null 2>&1
         
-        if [[( $DUMMYSYSHOME = ""  )]]
-        then
-            DUMMYSYSHOME="/etc/skel"
-        fi
-        
-        output "Cleaning up home : ${DUMMYSYSHOME}"
-        
-        #google chrome history
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/History" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/History Provider Cache"  > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Login Data"  > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Current Session"  > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Current Tabs"  > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Cookies"  > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Top Sites"  > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Visited Links"  > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Web Data" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cookies" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cookies-journal" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Current Session" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Current Tabs " > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Extension Cookies" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Extension Cookies-journal" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History-journal" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/History Provider Cache" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Last Session" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Last Tabs" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Login Data" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Login Data-journal" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Top Sites" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Top Sites-journal" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Web Data" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Web Data-journal" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/databases/*" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Shortcuts" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Thumbnails" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Visited Links" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Session Storage" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cache" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Google Profile Picture.png" > /dev/null 2>&1
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Cache" > /dev/null 2>&1 
-        rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Media Cache" > /dev/null 2>&1 
-        #rm -rf "${DUMMYSYSHOME}/.config/google-chrome/Default/Bookmarks" > /dev/null 2>&1   
-          
-        #firefox ?
-     
-        rm -rf ${DUMMYSYSHOME}/.gconf/system/networking > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/gvfs-metadata > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/gvfs-metadata > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/applications/wine-* > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/Trash > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/akonadi > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/webkit > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/kwalletd > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.kde/share/apps/klipper > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.kde/share/apps/nepomuk > /dev/null 2>&1
-        
-        rm -rf ${DUMMYSYSHOME}/.kde/share/apps/RecentDocuments/* > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.local/share/RecentDocuments/* > /dev/null 2>&1
-    
-        
-        rm -rf ${DUMMYSYSHOME}/.life/EXAM/client.log > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.bash_history > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.gitconfig > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.gksu.lock > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.history > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.Xauthority > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.xsession-errors > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.recently-used > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.dbus > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.cache > /dev/null 2>&1
-        rm -rf ${DUMMYSYSHOME}/.ssh > /dev/null 2>&1
-         
-        for i in ${DUMMYSYSHOME}/.gnome2/keyrings/*; do rm $i > /dev/null 2>&1; done
-        find ${DUMMYSYSHOME}/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
-        find ${DUMMYSYSHOME}/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
+    for i in ${DUMMYSYSHOME}/.gnome2/keyrings/*; do rm $i > /dev/null 2>&1; done
+    find ${DUMMYSYSHOME}/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
+    find ${DUMMYSYSHOME}/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
 }
 
 
@@ -187,9 +160,9 @@ copyhome (){
     # this copies the whole HOME folder of the current user to the lifesystem home in order to be used if the username is the same
     # ATTENTION we could just copy the userhome directory to skel and it would be used as default for the live session user
     # but this will slow down the boot process on "persistent" live systems enormously because skel is copied to casper-rw on boot time 
-    HOMEOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
+    HOMEOLDER=`grep "^$LIVEUSER:" /etc/passwd | awk -F ":" '{print $6}'`
     DUMMYSYSHOME="$WORKDIR/dummysys/home"
-    DUMMYSYSHOMEUSERDIR="$WORKDIR/dummysys/home/$SKELUSER"
+    DUMMYSYSHOMEUSERDIR="$WORKDIR/dummysys/home/$LIVEUSER"
     rm -rf ${DUMMYSYSHOME}/*
     
     output "Copying $HOMEOLDER" "52"
@@ -202,106 +175,25 @@ copyhome (){
         rm .bash_history
         
         rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/.
-        
         cleanhome $DUMMYSYSHOMEUSERDIR
-        
         # change ownership 
-        chown -R $SKELUSER:$SKELUSER ${DUMMYSYSHOME}   > /dev/null 2>&1  
+        chown -R $LIVEUSER:$LIVEUSER ${DUMMYSYSHOME}   > /dev/null 2>&1  
     else
         # output 100    
-        output "ERROR $SKELUSER or home folder not found - exiting."
-        exit 1
-     
-    fi
-
-}
-
-
-
-copyskel (){
-    # the content of /etc/skel is used as default userconfiguration for every new user and the live user if the home directory does not exist already
-    # only selected files and folders are copied there.. and then cleaned up
-    
-    SKELFOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
-
-    if [ -d "$SKELFOLDER" ]; then
-        cd $SKELFOLDER
-        
-        history -w
-        history -c
-        
-        # output 1
-        output "Cleaning /etc/skel ..." "1"
-        
-        rm -rf /etc/skel/Webroot > /dev/null 2>&1
-        rm -rf /etc/skel/.life > /dev/null 2>&1
-        rm -rf /etc/skel/.arduino > /dev/null 2>&1
-        rm -rf /etc/skel/.apps > /dev/null 2>&1
-        rm -rf /etc/skel/.designer > /dev/null 2>&1
-        rm -rf /etc/skel/.filius > /dev/null 2>&1
-        rm -rf /etc/skel/.fonts > /dev/null 2>&1
-        rm -rf /etc/skel/.gconf > /dev/null 2>&1
-        rm -rf /etc/skel/.bashrc > /dev/null 2>&1
-        rm -rf /etc/skel/.profile > /dev/null 2>&1
-        rm -rf /etc/skel/.gconf > /dev/null 2>&1
-        rm -rf /etc/skel/.gnome > /dev/null 2>&1
-        rm -rf /etc/skel/.config > /dev/null 2>&1
-        rm -rf /etc/skel/.local > /dev/null 2>&1
-        rm -rf /etc/skel/.gtkrc* > /dev/null 2>&1
-        rm -rf /etc/skel/.kde* > /dev/null 2>&1
-        
-        # output2
-        output "Copying config files to /etc/skel" "5"
-    
-        rsync -a Webroot /etc/skel/ > /dev/null 2>&1
-        rsync -a Downloads /etc/skel/ > /dev/null 2>&1
-        rsync -a .life /etc/skel/     > /dev/null 2>&1       # very important :)
-        rsync -a .arduino /etc/skel/ > /dev/null 2>&1
-        rsync -a .apps /etc/skel/ > /dev/null 2>&1
-        rsync -a .designer /etc/skel/ > /dev/null 2>&1
-        rsync -a .filius /etc/skel/ > /dev/null 2>&1
-        rsync -a .fonts /etc/skel/ > /dev/null 2>&1
-        rsync -a .gconf /etc/skel/ > /dev/null 2>&1
-        rsync -a .bashrc /etc/skel/ > /dev/null 2>&1
-        rsync -a .profile /etc/skel/ > /dev/null 2>&1
-        rsync -a .gnome /etc/skel/ > /dev/null 2>&1
-        rsync -a .config /etc/skel/ > /dev/null 2>&1
-        rsync -a .local /etc/skel/ > /dev/null 2>&1
-        rsync -a .gtkrc* /etc/skel/ > /dev/null 2>&1
-        rsync -a .kde* /etc/skel/ > /dev/null 2>&1
-    
-        # output3
-        output "clean up the mess a little bit more.." "9"
-        
-        cleanhome
-        
-        mkdir /etc/skel/Downloads/   > /dev/null 2>&1  #we want this default folder
-        # life specific first start wizard.. you can remove this line
-        cp .life/applications/life-firststart/firststart.sh /etc/skel/.config/autostart-scripts/
-    
-        #fix permissions 
-        chown -R root:root /etc/skel
-        # output4
-        output "skel Copy - done" "13"
-    else
-        # output 100    
-        output "ERROR $SKELUSER or home folder not found - exiting."
+        output "ERROR $LIVEUSER or home folder not found - exiting."
         exit 1
     fi
 }
-
 
 
 
 cleansystem (){
     # remove unwanted packages and usage history 
-
     # clear kde plasma clipboard and recend applications
-    sudo -u $SKELUSER  -H qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory
-    sudo -u $SKELUSER  -H dbus-send --session --dest=org.kde.ActivityManager --type=method_call /ActivityManager/Resources/Scoring org.kde.ActivityManager.ResourcesScoring.DeleteStatsForResource string:":current" string:":any" string:"applications:*"
-    sudo -u ${SKELUSER} -H qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardContents
+    sudo -u $LIVEUSER -H qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory
+    sudo -u $LIVEUSER -H dbus-send --session --dest=org.kde.ActivityManager --type=method_call /ActivityManager/Resources/Scoring org.kde.ActivityManager.ResourcesScoring.DeleteStatsForResource string:":current" string:":any" string:"applications:*"
+    sudo -u $LIVEUSER -H qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardContents
 
-    
     # output5
     output "Cleaning System before building" "17"
     apt-get update  &> /dev/null
@@ -320,7 +212,6 @@ cleansystem (){
     output "purging old kernel, tools and headers"  "22"
     dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | sed '/dev/d' | xargs apt-get -y purge
 
-
     #removing popularity-contest as it causes a problem when installing with ubiquity
     # output10
     output "Making sure popularity contest is not installed"  "25"
@@ -331,13 +222,10 @@ cleansystem (){
     output "Making sure syslinux-themes is not installed"  "28"
     apt-get -y -q purge syslinux-themes* &> /dev/null
 
-    
-    
     #remove some proprietary assets (important if you want to distribute this iso in public) 
     if [[( $REMOVERESTRICTED = "True"  )]]  
     then
         output "Removing proprietary packages from the system"  "30"
-    
         sudo apt-get -y -q purge ttf-mscorefonts-installer
         sudo apt-get -y -q purge kubuntu-restricted-extras lubuntu-restricted-extras ubuntu-restricted-extras xubuntu-restricted-extras
         sudo apt-get -y -q purge kubuntu-restricted-addons lubuntu-restricted-addons ubuntu-restricted-addons xubuntu-restricted-addons
@@ -347,47 +235,23 @@ cleansystem (){
         sudo apt-get -y -q autoclean
         
         output "Removing all fonts from the userdirectory"  "34"
-        SKELFOLDER=`grep "^$SKELUSER:" /etc/passwd | awk -F ":" '{print $6}'`
-        if [ -d "$SKELFOLDER" ]; then
+        LIVEFOLDER=`grep "^$LIVEUSER:" /etc/passwd | awk -F ":" '{print $6}'`
+        if [ -d "$LIVEFOLDER" ]; then
             #don't delete the whole font folder otherwise rescan will just skip and not remove fonts
-            rm -rf $SKELFOLDER/.fonts/*     
+            rm -rf $LIVEFOLDER/.fonts/*     
             fc-cache -rv
         fi
     fi
-    
-    
 }
 
 
 
 cdfs (){
     #################
-    #  clean up
-    ##########################
+    #  clean up & Create the FILESYSTEM tree in $WORKDIR/ISOTMP
+    #################
     cleansystem
     
-    
-    ##############
-    # check if we should copy the default configuration into the squashfs SKEL folder for all new users
-    # this only makes sense if the default user config is also used for the live user (COPYDEFAULTUSER)
-    # ATTENTION we could just copy the userhome directory to skel and it would be used as default for the live session user
-    # but this will slow down the boot process on "persistent" live systems enormously because skel is copied to casper-rw on boot time 
-    ###############################
-    if [[( $COPYDEFAULTUSER = "True"  )]]
-    then
-        if [[( $COPYSKEL = "True"  )]]   
-        then
-            copyskel
-        fi
-    fi
-        
-        
-    
-    
-    #################
-    #  Create the FILESYSTEM tree in $WORKDIR/ISOTMP
-    ##########################
-     
     #Installing isolinux and calamares (installer)
     # output12
     output "Making sure isolinux, casper and other packages are installed"  "38"
@@ -398,20 +262,16 @@ cdfs (){
     output "Patching casper..."  "39"
     #fix casper script (change boot order from persistent 1st root 2nd  to root 1st persistent 2nd
     # BUG https://bugs.launchpad.net/ubuntu/+source/casper/+bug/1489855
-    
     sudo cp -a ${SCRIPTDIR}/conf/casper_patched /usr/share/initramfs-tools/scripts/casper
     sleep 1
     
-    
     output "Apply branding and setup for calamares installer..."  "41"
     # you may change the installer behaviour and the branding on your own.. it's quite easy
-    
     sudo cp -a ${SCRIPTDIR}/conf/calamares /etc
     sleep 1
     
-    
-    
     output "Adding overlayfs to initramfs modules..."  "44"
+    # dont forget about this.. otherwise persistent partitions are not going to work
     echo "overlayfs" >> /etc/initramfs-tools/modules
     sleep 0.5
   
@@ -427,19 +287,11 @@ cdfs (){
     rsync -a /dev/urandom $WORKDIR/dummysys/dev/    # why? what do we need urandom for - isn't it created on boot time ?
     chmod ug+rwx,o+rwt $WORKDIR/dummysys/tmp        # needs to be accessable by everybody
     
-    
-    
-    
     # output14
     output "Copying /var and /etc to temp folder. This will take a while."  "48"
     rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a /var/. $WORKDIR/dummysys/var/.
-    #rsync --exclude-from="${EXCLUDESFILE}" -a /etc/. $WORKDIR/dummysys/etc/.  #using excludes here is dangerous. most files here are needed
     rsync -a /etc/. $WORKDIR/dummysys/etc/.
 
-    
-    
-    
-    
     #Adding packages location to sources
     ARCH=`archdetect | awk -F "/" '{print $1}'`
     DISKINFONAME=`echo $LIVECDLABEL | awk '{print $1}'`
@@ -449,15 +301,10 @@ cdfs (){
     sed -i '/cdrom:/d' $WORKDIR/dummysys/etc/apt/sources.list &> /dev/null
     echo "deb cdrom:[$DISKINFONAME $DISTRIB_RELEASE - Release $ARCH]/ dists/" >> $WORKDIR/dummysys/etc/apt/sources.list
 
-    
     #Copying grub config
     cp ${SCRIPTDIR}/conf/grub.conf $WORKDIR/dummysys/etc/default/grub
     sed -i "s/LIVECDLABEL/$LIVECDLABEL/g" $WORKDIR/dummysys/etc/default/grub
 
-    
-    
-    
-    
     # output16
     output "Removing unnecessary files in $WORKDIR/dummysys"  "66"
     
@@ -475,17 +322,15 @@ cdfs (){
     rm -rf $WORKDIR/dummysys/var/lock/* &> /dev/null
     rm -rf $WORKDIR/dummysys/var/crash/* &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/ubiquity/* &> /dev/null
-    
-
+    rm -rf $WORKDIR/dummysys/var/log/boot-repair
+    rm -rf $WORKDIR/dummysys/var/log/boot-info
     
     #create empty logfiles
-    find $WORKDIR/dummysys/var/log -regex '.*?[0-9].*?' -exec rm -v {} \;
+    find $WORKDIR/dummysys/var/log -regex '.*?[0-9].*?' -exec rm {} \;
     find $WORKDIR/dummysys/var/log -type f | while read file
     do
             cat /dev/null | tee $file
     done
-    
-    
     
     #Setting  auto login for sddm (makes user $LIVEUSER autologin )  
     cp -a ${SCRIPTDIR}/conf/sddm.conf $WORKDIR/dummysys/etc/
@@ -493,137 +338,15 @@ cdfs (){
     chmod +x $WORKDIR/dummysys/etc/sddm.conf
     chmod 755 $WORKDIR/dummysys/etc/sddm.conf
     
-
-    
-    
-  
-    
-    
-    
-    
-
-    #################
-    #  Copy the whole home folder to dummysys in order to preserve all configurations (if checkbox in UI is checked)
     ##########################
+    #  Copy the whole home folder to dummysys in order to preserve all configurations
+    #  and make sure the live system does not create a new user - nor ubiquity installer
+    ##########################
+    copyhome
     
-    if [[( $COPYDEFAULTUSER = "True"  )]]
-    then
-            #################
-            #  copy default user and make sure the live system does not create a new user - nor ubiquity installer
-            ##########################
-            copyhome
-            
-            # remove exec rights from add user scripts so no new live system user is added
-            output "Making sure adduser and autologin functions of casper are deactivated"  "74"
-            chmod 644 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin
-            
-            #################
-            #  ubiquity installer options... we don't create a new user.. the original system user is just copied back
-            ##########################
-            
-            # since this is sort of backup mode, prevent user-setup-apply from running during install - this will install no user at all (installed system should have the same user as life system 
-            if [ ! -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
-                mv /usr/lib/ubiquity/user-setup/user-setup-apply /usr/lib/ubiquity/user-setup/user-setup-apply.orig
-            fi
-            echo "exit 0"> /usr/lib/ubiquity/user-setup/user-setup-apply
-            chmod 755 /usr/lib/ubiquity/user-setup/user-setup-apply
-            
-            
-    else
-       
-            #################
-            #  remove current users and groups for the live system
-            ##########################
-            #only get rid of all user entries in /etc/passwd /etc/group if no usersettings are copied - the live user gets the uuid 999 - the first user on an installed system is 1000
-            
-            rm -rf $WORKDIR/dummysys/var/lib/sudo/*
-            rm -rf $WORKDIR/dummysys/var/lib/AccountsService/users/*
-            rm -rf $WORKDIR/dummysys/var/lib/kdm/*
-            rm -rf $WORKDIR/dummysys/var/run/console/*
-            rm -f $WORKDIR/dummysys/etc/X11/xorg.conf* &> /dev/null
-            rm -f $WORKDIR/dummysys/etc/{hosts,hostname,mtab*,fstab}
-            rm -f $WORKDIR/dummysys/etc/{group,passwd,shadow,shadow-,gshadow,gshadow-}
-            rm -f $WORKDIR/dummysys/etc/gdm/gdm.conf-custom
-            rm -f $WORKDIR/dummysys/etc/cups/printers.conf  #comment out if you want to provide a default network printer
-            rm -rf $WORKDIR/dummysys/etc/NetworkManager/system-connections/*  # i want to deliver a manual connection example
-            touch $WORKDIR/dummysys/etc/cups/printers.conf  #provide empty files
-            if [ ! -d /run ]; then
-                find $WORKDIR/dummysys/var/run/ $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
-            else
-                find $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
-                unlink $WORKDIR/dummysys/var/run
-                cd $WORKDIR/dummysys/var
-                ln -sf ../run run
-            fi
-        
-            # output17
-            output "Cleaning up passwd, group, files for the live system" "70"
-            # if the mode is dist then renumber the uid's for any user with a uid greater than 1000
-            # and make the passwdrestore file so the uid's are restored before the script finishes
-            # if this is not done, the livecd user will not be created properly
-            #re-build passwd file without those users above UID 999 and below 9999
-            grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
-            grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-            grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-            grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
-
-            #re-build group file without those groups that belong to the users
-            grep '^[^:]*:[^:]*:[0-9]:' /etc/group > $WORKDIR/dummysys/etc/group
-            grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-            grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-            grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
-
-            # get the usernames of the current users on the system and write them into tmpusers
-            grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
-            grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
-            grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
-            cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
-            rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
-
-            #get rid of all tmpusers entries in the group file
-            cat $WORKDIR/tmpusers | while read LINE ;do
-                echo $LINE | xargs -i sed -e 's/,{}$//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
-                echo $LINE | xargs -i sed -e 's/,{},/,/g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
-                echo $LINE | xargs -i sed -e 's/:{}$/:/g' $WORKDIR/dummysys/etc/group.new2 > $WORKDIR/dummysys/etc/group.new3
-                echo $LINE | xargs -i sed -e 's/:{},/:/g' $WORKDIR/dummysys/etc/group.new3 > $WORKDIR/dummysys/etc/group
-                rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
-            done
-            
-            # output18
-            output "Making sure adduser and autologin functions of casper are activated"  "74"
-            chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin 
-
-            # make sure user-setup-apply is present in case backup mode (also inclued user home config ) was last used
-            if [ -f /usr/lib/ubiquity/user-setup/user-setup-apply.orig ]; then
-                cp /usr/lib/ubiquity/user-setup/user-setup-apply.orig /usr/lib/ubiquity/user-setup/user-setup-apply
-            fi
-                
-
-    fi
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    # remove exec rights from add user scripts so no new live system user is added
+    output "Making sure adduser and autologin functions of casper are deactivated"  "74"
+    chmod 644 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin
     
     
     #################
@@ -644,9 +367,7 @@ cdfs (){
     #################
     #  Downloading packages for offline install (needed by the systeminstaller in order to install the system to a disk)
     ##########################
-    
-    
-    
+
     # output21
     output "Downloading packages for CD" "82"
     
@@ -658,18 +379,17 @@ cdfs (){
     #the list below is copied from the kubuntu 1804 original install image
     apt-get download b43-fwcutter binutils binutils-common binutils-x86-64-linux-gnu libbinutils build-essential bcmwl-kernel-source dkms dpkg-dev fakeroot libfakeroot g++-7 g++ gcc gcc-7 gcc-5 grub-pc grub-pc-bin grub-gfxpayload-lists grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed libasan4  libatomic1 libc-dev-bin libc6-dev libc6-i386 libcilkrts5 libfakeroot libgcc-7-dev libstdc++-7-dev libitm1 liblsan0 libmpx2 libquadmath0 libtsan0 libubsan0 linux-libc-dev lupin-support libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl make manpages-dev mokutil mouseemu oem-config oem-config-kde user-setup patch setserial shim shim-signed
 
-    
     mkdir -p $WORKDIR/ISOTMP/dists
     cd $WORKDIR/ISOTMP/
     dpkg-scanpackages -m pool /dev/null | gzip -9c > dists/Packages.gz
     apt-ftparchive -c ${SCRIPTDIR}/conf/release.conf release $WORKDIR/ISOTMP/dists > $WORKDIR/ISOTMP/dists/Release
 
 
+    
     #################
     #   create isolinux folder and files
     ##########################
-    
-  
+
     # output22
     output "Creating isolinux setup for the live system" "88"
     find /usr -name 'isolinux.bin' -exec cp {} $WORKDIR/ISOTMP/isolinux/ \;
@@ -696,8 +416,6 @@ cdfs (){
     #################
     #  add more stuff like .diskdefines .manifest etc.
     ##########################
-    
-    
     
     # output23
     output "Creating README.diskdefines"  "93"
@@ -749,15 +467,10 @@ FOO
 
     
 
-    
-    
-    
-
     #################
     #  create a new initial ramdisk including the casper scripts and kernel
     ##########################
     
-  
     # output26
     output "Creating a new initial ramdisk for the live system" "96"
     mkinitramfs -o /boot/initrd.img-`uname -r` `uname -r`
@@ -784,7 +497,6 @@ FOO
     #-----------------------------#
     
     
-    
     ##############
     #   Make filesystem.squashfs  
     ###############################
@@ -795,7 +507,6 @@ FOO
     # output1
     output "Creating filesystem.squashfs   ... this will take a while so be patient" "0"
     sleep 1
-    
     
     ##############
     #   Create a list of folders to be included in the squashfs (those we didn't copy before because we can add them unaltered)
@@ -810,12 +521,6 @@ FOO
         REALFOLDERS="$REALFOLDERS /$d"
     done
     
-#     in case of  $COPYDEFAULTUSER = "True"  we could just use the original HOME folder instead of copying it via copyhome()  - that way we cant change anything in it anymore - does it make a difference ?
-#     for d in `ls / | grep -v etc | grep -v run | grep -v tmp | grep -v sys | grep -v var | grep -v dev | grep -v media | grep -v cdrom | grep -v mnt | grep -v lost+found | grep -v proc`; do
-#         REALFOLDERS="$REALFOLDERS /$d"
-#     done
-    
-
     ##############
     #   Calculate the number of files to include (for the python script progress bar)
     ###############################
@@ -824,7 +529,7 @@ FOO
     FILES=28
     for k in $REALFOLDERS; do
         LIST=`ls -d $k`
-        NEWFILES=$(for i in $LIST; do find $i -printf "%i\n" | sort -u | wc -l ; done)
+        NEWFILES=$(for i in $LIST; do sudo find $i -printf "%i\n" | sort -u | wc -l ; done)
         FILES=$(( $FILES + $NEWFILES ))
     done
     
@@ -832,21 +537,17 @@ FOO
     # output2
     output "SQUASHSTART,$FILES" "0"
     # the progress of mksquashfs is monitored by the python script.. every line it produces advances the progressbar
-    
+    sleep 2
     
     ##############
     #  Make the fracking squashfs NOW     # squashfsopts uses -comp xz for highest compression - excluding bootfiles from compression
     ###############################
-    
     mksquashfs $REALFOLDERS $WORKDIR/ISOTMP/casper/filesystem.squashfs -no-progress -info $SQUASHFSOPTS -e /boot/efi/EFI /boot/grub $BASEWORKDIR $EXCLUDES
-    
-    
+
     # we send the finished process trigger word
     # output3
     output "SQUASHEND" "100"
-    
-    
-    
+
     sleep 1
 
     
@@ -868,14 +569,15 @@ FOO
     fi
 
     #add filesystem size 
-    # output1
-    output "Calculating the installed filesystem size for the installer" "0"
+    UNPACKEDSIZE=$(($SQUASHFSSIZE*3*1024))  
+    echo $UNPACKEDSIZE > $WORKDIR/ISOTMP/casper/filesystem.size
+    # compressed filesize times 3 (*1024 in bit) is almost accurate..  calculating it precisely takes long and somehow suddenly stops the program .. didn't do it yesterday..  wtf 
 
-    unsquashfs -lls $WORKDIR/ISOTMP/casper/filesystem.squashfs | grep -v " inodes " | grep -v "unsquashfs:" | awk '{print $3}' | grep -v "," > /tmp/size.tmp
-
-    for i in `cat /tmp/size.tmp`; do a=$(($a+$i)); done
-    echo $a > $WORKDIR/ISOTMP/casper/filesystem.size
-    
+#     # output1
+#     output "Calculating the installed filesystem size for the installer" "0"
+#     unsquashfs -lls $WORKDIR/ISOTMP/casper/filesystem.squashfs | grep -v " inodes " | grep -v "unsquashfs:" | awk '{print $3}' | grep -v "," > /tmp/size.tmp
+#     for i in `cat /tmp/size.tmp`; do a=$(($a+$i)); done
+#     echo $a > $WORKDIR/ISOTMP/casper/filesystem.size
 }
 
 
@@ -901,9 +603,9 @@ iso (){
     fi
 
 
-    ##############
+    ############################
     # Make ISO compatible with Ubuntu Startup Disk Creator
-    ###############################
+    ############################
 
     # output2
     output "Making disk compatible with Ubuntu Startup Disk Creator." "12"
@@ -924,7 +626,6 @@ iso (){
     cd $WORKDIR/ISOTMP && find . -type f -print0 | xargs -0 md5sum > md5sum.txt
 
     #isolinux mode
-
     # remove files that change and cause problems with checking the disk
     sed -e '/isolinux/d' md5sum.txt > md5sum.txt.new
     sed -e '/md5sum/d' md5sum.txt.new > md5sum.txt
@@ -933,16 +634,15 @@ iso (){
     sleep 1
 
   
-    ##############
+    ############################
     # Make the ISO file
-    ###############################
+    ############################
     
     if [ -f $WORKDIR/$CUSTOMISO ]; then
         #there already is an ISO file with that name.. rename it
         mv -f $WORKDIR/$CUSTOMISO $WORKDIR/$CUSTOMISO-old
         
     fi
-    
     
     # output4
     output "Creating $CUSTOMISO in $WORKDIR - this can take a while..." "38"
@@ -971,25 +671,24 @@ iso (){
 
     cd $WORKDIR
     sha256sum $CUSTOMISO > $CUSTOMISO.sha256
-
     sleep 1
 
     ISOSIZE="`ls -hs $WORKDIR/$CUSTOMISO | awk '{print $1}'`"
-
     
     # output8
-
     output "$WORKDIR/$CUSTOMISO which is $ISOSIZE in size is ready to be tested." "100"
 
 }
 
 
 
-
-
-
+###########
+# trigger creation of squashfs and iso file
+###########
 
 cdfs $@
+
+output "Creating ISO." "5"
 
 iso $@
   

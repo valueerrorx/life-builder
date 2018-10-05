@@ -322,15 +322,43 @@
            <height>20</height>
           </size>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4"/>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" name="widget_8" native="true">
-         <property name="layoutDirection">
-          <enum>Qt::RightToLeft</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QToolButton" name="splashimage">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>usbcreator/boot/grub/splash.png</normaloff>usbcreator/boot/grub/splash.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>96</width>
+              <height>72</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="splashlabel">
+            <property name="minimumSize">
+             <size>
+              <width>103</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>103</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Splash</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <spacer name="horizontalSpacer_5">
             <property name="orientation">
@@ -344,58 +372,7 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QLineEdit" name="skeluser">
-            <property name="minimumSize">
-             <size>
-              <width>220</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>220</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Als Quelle kann ein beliebiger System-Benutzer gewählt werden</string>
-            </property>
-           </widget>
-          </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="copydefaultuser">
-         <property name="toolTip">
-          <string/>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">margin-left:6px</string>
-         </property>
-         <property name="text">
-          <string>Original Benutzer Einstellungen einbinden</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="copyskel">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Neue Benutzer (z.B. nach der Installation des Systems)&lt;br/&gt;übernehmen die Einstellungen des Original Benutzers&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">margin-left:6px;</string>
-         </property>
-         <property name="text">
-          <string>Standard für alle Nutzer</string>
-         </property>
         </widget>
        </item>
        <item>
@@ -474,8 +451,17 @@
          <layout class="QHBoxLayout" name="horizontalLayout_14">
           <item>
            <widget class="QLabel" name="label_6">
+            <property name="minimumSize">
+             <size>
+              <width>64</width>
+              <height>86</height>
+             </size>
+            </property>
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">margin-top:2px;</string>
             </property>
             <property name="text">
              <string/>
@@ -483,8 +469,11 @@
             <property name="pixmap">
              <pixmap>pixmaps/appiconblue.png</pixmap>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
             <property name="margin">
-             <number>8</number>
+             <number>0</number>
             </property>
            </widget>
           </item>
@@ -500,42 +489,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QToolButton" name="splashimage">
-            <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>isolinux/splash.png</normaloff>isolinux/splash.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>96</width>
-              <height>72</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="splashlabel">
-            <property name="minimumSize">
-             <size>
-              <width>103</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>103</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Splash</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>
@@ -899,9 +852,6 @@
   <tabstop>burniso</tabstop>
   <tabstop>livecdlabel</tabstop>
   <tabstop>livehostname</tabstop>
-  <tabstop>skeluser</tabstop>
-  <tabstop>copydefaultuser</tabstop>
-  <tabstop>copyskel</tabstop>
   <tabstop>exit</tabstop>
   <tabstop>baseworkdir</tabstop>
   <tabstop>customiso</tabstop>
@@ -913,54 +863,5 @@
   <tabstop>testiso</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>copydefaultuser</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>skeluser</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>276</x>
-     <y>348</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>131</x>
-     <y>312</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>copydefaultuser</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>copyskel</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>276</x>
-     <y>348</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>276</x>
-     <y>374</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>copydefaultuser</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>liveuser</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>276</x>
-     <y>348</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>330</x>
-     <y>328</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

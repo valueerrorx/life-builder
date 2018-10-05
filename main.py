@@ -184,13 +184,8 @@ class MeinDialog(QtWidgets.QDialog):
     
     def onISO(self): 
         self.ui.mkiso.setEnabled(False)
-       
         self.ui.livehostname.setEnabled(False)
-       
-        self.ui.skeluser.setEnabled(False)
         self.ui.livecdlabel.setEnabled(False)
-        self.ui.copydefaultuser.setEnabled(False)
-        self.ui.copyskel.setEnabled(False)
         self.ui.tab_2.setEnabled(False)
         
         self.writeConfigToFile()
@@ -331,7 +326,6 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.liveuser.setText(USER)
         self.ui.livehostname.setText(LIVEHOSTNAME)
         self.ui.customiso.setText(CUSTOMISO)
-        self.ui.skeluser.setText(USER)
         self.ui.livecdlabel.setText(LIVECDLABEL)
         self.ui.livecdurl.setText(LIVECDURL)
         self.ui.excludes.setText(EXCLUDES)
@@ -342,24 +336,18 @@ class MeinDialog(QtWidgets.QDialog):
         LIVEUSER=self.ui.liveuser.text()
         LIVEHOSTNAME=self.ui.livehostname.text()
         CUSTOMISO=self.ui.customiso.text()
-        SKELUSER=self.ui.skeluser.text()
         LIVECDLABEL=self.ui.livecdlabel.text()
         LIVECDURL=self.ui.livecdurl.text()
         EXCLUDES=self.ui.excludes.text()
         SQUASHFSOPTS=self.ui.squashfsopts.text()
-        
-        COPYDEFAULTUSER = self.ui.copydefaultuser.isChecked()
         REMOVERESTRICTED = self.ui.restricted.isChecked()
         
-        if self.ui.copydefaultuser.isChecked():   # only if the default usersettings are going to be kept it makes sense to copy them for all new installer users
-            COPYSKEL = self.ui.copyskel.isChecked()
-        else:
-            COPYSKEL = "False"
+
         
         #write config to .conf file for bashscript
         filepath = os.path.join(self.scriptdir,'conf/config.py')
         f = open(filepath,"w")
-        configcontent = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nBASEWORKDIR='%s'\nLIVEUSER='%s'\nLIVEHOSTNAME='%s'\nCUSTOMISO='%s'\nSKELUSER='%s'\nLIVECDLABEL='%s'\nLIVECDURL='%s'\nEXCLUDES='%s'\nSQUASHFSOPTS='%s'\nCOPYSKEL='%s'\nCOPYDEFAULTUSER='%s'\nREMOVERESTRICTED='%s'\n" %(str(BASEWORKDIR),str(LIVEUSER),str(LIVEHOSTNAME),str(CUSTOMISO),str(SKELUSER),str(LIVECDLABEL),str(LIVECDURL),str(EXCLUDES),str(SQUASHFSOPTS),str(COPYSKEL),str(COPYDEFAULTUSER),str(REMOVERESTRICTED))
+        configcontent = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\nBASEWORKDIR='%s'\nLIVEUSER='%s'\nLIVEHOSTNAME='%s'\nCUSTOMISO='%s'\nLIVECDLABEL='%s'\nLIVECDURL='%s'\nEXCLUDES='%s'\nSQUASHFSOPTS='%s'\nREMOVERESTRICTED='%s'\n" %(str(BASEWORKDIR),str(LIVEUSER),str(LIVEHOSTNAME),str(CUSTOMISO),str(LIVECDLABEL),str(LIVECDURL),str(EXCLUDES),str(SQUASHFSOPTS),str(REMOVERESTRICTED))
         print(configcontent)
         f.write(configcontent)
         
