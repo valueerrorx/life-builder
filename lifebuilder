@@ -525,8 +525,8 @@ FOO
     #   Calculate the number of files to include (for the python script progress bar)
     ###############################
     
-    # we count all inodes in the REALFOLDERS in order to predict how many lines mksquashfs will produce (and we add 28 lines because of its additional output
-    FILES=28
+    # we count all inodes in the REALFOLDERS in order to predict how many lines mksquashfs will produce (and we add 20000 lines because of its additional output
+    FILES=25000
     for k in $REALFOLDERS; do
         LIST=`ls -d $k`
         NEWFILES=$(for i in $LIST; do sudo find $i -printf "%i\n" | sort -u | wc -l ; done)
