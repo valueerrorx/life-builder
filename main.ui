@@ -79,6 +79,12 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QWidget" name="widget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <property name="leftMargin">
            <number>6</number>
@@ -513,6 +519,9 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stellen sie sicher, dass im Arbeitsverzeichnis genug&lt;br/&gt;freier Speicherplatz vorhanden ist (min. 12GB)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -627,6 +636,9 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>/home/user/test /home/user/Nextcloud /home/user/videos</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -669,7 +681,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Live Benutzername sollte mit dem Orignial Benutzernamen ident sein.&lt;br/&gt;Links und andere Verweise auf den Namen könnten ihre Funktion verlieren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Benutzername der aktuellen Session.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -852,6 +864,7 @@
   <tabstop>burniso</tabstop>
   <tabstop>livecdlabel</tabstop>
   <tabstop>livehostname</tabstop>
+  <tabstop>splashimage</tabstop>
   <tabstop>exit</tabstop>
   <tabstop>baseworkdir</tabstop>
   <tabstop>customiso</tabstop>
