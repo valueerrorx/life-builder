@@ -147,7 +147,7 @@ cleanhome (){
         
     for i in ${DUMMYSYSHOME}/.gnome2/keyrings/*; do rm $i > /dev/null 2>&1; done
     find ${DUMMYSYSHOME}/ -name "*socket*" | xargs rm -rf '{}' > /dev/null 2>&1
-    find ${DUMMYSYSHOME}/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1
+#     find ${DUMMYSYSHOME}/ -name "*cache*" | xargs rm -rf '{}' > /dev/null 2>&1  #do NOT do this .. there are important files named *cache* 
 }
 
 
