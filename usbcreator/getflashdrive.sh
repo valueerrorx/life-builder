@@ -149,7 +149,7 @@ fi
 #---------------------------------------------------------#" 
 if  [[( $1 = "copy" ) || ( $1 = "iso" )  ]]
 then
-    LIFESIZE="4000"    #darf nicht grösser sein. fat32 beschränkung für squashfs datei
+    LIFESIZE="4500"    #squashfs !> 4000MB
     SHARESIZE=$2
     COPYCASPER=$3
     USB=$4
