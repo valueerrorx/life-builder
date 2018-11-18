@@ -307,10 +307,12 @@ cdfs (){
 
     # output16
     output "Removing unnecessary files in $WORKDIR/dummysys"  "66"
-    
+    #all apt package lists and srcpackage lists are removed. do "apt update" to restore
     rm -rf $WORKDIR/dummysys/var/lib/apt/lists/* -vf &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/apt/lists/lock &> /dev/null
     rm -rf $WORKDIR/dummysys/var/cache/apt/archives/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/cache/apt/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/cache/apt-xapian-index/* -r &> /dev/null
     rm -rf $WORKDIR/dummysys/var/lib/ureadahead/pack &> /dev/null
     rm -rf $WORKDIR/dummysys/var/cache/gdm/* &> /dev/null
     rm -f $WORKDIR/dummysys/etc/cups/ssl/server.crt &> /dev/null
