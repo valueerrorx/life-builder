@@ -247,7 +247,7 @@ then
         sleep 1
         #sudo mkfs.ext2 -b 4096 -L home-rw ${SDX}3
         sudo partprobe  > /dev/null 2>&1  #hide output
-
+        sleep 2  
         #  teste ob paritionierung erfolgreich war
         checkpart
     }
