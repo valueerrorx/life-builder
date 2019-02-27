@@ -3,9 +3,9 @@
 
 BASEWORKDIR='/home/lifebuilder'
 LIVEUSER='student'
-LIVEHOSTNAME='lifetest'
+LIVEHOSTNAME='life'
 CUSTOMISO='life.iso'
-LIVECDLABEL='life1'
+LIVECDLABEL='life'
 LIVECDURL='http://life-edu.eu'
 EXCLUDES='/home/student/Nextcloud'
 SQUASHFSOPTS='-no-recovery -always-use-fragments -b 1M -no-duplicates -comp xz'
