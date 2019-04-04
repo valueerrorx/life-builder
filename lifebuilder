@@ -295,12 +295,16 @@ cdfs (){
     #Adding packages location to sources
     ARCH=`archdetect | awk -F "/" '{print $1}'`
     DISKINFONAME=`echo $LIVECDLABEL | awk '{print $1}'`
+    
+    
     # output15
-    output "Adding CD-ROM to source list"  "60"
+   # output "Adding CD-ROM to source list"  "60"
     . /etc/lsb-release
-    sed -i '/cdrom:/d' $WORKDIR/dummysys/etc/apt/sources.list &> /dev/null
-    echo "deb cdrom:[$DISKINFONAME $DISTRIB_RELEASE - Release $ARCH]/ dists/" >> $WORKDIR/dummysys/etc/apt/sources.list
+   # sed -i '/cdrom:/d' $WORKDIR/dummysys/etc/apt/sources.list &> /dev/null
+   # echo "deb cdrom:[$DISKINFONAME $DISTRIB_RELEASE - Release $ARCH]/ dists/" >> $WORKDIR/dummysys/etc/apt/sources.list
 
+    
+    
     #Copying grub config
     cp ${SCRIPTDIR}/conf/grub.conf $WORKDIR/dummysys/etc/default/grub
     sed -i "s/LIVECDLABEL/$LIVECDLABEL/g" $WORKDIR/dummysys/etc/default/grub
@@ -367,11 +371,11 @@ cdfs (){
     
     
     #################
-    #  Downloading packages for offline install (needed by the systeminstaller in order to install the system to a disk)
+    #  Downloading packages for offline install (needed by the systeminstaller in order to install the system to a disk) or does it ??
     ##########################
 
     # output21
-    output "Downloading packages for CD" "82"
+    #output "Downloading packages for CD" "82"
     
     # Check Architecture
     ARCH=`archdetect | awk -F "/" '{print $1}'`
@@ -379,11 +383,11 @@ cdfs (){
     cd $WORKDIR/ISOTMP/pool
     
     #the list below is copied from the kubuntu 1804 original install image
-    apt-get download b43-fwcutter binutils binutils-common binutils-x86-64-linux-gnu libbinutils build-essential bcmwl-kernel-source dkms dpkg-dev fakeroot libfakeroot g++-7 g++ gcc gcc-7 gcc-5 grub-pc grub-pc-bin grub-gfxpayload-lists grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed libasan4  libatomic1 libc-dev-bin libc6-dev libc6-i386 libcilkrts5 libfakeroot libgcc-7-dev libstdc++-7-dev libitm1 liblsan0 libmpx2 libquadmath0 libtsan0 libubsan0 linux-libc-dev lupin-support libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl make manpages-dev mokutil mouseemu oem-config oem-config-kde user-setup patch setserial shim shim-signed
+   # apt-get download b43-fwcutter binutils binutils-common binutils-x86-64-linux-gnu libbinutils build-essential bcmwl-kernel-source dkms dpkg-dev fakeroot libfakeroot g++-7 g++ gcc gcc-7 gcc-5 grub-pc grub-pc-bin grub-gfxpayload-lists grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed libasan4  libatomic1 libc-dev-bin libc6-dev libc6-i386 libcilkrts5 libfakeroot libgcc-7-dev libstdc++-7-dev libitm1 liblsan0 libmpx2 libquadmath0 libtsan0 libubsan0 linux-libc-dev lupin-support libalgorithm-diff-perl libalgorithm-diff-xs-perl libalgorithm-merge-perl make manpages-dev mokutil mouseemu oem-config oem-config-kde user-setup patch setserial shim shim-signed
 
     mkdir -p $WORKDIR/ISOTMP/dists
     cd $WORKDIR/ISOTMP/
-    dpkg-scanpackages -m pool /dev/null | gzip -9c > dists/Packages.gz
+    #dpkg-scanpackages -m pool /dev/null | gzip -9c > dists/Packages.gz
     apt-ftparchive -c ${SCRIPTDIR}/conf/release.conf release $WORKDIR/ISOTMP/dists > $WORKDIR/ISOTMP/dists/Release
 
 
