@@ -408,6 +408,7 @@ then
     
     
     ##############15
+    echo "F90"
     echo "Bootloader Konfiguration" 
     sleep 0.5
     ##############

@@ -494,6 +494,10 @@ class  Worker(QtCore.QObject):
                         increment = float(1)   # progressbar geht nur weiter beim überschreiten ganzer zahlen - setze wieder auf 1 sonst werden letze einträge nicht visualisiert
                         completed += 1
                        
+                    if "F90" in line:  #advance to 90% (after sync)
+                        completed = 90
+                       
+                       
                     if "FAILED" in line or "error" in line or "failed" in line:
                         completed = 100
                         line = "Kopiervorgang fehlgeschlagen"
