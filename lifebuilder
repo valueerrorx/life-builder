@@ -133,6 +133,7 @@ cleanhome (){
     rm -rf ${DUMMYSYSHOME}/.kde/share/apps/RecentDocuments/* > /dev/null 2>&1
     rm -rf ${DUMMYSYSHOME}/.local/share/RecentDocuments/* > /dev/null 2>&1
     rm -rf ${DUMMYSYSHOME}/.life/EXAM/client.log > /dev/null 2>&1
+    rm -rf ${DUMMYSYSHOME}/.life/EXAM/ > /dev/null 2>&1
     rm -rf ${DUMMYSYSHOME}/.bash_history > /dev/null 2>&1
     rm -rf ${DUMMYSYSHOME}/.gitconfig > /dev/null 2>&1
     rm -rf ${DUMMYSYSHOME}/.gksu.lock > /dev/null 2>&1
