@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2017 Thomas Michael Weissel
@@ -140,7 +140,9 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.copydata.setEnabled(True)
         self.ui.update.setEnabled(True)
         self.ui.search.setEnabled(True)
-        
+        self.ui.liveonly.setEnabled(True) 
+        self.ui.usbusb.setEnabled(True)
+        self.ui.isousb.setEnabled(True)
        
        
     def searchUSB(self):
@@ -423,6 +425,9 @@ class MeinDialog(QtWidgets.QDialog):
             self.ui.copydata.setEnabled(False)
             self.ui.update.setEnabled(False) 
             self.ui.search.setEnabled(False) 
+            self.ui.liveonly.setEnabled(False) 
+            self.ui.usbusb.setEnabled(False)
+            self.ui.isousb.setEnabled(False)
             
             self.extraThread.start()
 
@@ -512,6 +517,7 @@ class  Worker(QtCore.QObject):
             
             with p.stdout:
                 for line in iter(p.stdout.readline, b''):
+                    line = line.decode()
                     line = line.strip('\n')
                     print(line)
                     
