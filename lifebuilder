@@ -14,7 +14,7 @@ fi
 
 
 #  load basic configuration 
-lifebuilderVERSION="1.1"
+lifebuilderVERSION="1.2"
 USER=$(logname)  
 HOME="/home/${USER}/"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  
@@ -54,12 +54,11 @@ fi
 rm $EXCLUDESFILE
 touch $EXCLUDESFILE
 if [ "$EXCLUDES" != "" ]; then
+    echo "/rofs" >> $EXCLUDESFILE    # we exclude /rofs (which contains the mounted squashfs filesystem on a live system
     for addvar in $EXCLUDES ; do
         echo $addvar >> $EXCLUDESFILE
     done
 fi
-
-
 
 
 #-----------------------------#
