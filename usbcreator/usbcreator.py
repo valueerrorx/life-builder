@@ -66,7 +66,7 @@ class MeinDialog(QtWidgets.QDialog):
         
         #check for root permissions 
         if os.geteuid() != 0:
-            print ("You need root access in order to create an ISO image")
+            print ("You need root access in order to create a live USB device")
             command = "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY KDE_FULL_SESSION=true  %s" % (os.path.abspath(__file__))
             self.ui.close()
             os.system(command)
