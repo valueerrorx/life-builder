@@ -30,6 +30,9 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.copy.clicked.connect(self.startCopy)
         self.ui.selectiso.clicked.connect(self.selectFile)
         self.ui.usbusb.clicked.connect(self.searchUSB)
+        self.ui.liveonly.clicked.connect(self.disableCopydata)
+        
+        
         self.proposed = ["sda","sdb","sdc","sdd","sde","sdf","sdg","sdh","sdi","sdj","sdk","sdl","sdm","sdn","sdo","sdp","sdq","sdr","sds","sdt","sdu","sdv","sdw","sdx","sdy","sdz"]
         
         QtWidgets.QApplication.instance().aboutToQuit.connect(self.quit)
@@ -58,9 +61,27 @@ class MeinDialog(QtWidgets.QDialog):
                 self.ui.isofilename.setText("<b>%s</b>" % filename[1])
             else:
                 print("isolocation was given but file not found")
+        
+        
+        
+        #check for root permissions 
+        if os.geteuid() != 0:
+            print ("You need root access in order to create a live USB device")
+            command = "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY KDE_FULL_SESSION=true  %s" % (os.path.abspath(__file__))
+            self.ui.close()
+            os.system(command)
+            os._exit(0)
+        
                 
-                
-    
+        
+    def disableCopydata(self):
+        if self.ui.liveonly.checkState():
+             self.ui.copydata.setEnabled(False)
+        else:
+            if self.ui.usbusb.isChecked():
+                self.ui.copydata.setEnabled(True)
+            
+            
     
     def selectFile(self):
         
@@ -90,7 +111,7 @@ class MeinDialog(QtWidgets.QDialog):
             pixmap = pixmap.scaled(QtCore.QSize(64,64))
             item.picture.setPixmap(pixmap)
             #make sure this process quits immediately
-            print "killing running subprocesses"
+            print('killing running subprocesses')
             command = "sudo pkill -f rsync && sudo killall rsync"
             os.system(command) 
                     
@@ -113,7 +134,7 @@ class MeinDialog(QtWidgets.QDialog):
        
        
     def  finished(self):
-        print  'finished'
+        print('finished')
         #self.ui.copy.setEnabled(True)
         self.ui.exit.setEnabled(True)
         self.ui.copydata.setEnabled(True)
@@ -123,6 +144,14 @@ class MeinDialog(QtWidgets.QDialog):
        
        
     def searchUSB(self):
+        
+        if self.ui.liveonly.checkState():
+            self.ui.copydata.setEnabled(False)
+            
+        
+        
+        
+        
         self.devices = []
         #make sure nothing is running anymore
         self.extraThread.quit()
@@ -164,7 +193,7 @@ class MeinDialog(QtWidgets.QDialog):
         # do not allow copy if any of the flashdrives is too small
         items = self.get_list_widget_items()  
         for item in items:
-            if item.sharesize is 0:
+            if item.sharesize == 0:
                 self.ui.copy.setEnabled(False)
        
             
@@ -177,7 +206,7 @@ class MeinDialog(QtWidgets.QDialog):
             for item in items:
                 if usbdev == item.id:
                     existing = True
-                    print "found existing widget for usb device"
+                    print("found existing widget for usb device")
             
             if existing is False:
                 self.addNewListItem(usbdev, device_info, devicemodel, usbbytesize)
@@ -192,7 +221,7 @@ class MeinDialog(QtWidgets.QDialog):
         
     def addNewListItem(self, usbdev, device_info, devicemodel, usbbytesize):
         item = QtWidgets.QListWidgetItem()
-        item.setSizeHint(QtCore.QSize(370, 120));
+        item.setSizeHint(QtCore.QSize(400, 154));
         #store important information on the widget
         item.id = usbdev 
         item.size = usbbytesize
@@ -208,11 +237,15 @@ class MeinDialog(QtWidgets.QDialog):
        
         item.info = QtWidgets.QLabel('      %s %s ( %s ) %.2fGB'  % (device_info, devicemodel, item.id, usbbytesize ))
         item.info.setAlignment(QtCore.Qt.AlignRight)
+        item.info.setFixedWidth(240)
         
         item.warn = QtWidgets.QLabel('')
         item.warn.setAlignment(QtCore.Qt.AlignVCenter|QtCore.Qt.AlignRight)
         
         item.placeholder = QtWidgets.QLabel('      ')
+        item.share = QtWidgets.QLabel("Größe der 'share' Partition:")
+        item.share.setAlignment(QtCore.Qt.AlignVCenter|QtCore.Qt.AlignRight)
+        
         
         item.comboBox = QtWidgets.QComboBox()
         item.comboBox.addItem("0.5 GB")
@@ -232,14 +265,16 @@ class MeinDialog(QtWidgets.QDialog):
         
         grid = QtWidgets.QGridLayout()
         grid.setSpacing(0)
-        grid.setRowStretch (1, 4)
-        grid.addWidget(item.info, 0, 2)
-        grid.addWidget(item.warn, 2, 2)
-        grid.addWidget(item.picture, 1, 0)
-        grid.addWidget(item.comboBox, 1, 2)
-        grid.addWidget(item.progressbar, 2, 0)
-        #grid.addWidget(item.placeholder, 3, 1)
-        grid.addWidget(item.placeholder, 3, 3)
+        #grid.setRowStretch (1, 4)
+        
+        grid.addWidget(item.info, 0, 1)
+        grid.addWidget(item.warn, 4, 1)
+        grid.addWidget(item.picture, 3, 0)
+        grid.addWidget(item.comboBox, 3, 1)
+        grid.addWidget(item.share, 2,1)
+        grid.addWidget(item.progressbar, 4, 0)
+        grid.addWidget(item.placeholder, 1, 1)
+        grid.addWidget(item.placeholder, 5, 1)
 
         widget = QtWidgets.QWidget()
         widget.setLayout(grid)
@@ -256,7 +291,7 @@ class MeinDialog(QtWidgets.QDialog):
 
     def get_list_widget_items(self):
         items = []
-        for index in xrange(self.ui.listWidget.count()):
+        for index in range(self.ui.listWidget.count()):
             items.append(self.ui.listWidget.item(index))
         return items  
         
@@ -277,9 +312,9 @@ class MeinDialog(QtWidgets.QDialog):
         getcommand=os.path.join(WORK_DIRECTORY, "getflashdrive.sh")
         
         answer = Popen([getcommand,"check", dev, copylife ], stdout=PIPE)
-        answer = str(answer.communicate()[0])  # das shellscript antwortet immer mit dem namen der datei die die informationen beinhaltet
+        answer = str(answer.communicate()[0],'utf-8')  # das shellscript antwortet immer mit dem namen der datei die die informationen beinhaltet
         answerlist= answer.split(';')    #  "0 $USB; 1 $DEVICEVENDOR; 2 $DEVICEMODEL; 3 $DEVICESIZE; 4 $USBBYTESIZE"
-        print answerlist
+        print(answerlist)
         
         usbdev = answerlist[0]    #erster teil ist usb gerät
         device_info = answerlist[1]
@@ -305,7 +340,7 @@ class MeinDialog(QtWidgets.QDialog):
                 devlist.append(devname[0])
                                    
             if usbdev in devlist:
-                print "already in list"
+                print("already in list")
             else:
                 # erstelle eine umfassende liste mit geräteinformationen
                 self.devices.append([usbdev, device_info, devicemodel, devicesize, usbbytesize])
@@ -320,7 +355,7 @@ class MeinDialog(QtWidgets.QDialog):
         sharesize = self.getShareSize(item)
         
         if devicesize-6000-sharesize > 0:   #4GB for the system 2GB  casper-rw + SHARE
-            print "device size ok"
+            print("device size ok")
             pixmap = QPixmap(os.path.join(WORK_DIRECTORY, "pixmaps/driveyes.png"))
             pixmap = pixmap.scaled(QtCore.QSize(64,64))
             item.picture.setPixmap(pixmap)
@@ -329,7 +364,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.ui.copy.setEnabled(True)
             return True
         else:
-            print "device to small %s" % item.id
+            print("device to small %s" % item.id)
             
             item.warn.setText("<b>Zu wenig Speicherplatz</b>")
             pixmap = QPixmap(os.path.join(WORK_DIRECTORY, "pixmaps/driveno.png"))
@@ -396,7 +431,7 @@ class MeinDialog(QtWidgets.QDialog):
                 
      
     def onAbbrechen(self):    # Exit button - remove ALL lockfiles
-        print "Beende alle Prozesse"
+        print("Beende alle Prozesse")
         for i in self.proposed:
             try:
                 os.remove("%s.lock" % i) 
@@ -448,7 +483,13 @@ class  Worker(QtCore.QObject):
             method = "copy"
             self.isolocation = "none"
             
-            
+        
+        if self.meindialog.ui.liveonly.checkState():
+            liveonly = True
+        else:
+            liveonly = False
+        
+        
             
         
         items = self.meindialog.get_list_widget_items()
@@ -467,12 +508,12 @@ class  Worker(QtCore.QObject):
             getcommand=os.path.join(WORK_DIRECTORY, "getflashdrive.sh")
          
          
-            p=Popen([getcommand,str(method),str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.meindialog.isolocation)],stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
+            p=Popen([getcommand,str(method),str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.meindialog.isolocation), str(liveonly)],stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
             
             with p.stdout:
                 for line in iter(p.stdout.readline, b''):
                     line = line.strip('\n')
-                    print line
+                    print(line)
                     
                     if "0%" not in line:    # rsync delivers 200 entries with 0% sometimes - do not increment
                         completed += increment
@@ -501,7 +542,7 @@ class  Worker(QtCore.QObject):
                     if "FAILED" in line or "error" in line or "failed" in line:
                         completed = 100
                         line = "Kopiervorgang fehlgeschlagen"
-                        print line
+                        print(line)
                         self.processed.emit(completed,item,line) 
                         p.kill()
                         break

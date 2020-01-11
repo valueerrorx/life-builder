@@ -156,6 +156,7 @@ then
     TITLE=$5
     UPDATE=$6
     ISOFILE=$7
+    LIVEONLY=$8
     
     TITLE=${TITLE//[-]/ }
     SDX="/dev/$USB" 
@@ -421,6 +422,15 @@ then
     sudo cp ${DIR}/isolinux/* ${MOUNTPOINT}/syslinux/   > /dev/null 2>&1  #hide output
     sudo cp ${DIR}/boot/grub/* ${MOUNTPOINT}/boot/grub/  > /dev/null 2>&1  #hide output
 
+    
+    
+    # copy alternative grub and syslinux conf (without persistent mode)
+    if [[( $LIVEONLY = "True"  )]]
+    then
+        sudo cp ${MOUNTPOINT}/boot/grub/grub-lifeonly.cfg ${MOUNTPOINT}/boot/grub/grub-lifeonly.cfg
+        sudo cp ${MOUNTPOINT}/syslinux/isolinux-lifeonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg 
+        sudo cp ${MOUNTPOINT}/syslinux/isolinux-lifeonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg 
+    fi
 
 
     ##############16
