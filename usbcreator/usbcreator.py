@@ -61,6 +61,17 @@ class MeinDialog(QtWidgets.QDialog):
                 self.ui.isofilename.setText("<b>%s</b>" % filename[1])
             else:
                 print("isolocation was given but file not found")
+        
+        
+        
+        #check for root permissions 
+        if os.geteuid() != 0:
+            print ("You need root access in order to create an ISO image")
+            command = "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY KDE_FULL_SESSION=true  %s" % (os.path.abspath(__file__))
+            self.ui.close()
+            os.system(command)
+            os._exit(0)
+        
                 
         
     def disableCopydata(self):
@@ -497,7 +508,7 @@ class  Worker(QtCore.QObject):
             getcommand=os.path.join(WORK_DIRECTORY, "getflashdrive.sh")
          
          
-            p=Popen([getcommand,str(method),str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.meindialog.isolocation)],stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
+            p=Popen([getcommand,str(method),str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.meindialog.isolocation), str(liveonly)],stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
             
             with p.stdout:
                 for line in iter(p.stdout.readline, b''):
