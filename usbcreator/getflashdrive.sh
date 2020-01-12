@@ -16,10 +16,10 @@
 #   sharesize:   500 / 1000 / 8000 
 #   copydata:  True / False
 #   item.id:   sda / sdb / sdc
-#   iteminfo:   adata s102 
+#   iteminfo:   adata-s102 
 #   update:    True / False
-#   self.isolocation:   PathToIsoFile /home/student/life.iso
-#
+#   self.isolocation:   PathToIsoFile /home/student/life.iso  or none
+#   liveonly:  True / False  (user alternate isolinux.cfg without persistence)
 #
 
 
@@ -38,7 +38,7 @@ getsizeInGB(){  ## get and display size of flashdrive to give the user more info
 #      check for lockfiles - delete if not use            #"
 #---------------------------------------------------------#"  
 check(){  #tests for lock files and process threads - removes unnesessary lockfiles 
-    if test -f ${DIR}/${USB}.lock;
+    if test -f /tmp/${USB}.lock;
     then 
         # test if there is a reason for the other lockfile
         PROCESS=$( pidof -x $0)   #test if there is a reason for lock files (another clone process) PIPING this throug "wc -w" would start another proces of this script for an instant
@@ -50,9 +50,9 @@ check(){  #tests for lock files and process threads - removes unnesessary lockfi
         if [[( $PROCESS = "1" || $DEV != "1" )]]   ##no other process of this script is running and locked device not found in /dev
         then
         # echo "DELETE LOCK FILE"
-            sudo rm *.lock > /dev/null 2>&1
-            sudo umount -f mnt* > /dev/null 2>&1
-            sudo rmdir mnt* > /dev/null 2>&1
+            sudo rm /tmp/*.lock > /dev/null 2>&1
+            sudo umount -f /tmp/mnt* > /dev/null 2>&1
+            sudo rmdir /tmp/mnt* > /dev/null 2>&1
         fi
     fi
 }
@@ -79,7 +79,7 @@ then
         ISAUFS=$(df -h |grep aufs |wc -l)
         if [[( $ISCOW = "0" ) && ( $ISAUFS = "0" ) && ( $COPYLIFE = "True" ) ]];
         then
-            touch ${DIR}/${USB}.lock 
+            touch /tmp/${USB}.lock 
             printf "$USB;NOLIVE"  #dies ist kein live system.. usbkopie von installierten systemen nicht möglich  (ausser von ISO dateien)
             exit 0
         fi
@@ -89,11 +89,11 @@ then
         
         if [[( $SYSMOUNT1 = '/cdrom' ) ||( $SYSMOUNT2 = '/cdrom' ) ||( $SYSMOUNT3 = '/cdrom' ) ]]                  ## check if this is the system device - check mountpoint!!
         then
-            touch ${DIR}/${USB}.lock 
+            touch /tmp/${USB}.lock 
             printf "$USB;SYSUSB"    # der gefundene stick ist das systemdevice
             exit 0
         fi
-        touch ${DIR}/${USB}.lock     #set target device
+        touch /tmp/${USB}.lock     #set target device
         SDX="/dev/$USB" 
         printf "$USB;$DEVICEVENDOR;$DEVICEMODEL;$DEVICESIZE;$USBBYTESIZE"
     }
@@ -346,7 +346,7 @@ then
         echo "Erstelle Mountpoint" 
         sleep 0.5
         ##############
-        MOUNTPOINT="mnt"
+        MOUNTPOINT="/tmp/mnt"
         count=0
         
         while [ -d $MOUNTPOINT ]   #we are doing this because another clone process could be active and already captured mnt
@@ -354,7 +354,7 @@ then
             # MOUNTPOINT="mnt${count}"
             #echo "$MOUNTPOINT directory already exists!"
             (( count++ ))
-            MOUNTPOINT="mnt${count}"
+            MOUNTPOINT="/tmp/mnt${count}"
             #echo "testing $MOUNTPOINT ..."
         done
         #echo ""
@@ -427,9 +427,9 @@ then
     # copy alternative grub and syslinux conf (without persistent mode)
     if [[( $LIVEONLY = "True"  )]]
     then
-        sudo cp ${MOUNTPOINT}/boot/grub/grub-lifeonly.cfg ${MOUNTPOINT}/boot/grub/grub-lifeonly.cfg
-        sudo cp ${MOUNTPOINT}/syslinux/isolinux-lifeonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg 
-        sudo cp ${MOUNTPOINT}/syslinux/isolinux-lifeonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg 
+        sudo cp ${MOUNTPOINT}/boot/grub/grub-liveonly.cfg ${MOUNTPOINT}/boot/grub/grub.cfg
+        sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg 
+        sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg 
     fi
 
 

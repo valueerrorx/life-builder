@@ -140,7 +140,8 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.copydata.setEnabled(True)
         self.ui.update.setEnabled(True)
         self.ui.search.setEnabled(True)
-        self.ui.liveonly.setEnabled(True) 
+        self.ui.liveonly.setEnabled(True)
+        self.ui.liveonly.setChecked(False)
         self.ui.usbusb.setEnabled(True)
         self.ui.isousb.setEnabled(True)
        
