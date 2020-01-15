@@ -197,7 +197,7 @@ class MeinDialog(QtWidgets.QDialog):
            at some point in the usb creation process (rsync start) suddenly the UI was closed but only if you started the life-builder with kdesu (it worked flawlessly from terminal)
            so "nohup" it is !
         """
-        command = "nohup bash -c 'cd %s && sudo python %s/usbcreator.py %s  >usbcreator.log 2>&1 &'  " % (WORK_DIRECTORY_USBCREATOR, WORK_DIRECTORY_USBCREATOR, self.isolocation)
+        command = "nohup bash -c 'cd %s && sudo python3 %s/usbcreator.py %s  >usbcreator.log 2>&1 &'  " % (WORK_DIRECTORY_USBCREATOR, WORK_DIRECTORY_USBCREATOR, self.isolocation)
         os.system(command) 
         self.ui.close()
 
