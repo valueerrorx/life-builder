@@ -55,7 +55,7 @@ class MeinDialog(QtWidgets.QDialog):
         if self.isolocation != "":
             if os.path.isfile(self.isolocation):   #check if the filenpath given via commandline is a valid file 
                 self.ui.copydata.setEnabled(False)
-                self.ui.update.setEnabled(False)
+                #self.ui.update.setEnabled(False)
                 self.ui.isousb.setChecked(True)
                 filename = self.isolocation.rsplit('/', 1)
                 self.ui.isofilename.setText("<b>%s</b>" % filename[1])
@@ -144,6 +144,9 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.liveonly.setChecked(False)
         self.ui.usbusb.setEnabled(True)
         self.ui.isousb.setEnabled(True)
+        if self.ui.isousb.isChecked():
+            self.ui.copydata.setEnabled(False)
+            
        
        
     def searchUSB(self):

@@ -423,21 +423,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>isousb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>update</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>540</x>
-     <y>215</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>540</x>
-     <y>476</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
