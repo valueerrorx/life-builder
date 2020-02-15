@@ -454,7 +454,7 @@ then
     if [[ ( ${ONLYUPDATE} = "true" ) ]];
     then
         ##############17.5
-        echo "Lösche alte Konfigurationsdateien die Konflikte verursachen" 
+        echo "Entferne Konfigurationsdateien" 
         sleep 0.5
         ##############
         # leider ist ein komplettaustausch unter der haube(configs) nicht so einfach möglich wenn altlasten "über" (overlayfs) den configs liegen
