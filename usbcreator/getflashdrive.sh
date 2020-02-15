@@ -451,7 +451,30 @@ then
     
 
 
-
+    if [[ ( ${ONLYUPDATE} = "true" ) ]];
+    then
+        ##############17.5
+        echo "Lösche alte Konfigurationsdateien die Konflikte verursachen" 
+        sleep 0.5
+        ##############
+        # leider ist ein komplettaustausch unter der haube(configs) nicht so einfach möglich wenn altlasten "über" (overlayfs) den configs liegen
+        
+        sudo umount $MOUNTPOINT > /dev/null 2>&1 
+        sudo umount -l $MOUNTPOINT > /dev/null 2>&1 
+        sudo umount -f $MOUNTPOINT > /dev/null 2>&1    #we make sure this sucker is umounted 
+        sudo mount ${SDX}3  $MOUNTPOINT  #mount third partition casper-rw
+        
+        sudo rm -r $MOUNTPOINT/upper/boot/*   > /dev/null 2>&1  #hide output
+        sudo rm -r $MOUNTPOINT/upper/dev/*   > /dev/null 2>&1  #hide output
+        sudo rm -r $MOUNTPOINT/upper/lib/*   > /dev/null 2>&1  #hide output
+        sudo rm -r $MOUNTPOINT/upper/media/*   > /dev/null 2>&1  #hide output
+        sudo rm -r $MOUNTPOINT/upper/tmp/*   > /dev/null 2>&1  #hide output
+        sudo rm -r $MOUNTPOINT/upper/var/*   > /dev/null 2>&1  #hide output
+        sudo rm -r $MOUNTPOINT/upper/home/student/.config/*   > /dev/null 2>&1  #hide output
+        sudo rm -r $MOUNTPOINT/upper/home/student/.local/*   > /dev/null 2>&1  #hide output
+    fi
+    
+    
     
     
     #---------------------------------------------------------#"
