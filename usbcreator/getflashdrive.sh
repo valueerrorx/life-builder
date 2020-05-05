@@ -149,7 +149,7 @@ fi
 #---------------------------------------------------------#" 
 if  [[( $1 = "copy" ) || ( $1 = "iso" )  ]]
 then
-    LIFESIZE="4500"    #squashfs !> 4000MB
+    LIFESIZE="4000"    #squashfs !> 4000MB
     SHARESIZE=$2
     COPYCASPER=$3
     USB=$4
@@ -234,11 +234,11 @@ then
         
         
         ##############7
-        echo "Erstelle Casper-rw  (ext4)" 
+        echo "Erstelle Casper-rw  (ext2)" 
         sleep 0.5
         ##############
         #trying ext2 because a journalling fs on a flashdrive is probably to heavy
-        sudo mkfs.ext4 -L casper-rw ${SDX}3 > /dev/null 2>&1  #hide output
+        sudo mkfs.ext2 -L casper-rw ${SDX}3 > /dev/null 2>&1  #hide output
         
         
         ##############8

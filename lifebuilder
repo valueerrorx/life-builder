@@ -29,7 +29,7 @@ output() {
 }
 
 #################
-#  load the system config file (written buy main.py)
+#  load the system config file (written by main.py)
 ##########################
 source ${SCRIPTDIR}/conf/config.py
 
@@ -171,10 +171,10 @@ copyhome (){
         cd $HOMEOLDER
         history -w
         history -c
-        rm .cache/konsole/*
-        rm .bash_history
+        rm .cache/konsole/* > /dev/null 2>&1
+        rm .bash_history > /dev/null 2>&1
         
-        rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a ${HOMEOLDER} ${DUMMYSYSHOME}/.
+        rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -azh --ignore-errors ${HOMEOLDER} ${DUMMYSYSHOME}/.
         cleanhome $DUMMYSYSHOMEUSERDIR
         # change ownership 
         chown -R $LIVEUSER:$LIVEUSER ${DUMMYSYSHOME}   > /dev/null 2>&1  
@@ -262,7 +262,7 @@ cdfs (){
     output "Patching casper..."  "39"
     #fix casper script (change boot order from persistent 1st root 2nd  to root 1st persistent 2nd
     # BUG https://bugs.launchpad.net/ubuntu/+source/casper/+bug/1489855
-    sudo cp -a ${SCRIPTDIR}/conf/casper_patched /usr/share/initramfs-tools/scripts/casper
+    #sudo cp -a ${SCRIPTDIR}/conf/casper_patched /usr/share/initramfs-tools/scripts/casper
     sleep 1
     
     output "Apply branding and setup for calamares installer..."  "41"
@@ -284,13 +284,13 @@ cdfs (){
     mkdir -p $WORKDIR/ISOTMP/{casper,preseed,isolinux,install,.disk} 
     mkdir -p $WORKDIR/dummysys/{dev,etc,cdrom,proc,tmp,sys,mnt,media/cdrom,var,run,home}
     
-    rsync -a /dev/urandom $WORKDIR/dummysys/dev/    # why? what do we need urandom for - isn't it created on boot time ?
+    rsync -ahz /dev/urandom $WORKDIR/dummysys/dev/    # why? what do we need urandom for - isn't it created on boot time ?
     chmod ug+rwx,o+rwt $WORKDIR/dummysys/tmp        # needs to be accessable by everybody
     
     # output14
     output "Copying /var and /etc to temp folder. This will take a while."  "48"
-    rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -a /var/. $WORKDIR/dummysys/var/.
-    rsync -a /etc/. $WORKDIR/dummysys/etc/.
+    rsync --exclude-from="${EXCLUDESFILE}" --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' -ahz /var/. $WORKDIR/dummysys/var/.
+    rsync -ahz /etc/. $WORKDIR/dummysys/etc/.
 
     #Adding packages location to sources
     ARCH=`archdetect | awk -F "/" '{print $1}'`
@@ -332,7 +332,7 @@ cdfs (){
     rm -rf $WORKDIR/dummysys/var/log/boot-info
     
     #create empty logfiles
-    find $WORKDIR/dummysys/var/log -regex '.*?[0-9].*?' -exec rm {} \;
+    find $WORKDIR/dummysys/var/log -regex '.*?[0-9].*?' -exec rm -rf {} \;
     find $WORKDIR/dummysys/var/log -type f | while read file
     do
             cat /dev/null | tee $file
@@ -400,15 +400,15 @@ cdfs (){
     output "Creating isolinux setup for the live system" "88"
     find /usr -name 'isolinux.bin' -exec cp {} $WORKDIR/ISOTMP/isolinux/ \;
     #find fix for vesamenu.32 provided by Krasimir S. Stefanov <lokiisyourmaster@gmail.com>
-    VESAMENU=`find /usr -print0 | grep -FzZ "bios/vesamenu.c32"`
+    VESAMENU=$(find /usr -print0 | grep -FzZ "bios/vesamenu.c32" | tr -d '\0')
     cp $VESAMENU $WORKDIR/ISOTMP/isolinux/ 
-    LDLINUX=`find /usr -print0 | grep -FzZ "bios/ldlinux.c32"`
+    LDLINUX=$(find /usr -print0 | grep -FzZ "bios/ldlinux.c32" | tr -d '\0')
     cp $LDLINUX $WORKDIR/ISOTMP/isolinux/
-    LIBUTIL=`find /usr -print0 | grep -FzZ "bios/libutil.c32"`
+    LIBUTIL=$(find /usr -print0 | grep -FzZ "bios/libutil.c32" | tr -d '\0')
     cp $LIBUTIL $WORKDIR/ISOTMP/isolinux/
-    LIBCOM=`find /usr -print0 | grep -FzZ "bios/libcom32.c32"`
+    LIBCOM=$(find /usr -print0 | grep -FzZ "bios/libcom32.c32" | tr -d '\0')
     cp $LIBCOM $WORKDIR/ISOTMP/isolinux/
-    MENU=`find /usr -print0 | grep -FzZ "bios/menu.c32"`
+    MENU=$(find /usr -print0 | grep -FzZ "bios/menu.c32" | tr -d '\0')
     cp $MENU $WORKDIR/ISOTMP/isolinux/
     
     

@@ -119,7 +119,7 @@ class  CheckWorker(QtCore.QObject):
         while self.meindialog.percent < 100:
             roundedpercent = "%.2f" % round(self.meindialog.percent,2)
             line = "Percent done: %s" %(roundedpercent)
-            self.processed1.emit(line, self.meindialog.percent)
+            self.processed1.emit(line, int(self.meindialog.percent))
             time.sleep(0.2)
         
         line = "Percent done: %s \n" %(self.meindialog.percent)
@@ -179,7 +179,7 @@ class MeinDialog(QtWidgets.QDialog):
     def updateProgress(self,line, totalpercentfinished, part=""):  
         self.ui.progressBar.setValue(int(totalpercentfinished))
         self.ui.info.setText(line)  
-        if not part is "":
+        if part != "":
             self.ui.part.setText("<b>%s</b>" % part)
     
     def onISO(self): 
