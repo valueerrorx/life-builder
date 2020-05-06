@@ -259,11 +259,11 @@ cdfs (){
     apt-get -y -q install casper calamares &> /dev/null
     apt-get -y -q install qemu-kvm overlayroot mbr
 
-    output "Patching casper..."  "39"
+   # output "Patching casper..."  "39"
     #fix casper script (change boot order from persistent 1st root 2nd  to root 1st persistent 2nd
     # BUG https://bugs.launchpad.net/ubuntu/+source/casper/+bug/1489855
     #sudo cp -a ${SCRIPTDIR}/conf/casper_patched /usr/share/initramfs-tools/scripts/casper
-    sleep 1
+   # sleep 1
     
     output "Apply branding and setup for calamares installer..."  "41"
     # you may change the installer behaviour and the branding on your own.. it's quite easy

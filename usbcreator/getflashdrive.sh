@@ -234,11 +234,11 @@ then
         
         
         ##############7
-        echo "Erstelle Casper-rw  (ext2)" 
+        echo "Erstelle Casper-rw  (ext4)" 
         sleep 0.5
         ##############
         #trying ext2 because a journalling fs on a flashdrive is probably to heavy
-        sudo mkfs.ext2 -L casper-rw ${SDX}3 > /dev/null 2>&1  #hide output
+        sudo mkfs.ext4 -L casper-rw ${SDX}3 > /dev/null 2>&1  #hide output
         
         
         ##############8
