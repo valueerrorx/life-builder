@@ -484,14 +484,14 @@ FOO
     # output27
     output "Copying your kernel and initrd for the livecd" "100"
     cp /boot/vmlinuz-`uname -r` $WORKDIR/ISOTMP/casper/vmlinuz
-    cp /boot/initrd.img-`uname -r` $WORKDIR/ISOTMP/casper/initrd.gz
+    cp /boot/initrd.img-`uname -r` $WORKDIR/ISOTMP/casper/initrd
     #check if that went well .. otherwise you can stop immediately
     if [ ! -f $WORKDIR/ISOTMP/casper/vmlinuz ]; then
         # output100
         output "ERROR Missing valid kernel. Exiting"
         exit 1
     fi
-    if [ ! -f $WORKDIR/ISOTMP/casper/initrd.gz ]; then
+    if [ ! -f $WORKDIR/ISOTMP/casper/initrd ]; then
         # output100
         output "ERROR Missing valid initial ramdisk. Exiting"
         exit 1
