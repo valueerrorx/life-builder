@@ -18,10 +18,10 @@ from conf.config import *
 import shutil
 from PIL import Image
 
-USER = check_output("logname", shell=True).rstrip().decode('UTF-8') #python3 adds a b'' to any byte objects need to decode
+USER= check_output("logname", shell=True).rstrip().decode('UTF-8') #python3 adds a b'' to any byte objects need to decode
 USER_HOME_DIR = os.path.join("/home", USER)   
 
-WORK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+WORK_DIRECTORY= os.path.dirname(os.path.abspath(__file__))
 WORK_DIRECTORY_USBCREATOR = os.path.join(WORK_DIRECTORY, "usbcreator")
 
 SPLASHDIR1 = os.path.join(WORK_DIRECTORY, "usbcreator/isolinux")
@@ -181,6 +181,7 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.info.setText(line)  
         if part != "":
             self.ui.part.setText("<b>%s</b>" % part)
+    
     
     def onISO(self): 
         self.ui.mkiso.setEnabled(False)

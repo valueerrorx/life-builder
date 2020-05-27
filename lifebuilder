@@ -571,7 +571,8 @@ FOO
     if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
         # output100
         output "ERROR The compressed filesystem is larger than genisoimage allows for a single file. You must try to reduce the amount of data you are backing up and try again."
-        exit 1
+	output "your build $SQUASHFSSIZE Byte"
+        #exit 1
     fi
 
     #add filesystem size 
