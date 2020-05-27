@@ -54,6 +54,7 @@ coverage.xml
 *.log
 local_settings.py
 
+
 # Flask stuff:
 instance/
 .webassets-cache
@@ -99,3 +100,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+dropin.cache
+plantuml.jar
+git2SSH.sh
+__init__.py
+~lock.*
+.settings
