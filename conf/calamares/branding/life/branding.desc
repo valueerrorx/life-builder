@@ -2,13 +2,13 @@
 componentName: life
 
 strings:
-    productName:         LiFE Neon
-    shortProductName:    LiFE Neon
-    version:             18.04
-    shortVersion:        bionic
-    versionedName:       LiFE Neon
-    shortVersionedName:  LiFE Neon 18.04
-    bootloaderEntryName: LiFE Neon 18.04
+    productName:         LiFE
+    shortProductName:    LiFE
+    version:             20.04
+    shortVersion:        focal
+    versionedName:       LiFE
+    shortVersionedName:  LiFE 20.04
+    bootloaderEntryName: LiFE 20.04
     productUrl:          http://life-edu.eu/
     supportUrl:          http://life-edu.eu/
     knownIssuesUrl:      http://life-edu.eu/
