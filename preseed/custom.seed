@@ -2,7 +2,7 @@
 ### Localization
 
 # Preseeding only locale sets language, country and locale.
-d-i debian-installer/locale string de_DE
+d-i debian-installer/locale string de_AT
 
 
 # Keyboard selection.
