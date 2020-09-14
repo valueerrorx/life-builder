@@ -1,5 +1,6 @@
 # life-builder
-Is an Subapplication for the LIFE KDE System [http://www.life-edu.eu/!](http://www.life-edu.eu/).
+Is an Subapplication for the LIFE KDE System [http://www.life-edu.eu/](http://www.life-edu.eu/).
+
 This apptlication is based on "remastersys" and creates an ISO file from the running system.
 The GUI is written in Python and QT.
 The Bash Script can also be used without GUI.
