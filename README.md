@@ -9,13 +9,13 @@ life-usbcreator is included in this application.
 
 Tested with Kubuntu 20.04 (but should work with most Ubuntu derivates).
 
-HowTo run this application:
+### HowTo run this application:
 
 ```python3 main.py```
 
 
 
-Python Dependencies:
+### Python Dependencies:
 pyqt5
 ipaddress
 
