@@ -283,6 +283,7 @@ cdfs (){
     
     mkdir -p $WORKDIR/ISOTMP/{casper,preseed,isolinux,install,.disk} 
     mkdir -p $WORKDIR/dummysys/{dev,etc,cdrom,proc,tmp,sys,mnt,media/cdrom,var,run,home}
+    mkdir -p $WORKDIR/dummysys/run/sshd
     
     rsync -ahz /dev/urandom $WORKDIR/dummysys/dev/    # why? what do we need urandom for - isn't it created on boot time ?
     chmod ug+rwx,o+rwt $WORKDIR/dummysys/tmp        # needs to be accessable by everybody
