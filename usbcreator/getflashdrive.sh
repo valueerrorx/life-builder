@@ -389,6 +389,7 @@ then
     
     if  [[( $1 = "iso" ) ]]  
     then
+        sudo mkdir /cdrom > /dev/null 2>&1  #hide output
         sudo mount -o loop $ISOFILE /cdrom
     fi
     
