@@ -33,7 +33,7 @@ output() {
 ##########################
 source ${SCRIPTDIR}/conf/config.py
 
-if [[( $BASEWORKDIR = "" ) || ( $LIVEUSER = "" ) || ( $LIVEHOSTNAME = "" ) || ( $CUSTOMISO = "" ) || ( $LIVECDLABEL = "" )]]; then
+if [[( $BASEWORKDIR = "" ) || ( $LIVEUSER = "" ) || ( $LIVEHOSTNAME = "") || ( $CUSTOMISO = "") || ( $LIVECDLABEL = "")]]; then
     output "At least one important setting is missing!" "0"
     exit 0
 fi
