@@ -11,10 +11,11 @@
 import sys
 import os
 from PyQt5 import QtCore, uic, QtWidgets
-from PyQt5.QtGui import *
+# from PyQt5.QtGui import *
 from subprocess import Popen, PIPE, STDOUT
 import subprocess
 import sip
+from PyQt5.QtGui import QPixmap, QIcon
 
 
 USER = subprocess.check_output("logname", shell=True).rstrip()
@@ -173,7 +174,7 @@ class MeinDialog(QtWidgets.QDialog):
             usbdev = deviceentry[0]
             device_info = deviceentry[1]
             devicemodel = deviceentry[2]
-            devicesize = deviceentry[3]
+            devicesize = deviceentry[3]  # noqa
             usbbytesize = deviceentry[4]
             self.createWidget(usbdev, device_info, devicemodel, usbbytesize)
 
@@ -214,7 +215,7 @@ class MeinDialog(QtWidgets.QDialog):
         item.picture.setPixmap(pixmap)
         item.picture.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
 
-        usbbytesize = float(usbbytesize)/1000/1000/1000
+        usbbytesize = float(usbbytesize) / 1000 / 1000 / 1000
 
         item.info = QtWidgets.QLabel('      %s %s ( %s ) %.2fGB' % (device_info, devicemodel, item.id, usbbytesize))
         item.info.setAlignment(QtCore.Qt.AlignRight)
@@ -322,10 +323,10 @@ class MeinDialog(QtWidgets.QDialog):
         return
 
     def checkSize(self, item):
-        devicesize = int(item.size)/1024/1024
+        devicesize = int(item.size) / 1024 / 1024
         sharesize = self.getShareSize(item)
 
-        if devicesize-6000-sharesize > 0:   # 4GB for the system 2GB  casper-rw + SHARE
+        if devicesize - 6000 - sharesize > 0:   # 4GB for the system 2GB  casper-rw + SHARE
             print("device size ok")
             pixmap = QPixmap(os.path.join(WORK_DIRECTORY, "pixmaps/driveyes.png"))
             pixmap = pixmap.scaled(QtCore.QSize(64, 64))
@@ -475,13 +476,13 @@ class Worker(QtCore.QObject):
                     if "FILENUMBER" in line:   # keyword FILENUMBER liefert anzahl an files für rsync
                         number = line.split(",")
                         number = float(number[1])
-                        increment = float(84/number)
+                        increment = float(84 / number)
                         completed += 1  # ganzer schritt notwendig um textupdate zu erzwingen
                     elif "CASPER" in line:   # keyword CASPER liefert anzahl an files für rsync
-                        number = absline.split(",")
+                        number = line.split(",")
                         number = float(number[1])
                         item.progressbar.setValue(18)
-                        increment = float(80/number)
+                        increment = float(80 / number)
                         completed += 1
 
                     if "size" in line:  # rsync is finished - advance 1 step

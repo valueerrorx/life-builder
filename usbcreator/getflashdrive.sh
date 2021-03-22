@@ -423,7 +423,9 @@ then
     sudo cp ${DIR}/isolinux/* ${MOUNTPOINT}/syslinux/   > /dev/null 2>&1  #hide output
     sudo cp ${DIR}/boot/grub/* ${MOUNTPOINT}/boot/grub/  > /dev/null 2>&1  #hide output
 
+    echo $LIVEONLY
     
+    exit
     
     # copy alternative grub and syslinux conf (without persistent mode)
     if [[( $LIVEONLY = "True"  )]]
