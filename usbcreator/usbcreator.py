@@ -93,7 +93,6 @@ class MeinDialog(QtWidgets.QDialog):
             filename = file_path.rsplit('/', 1)
             self.ui.isofilename.setText("<b>%s</b>" % filename[1])
             self.isolocation = file_path
-        return
 
     def updateProgress(self, value, item, line):
         if "abgeschlossen" in line:
@@ -167,7 +166,7 @@ class MeinDialog(QtWidgets.QDialog):
         # delete all widgets
         items = self.get_list_widget_items()
         for item in items:
-            sip.delete(item)
+            sip.delete(item)  # noqa
 
         # build size information for every device
         for deviceentry in self.devices:
@@ -299,7 +298,7 @@ class MeinDialog(QtWidgets.QDialog):
         except Exception:
             IndexError
 
-        if device_info == "NOUSB" or device_info == "SYSUSB" or device_info == "NOLIVE" or device_info == "LOCKED":
+        if device_info in ("NOUSB", "SYSUSB", "NOLIVE", "LOCKED"):
             # be more verbose if there is no usb found at all or if the only drive found is the sysusb  - we could iterate over a separate list of all devices later
             if device_info == "NOLIVE":
                 self.searchinfo = "NOLIVE"
@@ -423,15 +422,9 @@ class Worker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
 
     def doCopy(self):
-        if self.meindialog.ui.copydata.checkState():
-            copydata = True
-        else:
-            copydata = False
+        copydata = self.meindialog.ui.copydata.checkState()
 
-        if self.meindialog.ui.update.checkState():
-            update = True
-        else:
-            update = False
+        update = self.meindialog.ui.update.checkState()
 
         if self.meindialog.ui.isousb.isChecked():
             update = False
@@ -441,10 +434,7 @@ class Worker(QtCore.QObject):
             method = "copy"
             self.isolocation = "none"
 
-        if self.meindialog.ui.liveonly.checkState():
-            liveonly = True
-        else:
-            liveonly = False
+        liveonly = self.meindialog.ui.liveonly.checkState()
 
         items = self.meindialog.get_list_widget_items()
         for item in items:
@@ -500,7 +490,7 @@ class Worker(QtCore.QObject):
                         p.kill()
                         break
 
-                    elif "END" in line:
+                    if "END" in line:
                         completed = 100
                         line = "Kopiervorgang abgeschlossen"
 

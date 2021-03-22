@@ -422,14 +422,11 @@ then
     
     sudo cp ${DIR}/isolinux/* ${MOUNTPOINT}/syslinux/   > /dev/null 2>&1  #hide output
     sudo cp ${DIR}/boot/grub/* ${MOUNTPOINT}/boot/grub/  > /dev/null 2>&1  #hide output
-
-    echo $LIVEONLY
-    
-    exit
     
     # copy alternative grub and syslinux conf (without persistent mode)
     if [[( $LIVEONLY = "True"  )]]
     then
+        echo "Using Live Only grub-liveonly.cfg"
         sudo cp ${MOUNTPOINT}/boot/grub/grub-liveonly.cfg ${MOUNTPOINT}/boot/grub/grub.cfg
         sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg 
         sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg 
