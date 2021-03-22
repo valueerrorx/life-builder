@@ -1,0 +1,44 @@
+[MASTER]
+
+# A comma-separated list of package or module names from where C extensions may
+# be loaded. Extensions are loading into the active Python interpreter and may
+# run arbitrary code.
+
+extension-pkg-whitelist=PyQt5, cv2, numpy
+
+ignored-modules = cv2
+
+generated-members = cv2.*
+
+# Add files or directories to the blacklist. They should be base names, not paths.
+ignore=__init__.py
+
+# Add files or directories matching the regex patterns to the blacklist. The
+# regex matches against base names, not paths.
+ignore-patterns=Testings.py
+
+disable=bare-except,
+    locally-disabled,
+    too-many-branches,
+    too-many-locals,
+    invalid-name,
+    singleton-comparison,
+    line-too-long,
+    missing-module-docstring,
+    logging-not-lazy,
+    pointless-string-statement,
+    inconsistent-return-statements,
+    no-self-use,
+    missing-function-docstring,
+    broad-except,
+    unnecessary-lambda,
+    too-many-instance-attributes,
+    wrong-import-order,
+    too-many-public-methods,
+    no-else-return,
+    too-many-statements,
+    too-few-public-methods,
+    too-many-arguments,
+    wrong-import-position
+    
+
