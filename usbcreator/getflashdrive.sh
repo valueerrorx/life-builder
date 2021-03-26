@@ -427,11 +427,19 @@ then
     if [[( $LIVEONLY = "True"  )]]
     then
         echo "Using Live Only grub-liveonly.cfg"
-        sudo cp ${MOUNTPOINT}/boot/grub/grub-liveonly.cfg ${MOUNTPOINT}/boot/grub/grub.cfg
-        sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg
+
+        #replace persistent with nopersistent
+        sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+
+
+        #sudo cp ${MOUNTPOINT}/boot/grub/grub-liveonly.cfg ${MOUNTPOINT}/boot/grub/grub.cfg
+        #sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg
+        #sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg
     fi
     echo "Created with life-builder" > ${MOUNTPOINT}/boot/grub/readme.info
+    echo "Created with life-builder" > ${MOUNTPOINT}/syslinux/readme.info
 
 
     ##############16
