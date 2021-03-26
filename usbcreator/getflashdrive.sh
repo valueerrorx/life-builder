@@ -430,8 +430,8 @@ then
         sudo cp ${MOUNTPOINT}/boot/grub/grub-liveonly.cfg ${MOUNTPOINT}/boot/grub/grub.cfg
         sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg
         sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg
-        echo "Created with life-builder" > ${MOUNTPOINT}/boot/grub/readme
     fi
+    echo "Created with life-builder" > ${MOUNTPOINT}/boot/grub/readme.info
 
 
     ##############16
