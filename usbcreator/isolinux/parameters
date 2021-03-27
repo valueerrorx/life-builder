@@ -1,9 +1,0 @@
-Add one of the following '????.modeset=0' parameter at the end of the long grub command line as is (type 1 space before).
-Use the parameter related to the brand or chipset of your video card . pe.:
-use nouveau  or nvidia for nvidia based cards (proprietary driver, just nv in some linux distributions,
-nouveau driver is the default in Mint) ), use radeon for amd/ati cards, i915 for intel based motherboards, ,,,  These are the most common examples.
-
-   nvidia.modeset=0  NVIDIA
-   nouveau.modeset=0 NVIDIA
-   radeon.modeset=0
-   i915.modeset=0 

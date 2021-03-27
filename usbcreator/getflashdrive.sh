@@ -422,24 +422,25 @@ then
 
     sudo cp ${DIR}/isolinux/* ${MOUNTPOINT}/syslinux/   > /dev/null 2>&1  #hide output
     sudo cp ${DIR}/boot/grub/* ${MOUNTPOINT}/boot/grub/  > /dev/null 2>&1  #hide output
+    #copy syslinux.cfg to isolinux.cfg
+    sudo cp ${MOUNTPOINT}/syslinux/syslinux.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg
+
+    echo "Created with life-builder" > ${MOUNTPOINT}/boot/grub/readme.info
+    echo "Created with life-builder" > ${MOUNTPOINT}/syslinux/readme.info
 
     # copy alternative grub and syslinux conf (without persistent mode)
     if [[( $LIVEONLY = "True"  )]]
     then
-        echo "Using Live Only grub-liveonly.cfg"
-
+        echo "Using NON persistent Mode"
         #replace persistent with nopersistent
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
-
-        #sudo cp ${MOUNTPOINT}/boot/grub/grub-liveonly.cfg ${MOUNTPOINT}/boot/grub/grub.cfg
-        #sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/isolinux.cfg
-        #sudo cp ${MOUNTPOINT}/syslinux/isolinux-liveonly.cfg ${MOUNTPOINT}/syslinux/syslinux.cfg
+        echo "NON Persistent" >> ${MOUNTPOINT}/boot/grub/readme.info
+        echo "NON Persistent" >> ${MOUNTPOINT}/syslinux/readme.info
     fi
-    echo "Created with life-builder" > ${MOUNTPOINT}/boot/grub/readme.info
-    echo "Created with life-builder" > ${MOUNTPOINT}/syslinux/readme.info
+
 
 
     ##############16
