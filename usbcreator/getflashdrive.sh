@@ -433,6 +433,7 @@ then
     then
         echo "Using NON persistent Mode"
         #replace persistent with nopersistent
+        #replace Label immutable > live only
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
