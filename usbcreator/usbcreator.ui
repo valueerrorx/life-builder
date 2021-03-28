@@ -246,7 +246,17 @@
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Bootoption &amp;quot;persistent&amp;quot; (read/write) wird entfernt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
-                <string>Nur live Modus</string>
+                <string>Nur LIVE Modus</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="bootmessages">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ohne Splashscreen, dafür mit den üblichen Boot Messages&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Ausführliche Boot Messages</string>
                </property>
               </widget>
              </item>
@@ -336,6 +346,7 @@
         <widget class="QLabel" name="deviceinfo">
          <property name="font">
           <font>
+           <family>Ubuntu</family>
            <weight>50</weight>
            <bold>false</bold>
           </font>

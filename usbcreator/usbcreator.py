@@ -16,6 +16,7 @@ from subprocess import Popen, PIPE, STDOUT
 import subprocess
 import sip
 from PyQt5.QtGui import QPixmap, QIcon
+from configobj import ConfigObj
 
 
 USER = subprocess.check_output("logname", shell=True).rstrip()
@@ -30,10 +31,14 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.setWindowIcon(QIcon(os.path.join(WORK_DIRECTORY, "pixmaps/drive.png")))
         self.ui.search.clicked.connect(self.searchUSB)
         self.ui.exit.clicked.connect(self.onAbbrechen)        # setup Slots
-        self.ui.copy.clicked.connect(self.startCopy)
         self.ui.selectiso.clicked.connect(self.selectFile)
         self.ui.usbusb.clicked.connect(self.searchUSB)
+        self.ui.copy.clicked.connect(self.startCopy)
+
+        self.ui.copydata.clicked.connect(self.saveConfig)
+        self.ui.update.clicked.connect(self.saveConfig)
         self.ui.liveonly.clicked.connect(self.disableCopydata)
+        self.ui.bootmessages.clicked.connect(self.saveConfig)
 
         self.proposed = ["sda", "sdb", "sdc", "sdd", "sde", "sdf", "sdg", "sdh", "sdi", "sdj", "sdk", "sdl", "sdm", "sdn", "sdo", "sdp", "sdq", "sdr", "sds", "sdt", "sdu", "sdv", "sdw", "sdx", "sdy", "sdz"]
 
@@ -55,7 +60,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.isolocation = sys.argv[1]
 
         if self.isolocation != "":
-            if os.path.isfile(self.isolocation):   # check if the filenpath given via commandline is a valid file
+            if os.path.isfile(self.isolocation):   # check if the filepath given via commandline is a valid file
                 self.ui.copydata.setEnabled(False)
                 # self.ui.update.setEnabled(False)
                 self.ui.isousb.setChecked(True)
@@ -72,12 +77,15 @@ class MeinDialog(QtWidgets.QDialog):
             os.system(command)
             os._exit(0)
 
+        self.readConfig()
+
     def disableCopydata(self):
         if self.ui.liveonly.checkState():
             self.ui.copydata.setEnabled(False)
         else:
             if self.ui.usbusb.isChecked():
                 self.ui.copydata.setEnabled(True)
+        self.saveConfig()
 
     def selectFile(self):
         self.lines = []
@@ -412,6 +420,46 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.close()
         sys.exit(0)
 
+    def writeDefaultConfig(self):
+        """ default Config File """
+        config = ConfigObj('config.ini', encoding='UTF8')
+        config['copydata'] = 0
+        config['update'] = 0
+        config['liveonly'] = 0
+        config['bootmessages'] = 2
+        config.write()
+
+    def saveConfig(self):
+        config = ConfigObj('config.ini', encoding='UTF8')
+        config['copydata'] = self.ui.copydata.checkState()
+        config['update'] = self.ui.update.checkState()
+        config['liveonly'] = self.ui.liveonly.checkState()
+        config['bootmessages'] = self.ui.bootmessages.checkState()
+        config.write()
+
+    def setCheckBox(self, what, status):
+        """ set the checkbox from Config File """
+        if status == 2:  # 2 is checked
+            what.setChecked(True)
+        else:
+            what.setChecked(False)
+
+    def readConfig(self):
+        """ read the last used Configuration """
+        try:
+            config = ConfigObj('config.ini', encoding='UTF8')
+            self.setCheckBox(self.ui.copydata, int(config['copydata']))
+            self.setCheckBox(self.ui.update, int(config['update']))
+            self.setCheckBox(self.ui.liveonly, int(config['liveonly']))
+            self.setCheckBox(self.ui.bootmessages, int(config['bootmessages']))
+        except Exception:
+            # config does not exists > default Values
+            self.setCheckBox(self.ui.copydata, 0)
+            self.setCheckBox(self.ui.update, 0)
+            self.setCheckBox(self.ui.liveonly, 0)
+            self.setCheckBox(self.ui.bootmessages, 2)
+            self.writeDefaultConfig()
+
 
 class Worker(QtCore.QObject):
     def __init__(self, meindialog):
@@ -456,8 +504,14 @@ class Worker(QtCore.QObject):
             else:
                 liveonly = True
 
+            bootmessages = self.meindialog.ui.bootmessages.checkState()
+            if bootmessages == 0:
+                bootmessages = False
+            else:
+                bootmessages = True
+
             getcommand = os.path.join(WORK_DIRECTORY, "getflashdrive.sh")
-            p = Popen([getcommand, str(method), str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.isolocation), str(liveonly)], stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
+            p = Popen([getcommand, str(method), str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.isolocation), str(liveonly), str(bootmessages)], stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
 
             with p.stdout:
                 for line in iter(p.stdout.readline, b''):
