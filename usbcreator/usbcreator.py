@@ -450,9 +450,14 @@ class Worker(QtCore.QObject):
             else:
                 increment = float(1.3)
 
-            getcommand = os.path.join(WORK_DIRECTORY, "getflashdrive.sh")
+            liveonly = self.meindialog.ui.liveonly.checkState()
+            if liveonly == 0:
+                liveonly = False
+            else:
+                liveonly = True
 
-            p = Popen([getcommand, str(method), str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.meindialog.isolocation), str(liveonly)], stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
+            getcommand = os.path.join(WORK_DIRECTORY, "getflashdrive.sh")
+            p = Popen([getcommand, str(method), str(item.sharesize), str(copydata), str(item.id), str(iteminfo), str(update), str(self.isolocation), str(liveonly)], stdout=PIPE, stderr=STDOUT, bufsize=1, shell=False)
 
             with p.stdout:
                 for line in iter(p.stdout.readline, b''):
