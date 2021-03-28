@@ -133,15 +133,17 @@ class MeinDialog(QtWidgets.QDialog):
         print('finished')
         # self.ui.copy.setEnabled(True)
         self.ui.exit.setEnabled(True)
+        self.ui.search.setEnabled(True)
         self.ui.copydata.setEnabled(True)
         self.ui.update.setEnabled(True)
-        self.ui.search.setEnabled(True)
         self.ui.liveonly.setEnabled(True)
-        self.ui.liveonly.setChecked(False)
+        self.ui.bootmessages.setEnabled(True)
         self.ui.usbusb.setEnabled(True)
         self.ui.isousb.setEnabled(True)
         if self.ui.isousb.isChecked():
             self.ui.copydata.setEnabled(False)
+        # restore Config
+        self.readConfig()
 
     def searchUSB(self):
         if self.ui.liveonly.checkState():
@@ -399,6 +401,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.ui.liveonly.setEnabled(False)
             self.ui.usbusb.setEnabled(False)
             self.ui.isousb.setEnabled(False)
+            self.ui.bootmessages.setEnabled(False)
 
             self.extraThread.start()
 
