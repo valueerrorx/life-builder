@@ -157,6 +157,7 @@ then
     UPDATE=$6
     ISOFILE=$7
     LIVEONLY=$8
+    BOOTMESSAGES=$9
 
     TITLE=${TITLE//[-]/ }
     SDX="/dev/$USB"
@@ -431,15 +432,29 @@ then
     # copy alternative grub and syslinux conf (without persistent mode)
     if [[( $LIVEONLY = "True"  )]]
     then
-        echo "Using NON persistent Mode"
         #replace persistent with nopersistent
         #replace Label immutable > live only
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+        
+        sed -i 's/immutable/Live System/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
-        echo "NON Persistent" >> ${MOUNTPOINT}/boot/grub/readme.info
-        echo "NON Persistent" >> ${MOUNTPOINT}/syslinux/readme.info
+        echo "NON Persistent Mode" >> ${MOUNTPOINT}/boot/grub/readme.info
+        echo "NON Persistent Mode" >> ${MOUNTPOINT}/syslinux/readme.info
+    fi
+    #DONT  show classic Bootmessages?
+    if [[( $BOOTMESSAGES = "False"  )]]
+    then
+        #replace nosplash with quiet splash
+        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+
+        echo "NO Boot Messages" >> ${MOUNTPOINT}/boot/grub/readme.info
+        echo "NO Boot Messages" >> ${MOUNTPOINT}/syslinux/readme.info
     fi
 
 
