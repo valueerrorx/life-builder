@@ -76,6 +76,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.ui.close()
             os.system(command)
             os._exit(0)
+        self.configPath = os.path.dirname(os.path.abspath(__file__))
 
         self.readConfig()
 
@@ -425,20 +426,26 @@ class MeinDialog(QtWidgets.QDialog):
 
     def writeDefaultConfig(self):
         """ default Config File """
-        config = ConfigObj('config.ini', encoding='UTF8')
-        config['copydata'] = 0
-        config['update'] = 0
-        config['liveonly'] = 0
-        config['bootmessages'] = 2
-        config.write()
+        try:
+            config = ConfigObj(os.path.join(self.configPath, 'config.cfg'), encoding='UTF8')
+            config["copydata"] = 0
+            config["update"] = 0
+            config["liveonly"] = 0
+            config["bootmessages"] = 0
+            config.write()
+        except Exception as e:
+            print(e)
 
     def saveConfig(self):
-        config = ConfigObj('config.ini', encoding='UTF8')
-        config['copydata'] = self.ui.copydata.checkState()
-        config['update'] = self.ui.update.checkState()
-        config['liveonly'] = self.ui.liveonly.checkState()
-        config['bootmessages'] = self.ui.bootmessages.checkState()
-        config.write()
+        try:
+            config = ConfigObj(os.path.join(self.configPath, 'config.cfg'), encoding='UTF8')
+            config['copydata'] = self.ui.copydata.checkState()
+            config['update'] = self.ui.update.checkState()
+            config['liveonly'] = self.ui.liveonly.checkState()
+            config['bootmessages'] = self.ui.bootmessages.checkState()
+            config.write()
+        except Exception as e:
+            print(e)
 
     def setCheckBox(self, what, status):
         """ set the checkbox from Config File """
@@ -450,7 +457,7 @@ class MeinDialog(QtWidgets.QDialog):
     def readConfig(self):
         """ read the last used Configuration """
         try:
-            config = ConfigObj('config.ini', encoding='UTF8')
+            config = ConfigObj(os.path.join(self.configPath, 'config.cfg'), encoding='UTF8')
             self.setCheckBox(self.ui.copydata, int(config['copydata']))
             self.setCheckBox(self.ui.update, int(config['update']))
             self.setCheckBox(self.ui.liveonly, int(config['liveonly']))
