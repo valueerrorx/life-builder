@@ -169,7 +169,7 @@ then
     #---------------------------------------------------------#"
     partitiondevice(){
 
-        LIFESIZEEND=$(( $SHARESIZE + $LIFESIZE ))
+        SHARESIZEEND=$(( $SHARESIZE + $LIFESIZE ))
 
         # Ensuring that the device is not mounted #
         sudo umount ${SDX}1 > /dev/null 2>&1  #hide output
@@ -193,12 +193,12 @@ then
 
 
         sudo partprobe $SDX  > /dev/null 2>&1  #hide output
-        sudo parted -s $SDX mkpart primary 0% $SHARESIZE  > /dev/null 2>&1  #hide output
-        sudo parted -s $SDX mkpart primary $SHARESIZE $LIFESIZEEND  > /dev/null 2>&1  #hide output
-        sudo parted -s $SDX mkpart primary $LIFESIZEEND 100%  > /dev/null 2>&1  #hide output
+        sudo parted -s $SDX mkpart primary 0% $LIFESIZE  > /dev/null 2>&1  #hide output
+        sudo parted -s $SDX mkpart primary $LIFESIZE $SHARESIZEEND  > /dev/null 2>&1  #hide output
+        sudo parted -s $SDX mkpart primary $SHARESIZEEND 100%  > /dev/null 2>&1  #hide output
 
         # Setting boot flag to second partition   #
-        sudo parted -s $SDX set 2 boot on  > /dev/null 2>&1  #hide output
+        sudo parted -s $SDX set 1 boot on  > /dev/null 2>&1  #hide output
         sudo parted -s $SDX print  > /dev/null 2>&1  #hide output
 
 
@@ -218,19 +218,20 @@ then
         sleep 0.5
         ##############
 
-        ##############5
-        echo "Erstelle Share (fat32)"
-        sleep 0.5
-        ##############
-        sudo mkfs.vfat -F 32 -n SHARE ${SDX}1 > /dev/null 2>&1  #hide output
-        sleep 0.5
-
 
         ##############6
         echo "Erstelle Lifeclient (fat32)"
         sleep 0.5
         ##############
-        sudo mkfs.vfat -F 32 -n LIFECLIENT ${SDX}2 > /dev/null 2>&1  #hide output
+        sudo mkfs.vfat -F 32 -n LIFECLIENT ${SDX}1 > /dev/null 2>&1  #hide output
+        sleep 0.5
+
+
+        ##############5
+        echo "Erstelle Share (fat32)"
+        sleep 0.5
+        ##############
+        sudo mkfs.vfat -F 32 -n SHARE ${SDX}2 > /dev/null 2>&1  #hide output
         sleep 0.5
 
 
@@ -274,7 +275,7 @@ then
             echo "mtools_skip_check=1" >> /etc/mtools.conf
         fi
 
-        ISLIVE=$(sudo mlabel -si /dev/${USB}2 |awk '{print $4}')
+        ISLIVE=$(sudo mlabel -si /dev/${USB}1 |awk '{print $4}')
 
         if [[ ( "$ISLIVE" = "LIFECLIENT" ) ]];   #check if string not empty or null  (if life usb is found this ISLIVE returns a line
         then
@@ -312,7 +313,7 @@ then
 
     if [[( $UPDATE = "True"  )]]
     then
-        ISLIVE=$(sudo mlabel -si /dev/${USB}2 |awk '{print $4}')
+        ISLIVE=$(sudo mlabel -si /dev/${USB}1 |awk '{print $4}')
         if [[  ( "$ISLIVE" = "LIFECLIENT" ) ]];   #check if string not empty or null  (if life usb is found this ISLIVE returns a line
         then
             ##############11
@@ -371,7 +372,7 @@ then
         echo "USB Stick wird eingebunden"
         sleep 0.5
         ##############
-        sudo mount ${SDX}2  $MOUNTPOINT
+        sudo mount ${SDX}1  $MOUNTPOINT
     }
     mountsystempartition
 
@@ -437,7 +438,7 @@ then
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
-        
+
         sed -i 's/immutable/Live System/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/syslinux.cfg
@@ -449,13 +450,17 @@ then
     if [[( $BOOTMESSAGES = "False"  )]]
     then
         #replace nosplash with quiet splash
-        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/boot/grub/grub.cfg
-        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
         echo "NO Boot Messages" >> ${MOUNTPOINT}/boot/grub/readme.info
         echo "NO Boot Messages" >> ${MOUNTPOINT}/syslinux/readme.info
     fi
+    #Add Menuentry Debug to Config files
+    cat ${MOUNTPOINT}/boot/grub/grub_debug.cfg >> ${MOUNTPOINT}/boot/grub/grub.cfg
+    cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/isolinux.cfg
+    cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/syslinux.cfg
 
 
 
@@ -471,7 +476,7 @@ then
     echo "Installiere Bootloader"
     sleep 0.5
     ##############
-    sudo syslinux -if -d /syslinux ${SDX}2
+    sudo syslinux -if -d /syslinux ${SDX}1
     sleep 3
     sudo install-mbr ${SDX} --force
 

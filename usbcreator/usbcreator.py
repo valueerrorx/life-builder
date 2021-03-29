@@ -481,6 +481,7 @@ class Worker(QtCore.QObject):
             update = False
             copydata = False
             method = "iso"
+            self.isolocation = self.meindialog.isolocation
         else:
             method = "copy"
             self.isolocation = "none"
