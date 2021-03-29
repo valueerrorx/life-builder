@@ -460,7 +460,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.setCheckBox(self.ui.copydata, 0)
             self.setCheckBox(self.ui.update, 0)
             self.setCheckBox(self.ui.liveonly, 0)
-            self.setCheckBox(self.ui.bootmessages, 0)
+            self.setCheckBox(self.ui.bootmessages, 1)
             self.writeDefaultConfig()
 
 
