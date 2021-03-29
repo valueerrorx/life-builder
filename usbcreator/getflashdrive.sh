@@ -218,15 +218,15 @@ then
         sleep 0.5
         ##############
 
-        
+
         ##############6
         echo "Erstelle Lifeclient (fat32)"
         sleep 0.5
         ##############
         sudo mkfs.vfat -F 32 -n LIFECLIENT ${SDX}1 > /dev/null 2>&1  #hide output
         sleep 0.5
-        
-        
+
+
         ##############5
         echo "Erstelle Share (fat32)"
         sleep 0.5
@@ -438,7 +438,7 @@ then
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
-        
+
         sed -i 's/immutable/Live System/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/syslinux.cfg
@@ -450,13 +450,17 @@ then
     if [[( $BOOTMESSAGES = "False"  )]]
     then
         #replace nosplash with quiet splash
-        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/boot/grub/grub.cfg
-        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sed -i 's/nosplash/quiet splash/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
         echo "NO Boot Messages" >> ${MOUNTPOINT}/boot/grub/readme.info
         echo "NO Boot Messages" >> ${MOUNTPOINT}/syslinux/readme.info
     fi
+    #Add Menuentry Debug to Config files
+    cat ${MOUNTPOINT}/boot/grub/grub_debug.cfg >> ${MOUNTPOINT}/boot/grub/grub.cfg
+    cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/isolinux.cfg
+    cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/syslinux.cfg
 
 
 
