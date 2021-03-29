@@ -450,9 +450,9 @@ then
     if [[( $BOOTMESSAGES = "False"  )]]
     then
         #replace nosplash with quiet splash
-        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/boot/grub/grub.cfg
-        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sed -i 's/nosplash/quiet splash vt.handoff=1/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1 vt.global_cursor_default=0/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1 vt.global_cursor_default=0/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/nosplash/quiet splash vt.handoff=1 vt.global_cursor_default=0/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
         echo "NO Boot Messages" >> ${MOUNTPOINT}/boot/grub/readme.info
         echo "NO Boot Messages" >> ${MOUNTPOINT}/syslinux/readme.info
