@@ -433,16 +433,11 @@ then
     # copy alternative grub and syslinux conf (without persistent mode)
     if [[( $LIVEONLY = "True"  )]]
     then
-        #replace persistent with nopersistent
-        #replace Label customizable > live only
-        sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
-        sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
-
-        sed -i 's/customizable/Live System/' ${MOUNTPOINT}/boot/grub/grub.cfg
-        sed -i 's/customizable/Live System/' ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sed -i 's/customizable/Live System/' ${MOUNTPOINT}/syslinux/syslinux.cfg
-
+        #delete first entry in config files
+        sed -i -e '/Angepasst/,+4d' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i -e '/Angepasst/,+4d' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i -e '/Angepasst/,+4d' ${MOUNTPOINT}/syslinux/syslinux.cfg
+         
         echo "NON Persistent Mode" >> ${MOUNTPOINT}/boot/grub/readme.info
         echo "NON Persistent Mode" >> ${MOUNTPOINT}/syslinux/readme.info
     fi
