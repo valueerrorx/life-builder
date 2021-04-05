@@ -434,14 +434,14 @@ then
     if [[( $LIVEONLY = "True"  )]]
     then
         #replace persistent with nopersistent
-        #replace Label immutable > live only
+        #replace Label customizable > live only
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/boot/grub/grub.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/persistent/nopersistent/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
-        sed -i 's/immutable/Live System/' ${MOUNTPOINT}/boot/grub/grub.cfg
-        sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sed -i 's/immutable/Live System/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+        sed -i 's/customizable/Live System/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/customizable/Live System/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/customizable/Live System/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
         echo "NON Persistent Mode" >> ${MOUNTPOINT}/boot/grub/readme.info
         echo "NON Persistent Mode" >> ${MOUNTPOINT}/syslinux/readme.info
