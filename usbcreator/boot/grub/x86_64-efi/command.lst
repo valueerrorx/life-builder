@@ -33,7 +33,6 @@
 *menuentry: normal
 *pcidump: pcidump
 *probe: probe
-*rdmsr: rdmsr
 *read_byte: memrw
 *read_dword: memrw
 *read_word: memrw
@@ -46,7 +45,6 @@
 *sha256sum: hashsum
 *sha512sum: hashsum
 *sleep: sleep
-*smbios: smbios
 *submenu: normal
 *syslinux_configfile: syslinuxcfg
 *syslinux_source: syslinuxcfg
@@ -54,8 +52,8 @@
 *test_blockarg: test_blockarg
 *testspeed: testspeed
 *tr: tr
-*trust: pgp
-*verify_detached: pgp
+*trust: verify
+*verify_detached: verify
 *xnu_splash: xnu
 *zfskey: zfscrypt
 .: configfile
@@ -78,7 +76,7 @@ continue: normal
 coreboot_boottime: cbtime
 cutmem: mmap
 date: date
-distrust: pgp
+distrust: verify
 dump: minicmd
 eval: eval
 exit: minicmd
@@ -115,7 +113,7 @@ legacy_source: legacycfg
 linux16: linux16
 linux: linux
 linuxefi: linuxefi
-list_trusted: pgp
+list_trusted: verify
 loadbios: loadbios
 loadfont: font
 lscoreboot: cbls
@@ -141,7 +139,6 @@ net_bootp: net
 net_del_addr: net
 net_del_dns: net
 net_del_route: net
-net_dhcp: net
 net_get_dhcp_option: net
 net_ipv6_autoconf: net
 net_ls_addr: net
@@ -180,7 +177,6 @@ videotest: videotest
 write_byte: memrw
 write_dword: memrw
 write_word: memrw
-wrmsr: wrmsr
 xnu_devprop_load: xnu
 xnu_kernel64: xnu
 xnu_kernel: xnu
