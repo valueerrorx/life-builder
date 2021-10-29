@@ -247,6 +247,8 @@ class MeinDialog(QtWidgets.QDialog):
         item.comboBox.addItem("16 GB")
         item.comboBox.addItem("32 GB")
         item.comboBox.addItem("48 GB")
+        item.comboBox.addItem("64 GB")
+        item.comboBox.addItem("92 GB")
         item.comboBox.setFixedWidth(200)
         item.comboBox.setCurrentIndex(2)
         item.comboBox.currentIndexChanged.connect(lambda: self.checkSize(item))
@@ -375,6 +377,10 @@ class MeinDialog(QtWidgets.QDialog):
             sharesize = 32000
         elif sharesize == "48 GB":
             sharesize = 48000
+        elif sharesize == "64 GB":
+            sharesize = 64000
+        elif sharesize == "92 GB":
+            sharesize = 92000
         return sharesize
 
     def startCopy(self):
