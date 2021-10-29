@@ -453,13 +453,17 @@ then
         sed -i 's/rd.plymouth=0 plymouth.enable=0//' ${MOUNTPOINT}/syslinux/isolinux.cfg
         sed -i 's/rd.plymouth=0 plymouth.enable=0//' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
+	sed -i 's/vt.handoff=1//' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/vt.handoff=1//' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/vt.handoff=1//' ${MOUNTPOINT}/syslinux/syslinux.cfg
+
         echo "NO Boot Messages" >> ${MOUNTPOINT}/boot/grub/readme.info
         echo "NO Boot Messages" >> ${MOUNTPOINT}/syslinux/readme.info
     else
 	# replace quiet splash with nosplash && plymouth OFF
-        sed -i 's/quiet splash/nosplash rd.plymouth=0 plymouth.enable=0/' ${MOUNTPOINT}/boot/grub/grub.cfg
-        sed -i 's/quiet splash/nosplash rd.plymouth=0 plymouth.enable=0/' ${MOUNTPOINT}/syslinux/isolinux.cfg
-        sed -i 's/quiet splash/nosplash rd.plymouth=0 plymouth.enable=0/' ${MOUNTPOINT}/syslinux/syslinux.cfg
+        sed -i 's/quiet splash/nosplash rd.plymouth=0 plymouth.enable=0 vt.handoff=1/' ${MOUNTPOINT}/boot/grub/grub.cfg
+        sed -i 's/quiet splash/nosplash rd.plymouth=0 plymouth.enable=0 vt.handoff=1/' ${MOUNTPOINT}/syslinux/isolinux.cfg
+        sed -i 's/quiet splash/nosplash rd.plymouth=0 plymouth.enable=0 vt.handoff=1/' ${MOUNTPOINT}/syslinux/syslinux.cfg
 
         echo "NO Boot Messages" >> ${MOUNTPOINT}/boot/grub/readme.info
         echo "NO Boot Messages" >> ${MOUNTPOINT}/syslinux/readme.info
