@@ -477,6 +477,15 @@ then
     cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/isolinux.cfg
     cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/syslinux.cfg
 
+    ##############15-2
+    echo "WLAN Einstellungen"
+    sleep 0.5
+    ##############
+
+    # cp all connections /etc/NetworkManager/system-connections
+
+    unalias cp   # if an alias is set to cp command
+    sudo cp -r /etc/NetworkManager/system-connections ${MOUNTPOINT}/etc/NetworkManager/system-connections
 
 
     ##############16

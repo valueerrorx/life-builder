@@ -343,6 +343,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;: &lt;br/&gt;für WLAN Einstellungen checke bitte ob du eine Verbindung hergestellt hast.&lt;br/&gt;Für fest definierte DNS Server bitte die Datei in &lt;span style=&quot; font-style:italic;&quot;&gt;/etc/systemd/resolved.conf.d/DNS.conf&lt;/span&gt; bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="deviceinfo">
          <property name="font">
           <font>
