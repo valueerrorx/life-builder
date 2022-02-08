@@ -222,11 +222,17 @@
              </item>
              <item>
               <widget class="QCheckBox" name="copydata">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Datenpartition vom Quell USB Stick&lt;/p&gt;&lt;p&gt;wird auf den Ziel USB Stick übertragen&lt;/p&gt;&lt;p&gt;(Konfiguration, zusätzliche Programme, Dateien)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Veränderungen übertragen</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>

@@ -400,16 +400,13 @@ then
     echo "FILENUMBER,$FILENUMBER"   #send keyword and filenumber to python program
     ##############
 
+
+
     ##############14
     echo "Kopiere Systemdateien"
     sleep 0.5
     ##############
     sudo rsync -a -h --info=progress2,stats --no-inc-recursive /cdrom/ $MOUNTPOINT | stdbuf -oL tr '\r' '\n' | stdbuf -oL tr -s " " | stdbuf -oL cut -d " " -f 2-4
-
-
-
-
-
 
     ##############15
     echo "F90"
@@ -476,16 +473,6 @@ then
     cat ${MOUNTPOINT}/boot/grub/grub_debug.cfg >> ${MOUNTPOINT}/boot/grub/grub.cfg
     cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/isolinux.cfg
     cat ${MOUNTPOINT}/syslinux/syslinux_debug.cfg >> ${MOUNTPOINT}/syslinux/syslinux.cfg
-
-    ##############15-2
-    echo "WLAN Einstellungen"
-    sleep 0.5
-    ##############
-
-    # cp all connections /etc/NetworkManager/system-connections
-
-    unalias cp   # if an alias is set to cp command
-    sudo cp -r /etc/NetworkManager/system-connections ${MOUNTPOINT}/etc/NetworkManager/system-connections
 
 
     ##############16
@@ -595,6 +582,7 @@ then
         echo "Benutzerdaten übertragen"
         sleep 0.5
         ##############
+
 
         FILENUMBER=$(ls -Rahl ${MOUNTPOINTCASPER}/ |wc -l)
         ##############
