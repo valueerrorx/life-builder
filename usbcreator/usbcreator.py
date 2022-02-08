@@ -434,7 +434,7 @@ class MeinDialog(QtWidgets.QDialog):
         """ default Config File """
         try:
             config = ConfigObj(os.path.join(self.configPath, 'config.cfg'), encoding='UTF8')
-            config["copydata"] = 0
+            config["copydata"] = 1
             config["update"] = 0
             config["liveonly"] = 0
             config["bootmessages"] = 0
@@ -470,7 +470,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.setCheckBox(self.ui.bootmessages, int(config['bootmessages']))
         except Exception:
             # config does not exists > default Values
-            self.setCheckBox(self.ui.copydata, 0)
+            self.setCheckBox(self.ui.copydata, 1)
             self.setCheckBox(self.ui.update, 0)
             self.setCheckBox(self.ui.liveonly, 0)
             self.setCheckBox(self.ui.bootmessages, 0)
