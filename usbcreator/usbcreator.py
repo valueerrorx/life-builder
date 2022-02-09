@@ -37,7 +37,7 @@ class MeinDialog(QtWidgets.QDialog):
 
         # self.ui.copydata.clicked.connect(self.saveConfig)
         self.ui.update.clicked.connect(self.saveConfig)
-        self.ui.liveonly.clicked.connect(self.disableCopydata)
+        # self.ui.liveonly.clicked.connect(self.disableCopydata)
         self.ui.bootmessages.clicked.connect(self.saveConfig)
 
         self.proposed = ["sda", "sdb", "sdc", "sdd", "sde", "sdf", "sdg", "sdh", "sdi", "sdj", "sdk", "sdl", "sdm", "sdn", "sdo", "sdp", "sdq", "sdr", "sds", "sdt", "sdu", "sdv", "sdw", "sdx", "sdy", "sdz"]
@@ -61,7 +61,7 @@ class MeinDialog(QtWidgets.QDialog):
 
         if self.isolocation != "":
             if os.path.isfile(self.isolocation):   # check if the filepath given via commandline is a valid file
-                self.ui.copydata.setEnabled(False)
+                # self.ui.copydata.setEnabled(False)
                 # self.ui.update.setEnabled(False)
                 self.ui.isousb.setChecked(True)
                 filename = self.isolocation.rsplit('/', 1)
@@ -80,6 +80,7 @@ class MeinDialog(QtWidgets.QDialog):
 
         self.readConfig()
 
+    """
     def disableCopydata(self):
         if self.ui.liveonly.checkState():
             self.ui.copydata.setEnabled(False)
@@ -87,6 +88,7 @@ class MeinDialog(QtWidgets.QDialog):
             if self.ui.usbusb.isChecked():
                 self.ui.copydata.setEnabled(True)
         self.saveConfig()
+    """
 
     def selectFile(self):
         self.lines = []
@@ -135,20 +137,20 @@ class MeinDialog(QtWidgets.QDialog):
         # self.ui.copy.setEnabled(True)
         self.ui.exit.setEnabled(True)
         self.ui.search.setEnabled(True)
-        self.ui.copydata.setEnabled(True)
+        # self.ui.copydata.setEnabled(True)
         self.ui.update.setEnabled(True)
         self.ui.liveonly.setEnabled(True)
         self.ui.bootmessages.setEnabled(True)
         self.ui.usbusb.setEnabled(True)
         self.ui.isousb.setEnabled(True)
-        if self.ui.isousb.isChecked():
-            self.ui.copydata.setEnabled(False)
+        # if self.ui.isousb.isChecked():
+        #    self.ui.copydata.setEnabled(False)
         # restore Config
         self.readConfig()
 
     def searchUSB(self):
-        if self.ui.liveonly.checkState():
-            self.ui.copydata.setEnabled(False)
+        # if self.ui.liveonly.checkState():
+        #    self.ui.copydata.setEnabled(False)
 
         self.devices = []
         # make sure nothing is running anymore
@@ -402,7 +404,7 @@ class MeinDialog(QtWidgets.QDialog):
                 item.comboBox.setEnabled(False)
 
             self.ui.copy.setEnabled(False)
-            self.ui.copydata.setEnabled(False)
+            # self.ui.copydata.setEnabled(False)
             self.ui.update.setEnabled(False)
             self.ui.search.setEnabled(False)
             self.ui.liveonly.setEnabled(False)
@@ -434,7 +436,7 @@ class MeinDialog(QtWidgets.QDialog):
         """ default Config File """
         try:
             config = ConfigObj(os.path.join(self.configPath, 'config.cfg'), encoding='UTF8')
-            config["copydata"] = 1
+            # config["copydata"] = 1
             config["update"] = 0
             config["liveonly"] = 0
             config["bootmessages"] = 0
@@ -445,7 +447,7 @@ class MeinDialog(QtWidgets.QDialog):
     def saveConfig(self):
         try:
             config = ConfigObj(os.path.join(self.configPath, 'config.cfg'), encoding='UTF8')
-            config['copydata'] = self.ui.copydata.checkState()
+            # config['copydata'] = self.ui.copydata.checkState()
             config['update'] = self.ui.update.checkState()
             config['liveonly'] = self.ui.liveonly.checkState()
             config['bootmessages'] = self.ui.bootmessages.checkState()
@@ -464,7 +466,7 @@ class MeinDialog(QtWidgets.QDialog):
         """ read the last used Configuration """
         try:
             config = ConfigObj(os.path.join(self.configPath, 'config.cfg'), encoding='UTF8')
-            self.setCheckBox(self.ui.copydata, int(config['copydata']))
+            # self.setCheckBox(self.ui.copydata, int(config['copydata']))
             self.setCheckBox(self.ui.update, int(config['update']))
             self.setCheckBox(self.ui.liveonly, int(config['liveonly']))
             self.setCheckBox(self.ui.bootmessages, int(config['bootmessages']))
