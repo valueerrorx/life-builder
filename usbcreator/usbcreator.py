@@ -35,7 +35,7 @@ class MeinDialog(QtWidgets.QDialog):
         self.ui.usbusb.clicked.connect(self.searchUSB)
         self.ui.copy.clicked.connect(self.startCopy)
 
-        self.ui.copydata.clicked.connect(self.saveConfig)
+        # self.ui.copydata.clicked.connect(self.saveConfig)
         self.ui.update.clicked.connect(self.saveConfig)
         self.ui.liveonly.clicked.connect(self.disableCopydata)
         self.ui.bootmessages.clicked.connect(self.saveConfig)
@@ -470,7 +470,7 @@ class MeinDialog(QtWidgets.QDialog):
             self.setCheckBox(self.ui.bootmessages, int(config['bootmessages']))
         except Exception:
             # config does not exists > default Values
-            self.setCheckBox(self.ui.copydata, 1)
+            # self.setCheckBox(self.ui.copydata, 1)
             self.setCheckBox(self.ui.update, 0)
             self.setCheckBox(self.ui.liveonly, 0)
             self.setCheckBox(self.ui.bootmessages, 0)
