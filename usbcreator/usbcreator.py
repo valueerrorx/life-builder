@@ -14,7 +14,7 @@ from PyQt5 import QtCore, uic, QtWidgets
 # from PyQt5.QtGui import *
 from subprocess import Popen, PIPE, STDOUT
 import subprocess
-import sip
+import sip  # noqa
 from PyQt5.QtGui import QPixmap, QIcon
 from configobj import ConfigObj
 
@@ -486,7 +486,9 @@ class Worker(QtCore.QObject):
     finished = QtCore.pyqtSignal()
 
     def doCopy(self):
-        copydata = self.meindialog.ui.copydata.checkState()
+        # copydata = self.meindialog.ui.copydata.checkState()
+        # we allways copy the data
+        copydata = True
 
         update = self.meindialog.ui.update.checkState()
 

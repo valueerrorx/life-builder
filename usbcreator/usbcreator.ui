@@ -221,22 +221,6 @@
               </spacer>
              </item>
              <item>
-              <widget class="QCheckBox" name="copydata">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Die Datenpartition vom Quell USB Stick&lt;/p&gt;&lt;p&gt;wird auf den Ziel USB Stick übertragen&lt;/p&gt;&lt;p&gt;(Konfiguration, zusätzliche Programme, Dateien)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="text">
-                <string>Veränderungen übertragen</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QCheckBox" name="update">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Der Ziel USB Stick wird nicht formatiert!&lt;/p&gt;&lt;p&gt;Alle Anpassungen und privaten Daten&lt;/p&gt;&lt;p&gt;am Ziel USB Stick bleiben erhalten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -349,13 +333,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;: &lt;br/&gt;Für fest definierte DNS Server bitte die Datei in &lt;span style=&quot; font-style:italic;&quot;&gt;/etc/systemd/resolved.conf.d/DNS.conf&lt;/span&gt; bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="deviceinfo">
          <property name="font">
           <font>
@@ -372,6 +349,13 @@
          </property>
          <property name="indent">
           <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;: &lt;br/&gt;Für fest definierte DNS Server bitte die Datei in &lt;span style=&quot; font-style:italic;&quot;&gt;/etc/systemd/resolved.conf.d/DNS.conf&lt;/span&gt; bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -428,22 +412,6 @@
     <hint type="destinationlabel">
      <x>153</x>
      <y>260</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>isousb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>copydata</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>540</x>
-     <y>215</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>540</x>
-     <y>450</y>
     </hint>
    </hints>
   </connection>
